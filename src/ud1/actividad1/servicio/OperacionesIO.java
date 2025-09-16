@@ -1,10 +1,6 @@
 package ud1.actividad1.servicio;
 
 import java.io.File;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -14,31 +10,29 @@ import ud1.actividad1.excepciones.NoEsDirectorioException;
 
 public class OperacionesIO {
     public static void visualizarContenido(String ruta) throws DirectorioNoExisteException, NoEsDirectorioException {
-        final long KB = (long) 1024.0;
         File directorio = new File(ruta);
-        if (!directorio.exists()) {
-            throw new DirectorioNoExisteException();
-        }
-        if (directorio.isFile()) {
-            throw new NoEsDirectorioException();
+        Utilidades.validarDirectorio(directorio);
+
+        File[] ficheros = directorio.listFiles();
+        for (File file : ficheros) {
+            Utilidades.mostrarInfo(file,"");
         }
 
-        for (String nombre : directorio.list()) {
-            File elemento = new File(ruta + "\\" + nombre);
-            if (elemento.isFile()) {
-                LocalDateTime fecha = LocalDateTime.ofInstant(Instant.ofEpochMilli(elemento.lastModified()),
-                        ZoneId.systemDefault());
-                DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                String fechaFormateada = formateador.format(fecha);
+        // for (String nombre : directorio.list()) {
+        //     File elemento = new File(ruta + "\\" + nombre);
 
-                System.out.println("- | " + elemento.getName() + " " + "<FICHERO> " + elemento.length() / KB + " "
-                        + fechaFormateada);
-            } else {
-                // ES DIRECTORIO
-                System.out.println("- | " + elemento.getName() + " " + "<DIR>");
-            }
+        //     if (elemento.isFile()) {
+        //         String patronFecha = "dd/MM/yyyy HH:mm:ss";
+        //         String fechaFormateada = Utilidades.formatearFecha(elemento.lastModified(),patronFecha);
 
-        }
+        //         System.out.println("- | " + elemento.getName() + " " + "<FICHERO> " + elemento.length() / 1024.0 + " "
+        //                 + fechaFormateada);
+        //     } else {
+        //         // ES DIRECTORIO
+        //         System.out.println("- | " + elemento.getName() + " " + "<DIR>");
+        //     }
+
+        // }
     }
 
     public static void recorrerRecursivo(String ruta) {
@@ -53,22 +47,18 @@ public class OperacionesIO {
             throws DirectorioNoExisteException, NoEsDirectorioException {
         final long KB = (long) 1024.0;
         File directorio = new File(ruta);
-        if (!directorio.exists()) {
-            throw new DirectorioNoExisteException();
-        }
-        if (directorio.isFile()) {
-            throw new NoEsDirectorioException();
-        }
+        Utilidades.validarDirectorio(directorio);
+
+        // CADA VEZ QUE SE LLAMA A SI MISMO VUELVE A VALIDAR; ES INEFICIENTE.
+        // recorrer(directorio, "-|");
 
         String identacion = "-".repeat(nivelIdentacion);
 
         for (String nombre : directorio.list()) {
             File elemento = new File(ruta + "\\" + nombre);
             if (elemento.isFile()) {
-                LocalDateTime fecha = LocalDateTime.ofInstant(Instant.ofEpochMilli(elemento.lastModified()),
-                        ZoneId.systemDefault());
-                DateTimeFormatter formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-                String fechaFormateada = formateador.format(fecha);
+                String patronFecha = "dd/MM/yyyy HH:mm:ss";
+                String fechaFormateada = Utilidades.formatearFecha(elemento.lastModified(),patronFecha);
 
                 System.out.println(identacion + "| " + elemento.getName()
                         + " <FICHERO> " + (elemento.length() / KB) + " KB "
@@ -83,21 +73,29 @@ public class OperacionesIO {
         }
     }
 
+    private static void recorrer(File dir, String sangria){
+        File[] elementos = dir.listFiles();
+        if (elementos == null) {
+            return;
+        }
+        for(File f : elementos){
+            Utilidades.mostrarInfo(f, sangria);
+            if (f.isDirectory()) {
+                recorrer(f, sangria + "----");
+            }
+        }
+    }
+
     public static void filtrarPorExtension(String ruta, String extension)
             throws DirectorioNoExisteException, NoEsDirectorioException {
         File directorio = new File(ruta);
-        if (!directorio.exists()) {
-            throw new DirectorioNoExisteException();
-        }
-        if (directorio.isFile()) {
-            throw new NoEsDirectorioException();
-        }
+        Utilidades.validarDirectorio(directorio);
 
         boolean hayFichero = false;
 
         for (String nombre : directorio.list()) {
             File elemento = new File(ruta + "\\" + nombre);
-            if (elemento.isFile() && getExtension(elemento).equals(extension)) {
+            if (elemento.isFile() && Utilidades.getExtension(elemento).equals(extension)) {
                 System.out.println("-| " + elemento.getName());
                 hayFichero = true;
             }
@@ -108,31 +106,19 @@ public class OperacionesIO {
         }
     }
 
-    private static String getExtension(File f) {
-        String nombre = f.getName();
-        int posicionPunto = nombre.lastIndexOf('.');
-        if (posicionPunto > 0 && posicionPunto < nombre.length() - 1) {
-            return nombre.substring(posicionPunto + 1);
-        } else {
-            throw new IllegalArgumentException("ERROR: El archivo no tiene extensión");
-        }
-    }
+    
 
     public static void filtrarPorExtensionYOrdenar(String ruta, String extension, boolean descendente)
             throws NoEsDirectorioException, DirectorioNoExisteException {
         ArrayList<File> lista = new ArrayList<File>();
         File directorio = new File(ruta);
-        if (!directorio.exists()) {
-            throw new DirectorioNoExisteException();
-        } else if (!directorio.isDirectory()) {
-            throw new NoEsDirectorioException();
-        }
+        Utilidades.validarDirectorio(directorio);
 
         Comparator<File> comparador = Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER);
 
         for (String nombre : directorio.list()) {
             File elemento = new File(ruta + "\\" + nombre);
-            if (elemento.isFile() && getExtension(elemento).equalsIgnoreCase(extension)) {
+            if (elemento.isFile() && Utilidades.getExtension(elemento).equalsIgnoreCase(extension)) {
                 lista.add(elemento);
             }
         }
@@ -173,11 +159,9 @@ public class OperacionesIO {
     public static void copiarDirectorio(String origen, String destino) {
     }
 
-    public static void borrar(String ruta) throws DirectorioNoExisteException {
+    public static void borrar(String ruta) throws DirectorioNoExisteException, ArchivoNoExisteException {
         File directorio = new File(ruta);
-        if (!directorio.exists()) {
-            throw new DirectorioNoExisteException();
-        }
+        Utilidades.validarExistenciaArchivo(directorio);
 
         if (directorio.isFile() && directorio.delete()) {
             System.out.println("Archivo " + directorio.getAbsolutePath() + " borrado correctamente.");
