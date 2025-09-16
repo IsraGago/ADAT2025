@@ -2,13 +2,15 @@ package ud1.actividad1;
 
 import java.util.Scanner;
 
+import ud1.actividad1.excepciones.DirectorioNoExisteException;
+import ud1.actividad1.excepciones.NoEsDirectorioException;
 import ud1.actividad1.servicio.OperacionesIO;
 
 public class Main {
 
     public static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws DirectorioNoExisteException, NoEsDirectorioException {
 
         String ruta = "";
         String extension = "";
@@ -45,7 +47,7 @@ public class Main {
                     break;
                 case 4: // Filtrar por extensión y ordenar
                     ruta = preguntarRuta("Introduce al ruta del directorio: ");
-                    System.out.println("Introduce la extensión (sin el .): ");
+                    System.out.println("Introduce la extensión: ");
                     System.out.println("Ordenar ascendentemente (a) o descendentemente (d): ");
                     boolean descendentemente = sc.nextLine().charAt(0) == 'd' ? true : false;
                     extension = sc.nextLine();

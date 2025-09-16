@@ -2,11 +2,15 @@ package ud1.actividad1.servicio;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.Objects;
 
 import ud1.actividad1.excepciones.ArchivoNoExisteException;
 import ud1.actividad1.excepciones.DirectorioNoExisteException;
 import ud1.actividad1.excepciones.NoEsDirectorioException;
+
+import static ud1.actividad1.servicio.Utilidades.mostrarInfo;
 
 public class OperacionesIO {
     public static void visualizarContenido(String ruta) throws DirectorioNoExisteException, NoEsDirectorioException {
@@ -15,7 +19,7 @@ public class OperacionesIO {
 
         File[] ficheros = directorio.listFiles();
         for (File file : ficheros) {
-            Utilidades.mostrarInfo(file,"");
+            mostrarInfo(file, "");
         }
 
         // for (String nombre : directorio.list()) {
@@ -58,7 +62,7 @@ public class OperacionesIO {
             File elemento = new File(ruta + "\\" + nombre);
             if (elemento.isFile()) {
                 String patronFecha = "dd/MM/yyyy HH:mm:ss";
-                String fechaFormateada = Utilidades.formatearFecha(elemento.lastModified(),patronFecha);
+                String fechaFormateada = Utilidades.formatearFecha(elemento.lastModified(), patronFecha);
 
                 System.out.println(identacion + "| " + elemento.getName()
                         + " <FICHERO> " + (elemento.length() / KB) + " KB "
@@ -73,13 +77,13 @@ public class OperacionesIO {
         }
     }
 
-    private static void recorrer(File dir, String sangria){
+    private static void recorrer(File dir, String sangria) {
         File[] elementos = dir.listFiles();
         if (elementos == null) {
             return;
         }
-        for(File f : elementos){
-            Utilidades.mostrarInfo(f, sangria);
+        for (File f : elementos) {
+            mostrarInfo(f, sangria);
             if (f.isDirectory()) {
                 recorrer(f, sangria + "----");
             }
@@ -91,22 +95,18 @@ public class OperacionesIO {
         File directorio = new File(ruta);
         Utilidades.validarDirectorio(directorio);
 
-        boolean hayFichero = false;
+        File[] listaArchivos = directorio.listFiles(new FiltroExtension(extension));
 
-        for (String nombre : directorio.list()) {
-            File elemento = new File(ruta + "\\" + nombre);
-            if (elemento.isFile() && Utilidades.getExtension(elemento).equals(extension)) {
-                System.out.println("-| " + elemento.getName());
-                hayFichero = true;
+        if (listaArchivos != null) {
+            for (File file : listaArchivos) {
+                mostrarInfo(file, extension);
             }
-        }
+        } else {
+            System.out.println("No se ha encontrado ningún fichero con la extensión: " + extension);
 
-        if (!hayFichero) {
-            System.out.println("No se ha encontrado ningún fichero con la extensión ." + extension);
         }
     }
 
-    
 
     public static void filtrarPorExtensionYOrdenar(String ruta, String extension, boolean descendente)
             throws NoEsDirectorioException, DirectorioNoExisteException {
@@ -116,12 +116,7 @@ public class OperacionesIO {
 
         Comparator<File> comparador = Comparator.comparing(File::getName, String.CASE_INSENSITIVE_ORDER);
 
-        for (String nombre : directorio.list()) {
-            File elemento = new File(ruta + "\\" + nombre);
-            if (elemento.isFile() && Utilidades.getExtension(elemento).equalsIgnoreCase(extension)) {
-                lista.add(elemento);
-            }
-        }
+        Collections.addAll(lista, Objects.requireNonNull(directorio.listFiles(new FiltroExtension(extension))));
 
         if (descendente) {
             lista.sort(comparador.reversed());
@@ -130,12 +125,21 @@ public class OperacionesIO {
         }
 
         for (File f : lista) {
-            System.out.println(f.getName());
+            mostrarInfo(f, extension);
         }
     }
 
-    public static void filtrarPorSubcadena(String ruta, String subcadena) {
-
+    public static void filtrarPorSubcadena(String ruta, String subcadena) throws DirectorioNoExisteException, NoEsDirectorioException {
+        File directorio = new File(ruta);
+        Utilidades.validarDirectorio(directorio);
+        File[] ficheros = directorio.listFiles(new FiltroSubstring("subadena"));
+        if (ficheros != null) {
+            for (File f : ficheros) {
+                mostrarInfo(f, subcadena);
+            }
+        } else {
+            System.out.println("No se ha encontrado ningún archivo o directorio con la subcadena: "+subcadena);
+        }
     }
 
     public static void copiarArchivo(String origen, String destino) throws ArchivoNoExisteException {
