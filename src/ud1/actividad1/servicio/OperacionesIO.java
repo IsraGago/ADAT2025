@@ -1,6 +1,9 @@
 package ud1.actividad1.servicio;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,74 +24,33 @@ public class OperacionesIO {
         for (File file : ficheros) {
             mostrarInfo(file, "");
         }
-
-        // for (String nombre : directorio.list()) {
-        //     File elemento = new File(ruta + "\\" + nombre);
-
-        //     if (elemento.isFile()) {
-        //         String patronFecha = "dd/MM/yyyy HH:mm:ss";
-        //         String fechaFormateada = Utilidades.formatearFecha(elemento.lastModified(),patronFecha);
-
-        //         System.out.println("- | " + elemento.getName() + " " + "<FICHERO> " + elemento.length() / 1024.0 + " "
-        //                 + fechaFormateada);
-        //     } else {
-        //         // ES DIRECTORIO
-        //         System.out.println("- | " + elemento.getName() + " " + "<DIR>");
-        //     }
-
-        // }
     }
 
     public static void recorrerRecursivo(String ruta) {
+        File directorio = new File(ruta);
+
         try {
-            recorrerRecursivo(ruta, 1); // para no obligar a poner un int en la llamada
+            Utilidades.validarDirectorio(directorio);
+            recorrerRecursivo(directorio, "-|"); // para no obligar a poner un int en la llamada
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
-    private static void recorrerRecursivo(String ruta, int nivelIdentacion)
-            throws DirectorioNoExisteException, NoEsDirectorioException {
-        final long KB = (long) 1024.0;
-        File directorio = new File(ruta);
-        Utilidades.validarDirectorio(directorio);
-
-        // CADA VEZ QUE SE LLAMA A SI MISMO VUELVE A VALIDAR; ES INEFICIENTE.
-        // recorrer(directorio, "-|");
-
-        String identacion = "-".repeat(nivelIdentacion);
-
-        for (String nombre : directorio.list()) {
-            File elemento = new File(ruta + "\\" + nombre);
-            if (elemento.isFile()) {
-                String patronFecha = "dd/MM/yyyy HH:mm:ss";
-                String fechaFormateada = Utilidades.formatearFecha(elemento.lastModified(), patronFecha);
-
-                System.out.println(identacion + "| " + elemento.getName()
-                        + " <FICHERO> " + (elemento.length() / KB) + " KB "
-                        + fechaFormateada);
-            } else {
-                // ES DIRECTORIO
-                System.out.println(identacion + "| " + elemento.getName() + " <DIR>");
-                recorrerRecursivo(elemento.getAbsolutePath(), nivelIdentacion + 5);
-
-            }
-
-        }
-    }
-
-    private static void recorrer(File dir, String sangria) {
-        File[] elementos = dir.listFiles();
-        if (elementos == null) {
-            return;
-        }
-        for (File f : elementos) {
-            mostrarInfo(f, sangria);
-            if (f.isDirectory()) {
-                recorrer(f, sangria + "----");
+    private static void recorrerRecursivo(File directorio, String sangria) {
+        File[] archivos = directorio.listFiles();
+        if (archivos != null) {
+            for (File f : archivos) {
+                mostrarInfo(f, sangria);
+                if (f.isDirectory()) {
+                    recorrerRecursivo(f, "-----" + sangria);
+                }
             }
         }
+
     }
+
+
 
     public static void filtrarPorExtension(String ruta, String extension)
             throws DirectorioNoExisteException, NoEsDirectorioException {
@@ -132,35 +94,77 @@ public class OperacionesIO {
     public static void filtrarPorSubcadena(String ruta, String subcadena) throws DirectorioNoExisteException, NoEsDirectorioException {
         File directorio = new File(ruta);
         Utilidades.validarDirectorio(directorio);
-        File[] ficheros = directorio.listFiles(new FiltroSubstring("subadena"));
+        File[] ficheros = directorio.listFiles(new FiltroSubstring(subcadena));
         if (ficheros != null) {
             for (File f : ficheros) {
                 mostrarInfo(f, subcadena);
             }
         } else {
-            System.out.println("No se ha encontrado ningún archivo o directorio con la subcadena: "+subcadena);
+            System.out.println("No se ha encontrado ningún archivo o directorio con la subcadena: " + subcadena);
         }
     }
 
-    public static void copiarArchivo(String origen, String destino) throws ArchivoNoExisteException {
-        File rutaOrigen = new File(origen);
-        File rutaDestino = new File(destino);
+    public static void copiarArchivo(String origen, String destino) throws ArchivoNoExisteException, IOException {
+        File archivoOrigen = new File(origen);
+        File archivoDestino = new File(destino);
 
-        if (!rutaOrigen.exists()) {
-            throw new ArchivoNoExisteException();
-        } else if (rutaOrigen.isDirectory()) {
-            System.out.println("ERROR: La ruta de origen debe corresponder a un archivo, no a un directorio.");
+        Utilidades.validarExistenciaArchivo(archivoOrigen);
+
+        if (archivoDestino.isDirectory()){
+            throw new IOException("El destino no puede ser un directorio: " + destino);
         }
 
-        // TODO LEER EL FICHERO Y ESCRIBIRLO EN LA NUEVA RUTA
+        try (FileInputStream fis = new FileInputStream(archivoOrigen);
+             FileOutputStream fos = new FileOutputStream(archivoDestino)) {
+
+            byte[] buffer = new byte[8192]; // Buffer de 1 KB
+            int bytesLeidos;
+
+            while ((bytesLeidos = fis.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesLeidos);
+            }
+
+            System.out.println("Archivo copiado exitosamente de " + origen + " a " + destino);
+
+        } catch (SecurityException e) {
+            System.out.println("Acceso denegado: No tienes permisos para acceder al archivo o directorio.");
+        } catch (IOException e) {
+            System.out.println("Error de E/S al copiar el archivo: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado: " + e.getMessage());
+        }
     }
 
-    public static void moverArchivo(String origen, String destino) {
-
-        // TODO LEER EL FICHERO, ESCRIBIRLO EN LA NUEVA RUTA Y BORRAR EL VIEJO
+    public static void moverArchivo(String origen, String destino) throws ArchivoNoExisteException, IOException, DirectorioNoExisteException {
+        copiarArchivo(origen,destino);
+        borrar(origen);
     }
 
-    public static void copiarDirectorio(String origen, String destino) {
+    public static void copiarDirectorio(String origen, String destino) throws DirectorioNoExisteException, NoEsDirectorioException, ArchivoNoExisteException, IOException {
+        File dirOrigen = new File(origen);
+        File dirDestino = new File(destino);
+
+        Utilidades.validarDirectorio(dirOrigen);
+
+        if (!dirDestino.exists()) {
+            if (!dirDestino.mkdirs()) {
+                throw new IOException("No se pudo crear el directorio de destino: " + dirDestino.getAbsolutePath());
+            }
+        }
+
+        File[] ficherosOrigen = dirOrigen.listFiles();
+        if (ficherosOrigen != null) {
+            for (File f : ficherosOrigen) {
+                File destinoArchivo = new File(dirDestino, f.getName());
+                if (f.isDirectory()) {
+                    // Copiar subdirectorios recursivamente
+                    copiarDirectorio(f.getAbsolutePath(), destinoArchivo.getAbsolutePath());
+                } else {
+                    // Copiar archivos
+                    copiarArchivo(f.getAbsolutePath(), destinoArchivo.getAbsolutePath());
+                }
+            }
+        }
     }
 
     public static void borrar(String ruta) throws DirectorioNoExisteException, ArchivoNoExisteException {

@@ -44,17 +44,21 @@ public class Utilidades {
     }
 
     public static void mostrarInfo(File f, String sangria) {
-        final long KB = (long) 1024.0;
+        if (f == null) {
+            throw new IllegalArgumentException("El archivo proporcionado es nulo.");
+        }
+
+        final double KB = 1024.0;
         String patronFecha = "dd/MM/yyyy HH:mm:ss";
 
         if (f.isFile()) {
             String fechaFormateada = Utilidades.formatearFecha(f.lastModified(), patronFecha);
-
-            System.out.println(sangria + f.getName() + " " + "<FICHERO> " + f.length() / KB + " KB "
-                    + fechaFormateada);
+            System.out.printf("%s%s <FICHERO> %.2f KB %s%n",
+                    sangria, f.getName(), f.length() / KB, fechaFormateada);
+        } else if (f.isDirectory()) {
+            System.out.printf("%s%s <DIR>%n", sangria, f.getName());
         } else {
-            // ES DIRECTORIO
-            System.out.println(sangria + f.getName() + " " + "<DIR>");
+            System.out.printf("%s%s <DESCONOCIDO>%n", sangria, f.getName());
         }
     }
 }

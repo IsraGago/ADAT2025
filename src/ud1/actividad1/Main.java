@@ -49,7 +49,7 @@ public class Main {
                     ruta = preguntarRuta("Introduce al ruta del directorio: ");
                     System.out.println("Introduce la extensión: ");
                     System.out.println("Ordenar ascendentemente (a) o descendentemente (d): ");
-                    boolean descendentemente = sc.nextLine().charAt(0) == 'd' ? true : false;
+                    boolean descendentemente = sc.nextLine().charAt(0) == 'd';
                     extension = sc.nextLine();
                     
                     try {
