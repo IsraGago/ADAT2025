@@ -31,7 +31,7 @@ public class OperacionesIO {
 
         try {
             Utilidades.validarDirectorio(directorio);
-            recorrerRecursivo(directorio, "-|"); // para no obligar a poner un int en la llamada
+            recorrerRecursivo(directorio, "─ "); // para no obligar a poner un int en la llamada
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
@@ -43,7 +43,7 @@ public class OperacionesIO {
             for (File f : archivos) {
                 mostrarInfo(f, sangria);
                 if (f.isDirectory()) {
-                    recorrerRecursivo(f, "-----" + sangria);
+                    recorrerRecursivo(f, "───" + sangria);
                 }
             }
         }

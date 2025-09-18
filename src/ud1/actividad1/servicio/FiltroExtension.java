@@ -15,6 +15,6 @@ public class FiltroExtension implements FilenameFilter {
 
     @Override
     public boolean accept(File dir, String name) {
-        return name.endsWith(extension);
+        return name.toLowerCase().endsWith(extension.toLowerCase());
     }
 }

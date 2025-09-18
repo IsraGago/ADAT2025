@@ -1,7 +1,8 @@
 package ud1.actividad1.servicio;
 
 import java.io.File;
-import java.text.NumberFormat;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -37,6 +38,14 @@ public class Utilidades {
         }
     }
 
+    public static void validarDirectorio(Path path) throws DirectorioNoExisteException, NoEsDirectorioException{
+        if (!Files.exists(path)) {
+            throw new DirectorioNoExisteException("La ruta no existe: " + path);
+        } else if (Files.isRegularFile(path)){
+            throw new NoEsDirectorioException("La ruta no corresponde a un directorio: " + path);
+        }
+    }
+
     public static void validarExistenciaArchivo(File arch) throws ArchivoNoExisteException {
         if (!arch.exists()) {
             throw new ArchivoNoExisteException();
@@ -53,12 +62,12 @@ public class Utilidades {
 
         if (f.isFile()) {
             String fechaFormateada = Utilidades.formatearFecha(f.lastModified(), patronFecha);
-            System.out.printf("%s%s <FICHERO> %.2f KB %s%n",
+            System.out.printf("├%s%s <FICHERO> %.2f KB %s%n",
                     sangria, f.getName(), f.length() / KB, fechaFormateada);
         } else if (f.isDirectory()) {
-            System.out.printf("%s%s <DIR>%n", sangria, f.getName());
+            System.out.printf("├%s%s <DIR>%n", sangria, f.getName());
         } else {
-            System.out.printf("%s%s <DESCONOCIDO>%n", sangria, f.getName());
+            System.out.printf("├%s%s <DESCONOCIDO>%n", sangria, f.getName());
         }
     }
 }
