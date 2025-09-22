@@ -50,8 +50,6 @@ public class OperacionesIO {
 
     }
 
-
-
     public static void filtrarPorExtension(String ruta, String extension)
             throws DirectorioNoExisteException, NoEsDirectorioException {
         File directorio = new File(ruta);
@@ -68,7 +66,6 @@ public class OperacionesIO {
 
         }
     }
-
 
     public static void filtrarPorExtensionYOrdenar(String ruta, String extension, boolean descendente)
             throws NoEsDirectorioException, DirectorioNoExisteException {
@@ -91,7 +88,8 @@ public class OperacionesIO {
         }
     }
 
-    public static void filtrarPorSubcadena(String ruta, String subcadena) throws DirectorioNoExisteException, NoEsDirectorioException {
+    public static void filtrarPorSubcadena(String ruta, String subcadena)
+            throws DirectorioNoExisteException, NoEsDirectorioException {
         File directorio = new File(ruta);
         Utilidades.validarDirectorio(directorio);
         File[] ficheros = directorio.listFiles(new FiltroSubstring(subcadena));
@@ -108,20 +106,25 @@ public class OperacionesIO {
         File archivoOrigen = new File(origen);
         File archivoDestino = new File(destino);
 
-        Utilidades.validarExistenciaArchivo(archivoOrigen);
+        try {
+            Utilidades.validarExistenciaArchivo(archivoOrigen);
+            Utilidades.validarDirectorio(new File(archivoDestino.getParent()));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
 
-        if (archivoDestino.isDirectory()){
+        if (archivoDestino.isDirectory()) {
             throw new IOException("El destino no puede ser un directorio: " + destino);
         }
 
-        try (FileInputStream fis = new FileInputStream(archivoOrigen);
-             FileOutputStream fos = new FileOutputStream(archivoDestino)) {
+        try (FileInputStream in = new FileInputStream(archivoOrigen);
+                FileOutputStream out = new FileOutputStream(archivoDestino)) {
 
-            byte[] buffer = new byte[8192]; // Buffer de 1 KB
+            byte[] buffer = new byte[8192]; // Buffer de 8 KB
             int bytesLeidos;
 
-            while ((bytesLeidos = fis.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesLeidos);
+            while ((bytesLeidos = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesLeidos);
             }
 
             System.out.println("Archivo copiado exitosamente de " + origen + " a " + destino);
@@ -135,20 +138,25 @@ public class OperacionesIO {
         }
     }
 
-    public static void moverArchivo(String origen, String destino) throws ArchivoNoExisteException, IOException, DirectorioNoExisteException {
-        copiarArchivo(origen,destino);
+    public static void moverArchivo(String origen, String destino)
+            throws ArchivoNoExisteException, IOException, DirectorioNoExisteException {
+        copiarArchivo(origen, destino);
         borrar(origen);
     }
 
-    public static void copiarDirectorio(String origen, String destino) throws DirectorioNoExisteException, NoEsDirectorioException, ArchivoNoExisteException, IOException {
+    public static void copiarDirectorio(String origen, String destino)
+            throws DirectorioNoExisteException, NoEsDirectorioException, ArchivoNoExisteException, IOException {
         File dirOrigen = new File(origen);
         File dirDestino = new File(destino);
 
-        Utilidades.validarDirectorio(dirOrigen);
+        Utilidades.validarDirectorio(dirOrigen); // ESTO HAY QUE SACARLO FUERA PORQUE AL SER RECURSIVO DE VALIDA EN CADA
+                                                 // LLAMADA, SOLO DEBERÍA VALIDAR LA PRIMERA.
 
         if (!dirDestino.exists()) {
-            if (!dirDestino.mkdirs()) {
-                throw new IOException("No se pudo crear el directorio de destino: " + dirDestino.getAbsolutePath());
+            try {
+                Utilidades.crearDirectorio(dirDestino);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -170,7 +178,16 @@ public class OperacionesIO {
     public static void borrar(String ruta) throws DirectorioNoExisteException, ArchivoNoExisteException {
         File directorio = new File(ruta);
         Utilidades.validarExistenciaArchivo(directorio);
+        // borrarRecursivo(ruta); // SE SEPARA PORQUE VALIDAR CON LA RECURSIVIDAD CONSUME MUCHO
+        try {
+            borrarRecursivoPepa(directorio);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
 
+    private static void borrarRecursivo(String ruta) throws DirectorioNoExisteException, ArchivoNoExisteException {
+        File directorio = new File(ruta);
         if (directorio.isFile() && directorio.delete()) {
             System.out.println("Archivo " + directorio.getAbsolutePath() + " borrado correctamente.");
         } else if (directorio.isFile()) {
@@ -200,7 +217,23 @@ public class OperacionesIO {
                 System.out.println("Borrando la carpeta " + ruta);
             }
         }
+    }
 
+    private static void borrarRecursivoPepa(File f) throws IOException{
+        if(f.isDirectory()) {
+            File[] hijos = f.listFiles();
+            if (hijos != null) {
+                for (File hijo : hijos) {
+                    borrarRecursivoPepa(hijo);
+                }
+            }
+        }
+
+        Utilidades.mostrarInfo(f,"");
+
+        if (!f.delete()) {
+            throw new IOException("No se ha podido borrar (posible falta de permisos): ");
+        }
     }
 
 }

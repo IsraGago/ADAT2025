@@ -5,6 +5,7 @@ import java.util.Scanner;
 import ud1.actividad1.excepciones.DirectorioNoExisteException;
 import ud1.actividad1.excepciones.NoEsDirectorioException;
 import ud1.actividad1.servicio.OperacionesIO;
+import ud1.actividad1.servicio.Utilidades;
 
 public class Main {
 
@@ -20,7 +21,7 @@ public class Main {
 
         do {
             mostrarMenu();
-            respuesta = leerInt();
+            respuesta = Utilidades.leerInt("Introduce un número entero: ");
             switch (respuesta) {
                 case 1: // isualizar contenido de un directorio
                     ruta = preguntarRuta("Introduce la ruta del directorio: ");
@@ -114,21 +115,7 @@ public class Main {
         return sc.nextLine();
     }
 
-    private static int leerInt() {
-        int num;
-        while (true) {
-            System.out.print("Introduce un número entero: ");
-            if (sc.hasNextInt()) {
-                num = sc.nextInt();
-                sc.nextLine();
-                break;
-            } else {
-                System.out.println("Valor no válido. Intenta de nuevo.");
-                sc.next(); // Limpiar el valor incorrecto
-            }
-        }
-        return num;
-    }
+    
 
     private static void mostrarMenu() {
         System.out.println("\n--------------");

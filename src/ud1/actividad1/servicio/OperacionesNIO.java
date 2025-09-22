@@ -5,6 +5,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
@@ -16,12 +17,23 @@ public class OperacionesNIO {
         Path path = Paths.get(ruta);
         Utilidades.validarDirectorio(path);
 
-        // PROGRAMACIÓN FUNCIONAL
-        try (Stream<Path> s = Files.list(path)) {
-            s.forEach(System.out::println);
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path)) {
+            // for (Path p : stream) {
+            // Utilidades.mostrarInfo(p.toFile());
+            // }
+            stream.forEach(p -> Utilidades.mostrarInfo(p.toFile()));
+            // stream.forEach(Utilidades::mostrarInfo); // SOBRECARGANDO MOSTRAR INFO PARA
+            // QUE ADMITA PATH
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
+
+        // PROGRAMACIÓN FUNCIONAL
+        // try (Stream<Path> s = Files.list(path)) {
+        // s.forEach(System.out::println);
+        // } catch (Exception e) {
+        // System.out.println(e.getMessage());
+        // }
 
         // FORMA CLÁSICA
         // try (Stream<Path> stream = Files.list(path)) {
@@ -39,14 +51,13 @@ public class OperacionesNIO {
         Path path = Paths.get(ruta);
 
         Utilidades.validarDirectorio(path);
-        String sangria = "";
 
         try (Stream<Path> stream = Files.walk(path)) {
-            Iterator<Path> it = stream.iterator();
-            while (it.hasNext()) {
-                Path p = it.next();
-                System.out.println(p);
-            }
+            stream.forEach(p -> { // EXPRESIÓN LAMBDA
+                String sangria = "───".repeat(p.relativize(path).getNameCount() - 1);
+                Utilidades.mostrarInfo(p.toFile(), sangria);
+            });
+
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -57,7 +68,7 @@ public class OperacionesNIO {
         if (extension.charAt(0) == '.') {
             extension = extension.substring(1);
         }
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*."+extension);) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*." + extension);) {
             for (Path p : stream) {
                 System.out.println(p);
             }
@@ -76,6 +87,22 @@ public class OperacionesNIO {
     }
 
     public static void moverArchivo(String origen, String destino) {
+        Path pOrigen = Paths.get(origen);
+        Path pDestino = Paths.get(destino);
+        try {
+            boolean mover = false;
+            char[] caracteresValidos = { 's', 'n' };
+            if (Files.exists(pDestino)) {
+                mover = Utilidades.leerChar("Sobreescribir " + pDestino + " (s/n): ", caracteresValidos) == 's';
+                if (mover) {
+                    Files.move(pOrigen, pDestino, StandardCopyOption.REPLACE_EXISTING);
+                } else {
+                    System.out.println("Operación cancelada");
+                }
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void copiarDirectorio(String origen, String destino) {
@@ -87,9 +114,10 @@ public class OperacionesNIO {
     public static void main(String[] args) {
         String ruta = "D:/igagoacun/prueba";
         try {
-            //visualizarContenido(ruta);
-            //recorrerRecursivo(ruta);
-            filtrarPorExtension(ruta, ".txt");
+            // visualizarContenido(ruta);
+            recorrerRecursivo(ruta);
+            // OperacionesIO.recorrerRecursivo(ruta);
+            // filtrarPorExtension(ruta, ".txt");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
