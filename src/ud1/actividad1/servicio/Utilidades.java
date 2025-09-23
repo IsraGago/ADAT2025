@@ -129,4 +129,16 @@ public class Utilidades {
             throw new IOException("No se pudo crear el directorio de destino: " + dir.getAbsolutePath());
         }
     }
+
+    public static String calcularSangria(Path pActual, Path pOriginal){
+        int profundidad = pActual.relativize(pOriginal).getNameCount() - 1;
+        return "───".repeat(profundidad);
+    }
+
+    public static String limpiarPuntoExtension(String extension) {
+        if (extension.charAt(0) == '.') {
+            extension = extension.substring(1);
+        }
+        return extension;
+    }
 }
