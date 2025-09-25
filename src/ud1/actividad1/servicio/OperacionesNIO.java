@@ -1,7 +1,5 @@
 package ud1.actividad1.servicio;
 
-import static ud1.actividad1.servicio.Utilidades.mostrarInfo;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
@@ -18,6 +16,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
+import ud1.actividad1.excepciones.ArchivoNoExisteException;
 import ud1.actividad1.excepciones.DirectorioNoExisteException;
 import ud1.actividad1.excepciones.NoEsDirectorioException;
 
@@ -193,10 +192,26 @@ public class OperacionesNIO {
 
     public static void filtrarPorSubcadena(String ruta, String subcadena) {
         Path path = Paths.get(ruta);
+        //TODO HACER METODO
         
     }
 
     public static void copiarArchivo(String origen, String destino) {
+        Path rutaOrigen = Paths.get(origen);
+        Path rutaDestino = Paths.get(destino);
+        try {
+            Utilidades.validarExistenciaArchivo(rutaOrigen.toFile());
+            Utilidades.validarDirectorio(rutaDestino);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+        
+        try {
+            Files.copy(rutaOrigen,rutaDestino,StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void moverArchivo(String origen, String destino) {
@@ -219,9 +234,11 @@ public class OperacionesNIO {
     }
 
     public static void copiarDirectorio(String origen, String destino) {
+        //TODO HACER METODO
     }
 
     public static void borrar(String ruta) {
+        //TODO HACER METODO
     }
 
     public static void main(String[] args) {
