@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -81,12 +82,6 @@ public class OperacionesNIO {
         }
     }
 
-    // public static void recorrerRecursivo2(String ruta){
-    // Path dir = Paths.get(ruta);
-    // Files.walkFileTree(dir, new SimpleFileVisitor<Path>()); //TODO EL CONSTRUCTOR
-    // NO ES VISIBLE (?)
-    // }
-
     public static void filtrarPorExtension(String ruta, String extension) {
         Path path = Paths.get(ruta);
         extension = Utilidades.limpiarPuntoExtension(extension);
@@ -122,7 +117,7 @@ public class OperacionesNIO {
                 Utilidades.mostrarInfo(p.toFile(), santria);
             });
         } catch (Exception e) {
-            // TODO: handle exception
+            System.out.println(e.getMessage());
         }
     }
 
@@ -192,8 +187,28 @@ public class OperacionesNIO {
 
     public static void filtrarPorSubcadena(String ruta, String subcadena) {
         Path path = Paths.get(ruta);
-        //TODO HACER METODO
-        
+
+        try {
+            Utilidades.validarDirectorio(path);
+        } catch (DirectorioNoExisteException e) {
+            e.printStackTrace();
+            return;
+        } catch (NoEsDirectorioException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(path,
+                entry -> entry.getFileName().toString().contains(subcadena))) {
+
+            for (Path p : stream) {
+                System.out.println(p.getFileName());
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     public static void copiarArchivo(String origen, String destino) {
@@ -206,9 +221,9 @@ public class OperacionesNIO {
             System.out.println(e.getMessage());
             return;
         }
-        
+
         try {
-            Files.copy(rutaOrigen,rutaDestino,StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(rutaOrigen, rutaDestino, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
@@ -234,11 +249,53 @@ public class OperacionesNIO {
     }
 
     public static void copiarDirectorio(String origen, String destino) {
-        //TODO HACER METODO
+        Path rutaOrigen = Paths.get(origen);
+        Path rutaDestino = Paths.get(destino);
+
+        try {
+            Files.walkFileTree(rutaOrigen, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
+                    Path targetDir = rutaDestino.resolve(rutaDestino.relativize(path));
+                    if (!Files.exists(targetDir)) {
+                        Files.createDirectories(targetDir);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path archivo, BasicFileAttributes attrs) throws IOException {
+                    Path targetFile = rutaDestino.resolve(rutaDestino.relativize(archivo));
+                    Files.copy(archivo, targetFile, StandardCopyOption.REPLACE_EXISTING);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void borrar(String ruta) {
-        //TODO HACER METODO
+        try {
+            Path path = Path.of(ruta);
+            Utilidades.validarDirectorio(path);
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     public static void main(String[] args) {

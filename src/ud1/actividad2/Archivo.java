@@ -9,9 +9,6 @@ public abstract class Archivo {
 
     public Archivo(String ruta){
         this.ruta = new File(ruta);
-        if (!this.comprobarRuta()) {
-            throw new IllegalArgumentException("La ruta "+ ruta +"  no existe o no es un archivo.");
-        }
     }
 
     public boolean comprobarRuta() {

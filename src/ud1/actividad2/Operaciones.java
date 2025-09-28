@@ -1,7 +1,5 @@
 package ud1.actividad2;
 
-import java.io.File;
-
 public class Operaciones {
     // NO PUEDE HABER NINGUNA LINEA QUE TRABAJE DIRECTAMENTE CON LOS FICHEROS
 
@@ -26,10 +24,11 @@ public class Operaciones {
     }
 
     public static void escribirLineas(String[] lineas, String ruta){
-        EscibirTexto escritura = new EscibirTexto(ruta);
+        EscribirTexto escritura = new EscribirTexto(ruta);
         escritura.abrirArchivo();
         for (String linea : lineas) {
             escritura.escribirLinea(linea);
         }
+        escritura.cerrarArchivo();
     }
 }
