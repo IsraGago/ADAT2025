@@ -1,0 +1,9 @@
+La palabra "escoba" en el fichero ./src/ud1/actividad2/ficheros/file2.txt:
+-----------------------------------
+línea 1: aparece 1 veces.
+línea 2: aparece 1 veces.
+línea 3: aparece 3 veces.
+línea 4: aparece 0 veces.
+línea 5: aparece 0 veces.
+-----------------------------------
+Aparecen un total de 5 veces.

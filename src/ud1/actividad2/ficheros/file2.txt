@@ -1,3 +1,5 @@
 La escoba está en la esquina
 No hay escoba aquí
-Una escoba, otrea escoba, y más escoba
+Una escoba, otra escoba, y más escoba
+
+?escoba: ;escoba! $escoba% "escoba" [escoba] {escoba} (escoba) <escoba>

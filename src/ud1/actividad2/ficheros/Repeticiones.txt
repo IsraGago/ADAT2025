@@ -1,0 +1,15 @@
+Palabras y sus repeticiones en el archivo: ./src/ud1/actividad2/ficheros/file2.txt
+-------------------------
+otra: 1 veces.
+no: 1 veces.
+hay: 1 veces.
+escoba: 12 veces.
+aquí: 1 veces.
+en: 1 veces.
+una: 1 veces.
+esquina: 1 veces.
+[escoba]: 1 veces.
+está: 1 veces.
+la: 2 veces.
+y: 1 veces.
+más: 1 veces.
