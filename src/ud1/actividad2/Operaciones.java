@@ -64,8 +64,8 @@ public class Operaciones {
             leer.abrirArchivo();
             while (linea != null) {
                 linea = leer.leerLinea();
-                String[] partes = linea.split("/");
-                if (partes.length == 3) {
+                if (linea.matches("DAM|ASIR[1,2]/\\d+/[A-Za-zñ]+")) {
+                    String[] partes = linea.split("/");
                     String curso = partes[0];
                     String numero = partes[1];
                     String nombre = partes[2];
