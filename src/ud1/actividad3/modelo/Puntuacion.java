@@ -1,4 +1,4 @@
-package ud1.actividad3.servicio;
+package ud1.actividad3.modelo;
 
 import java.io.Serializable;
 

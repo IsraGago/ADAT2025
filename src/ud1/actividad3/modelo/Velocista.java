@@ -1,4 +1,4 @@
-package ud1.actividad3.servicio;
+package ud1.actividad3.modelo;
 
 public class Velocista extends Corredor{
     private float velocidadMedia; // EN KM/H
