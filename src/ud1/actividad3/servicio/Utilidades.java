@@ -7,10 +7,10 @@ public class Utilidades {
     public static boolean esNombreValido(String nombre) {
         return nombre != null && !nombre.trim().isEmpty() && nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s]+");
     }
-    
-    public static void crearPadreSiNoExiste(File fichero) {
-        if (!fichero.getParentFile().exists()) {
-            fichero.getParentFile().mkdirs();
-        }
-    }
+
+    // public static void crearPadreSiNoExiste(File fichero) {
+    //     if (!fichero.getParentFile().exists()) {
+    //         fichero.getParentFile().mkdirs();
+    //     }
+    // }
 }
