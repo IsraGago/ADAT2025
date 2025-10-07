@@ -1,9 +1,7 @@
 package ud1.actividad3;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.time.LocalDate;
-import java.util.ArrayList;
 
 import ud1.actividad3.modelo.Corredor;
 import ud1.actividad3.modelo.Fondista;
@@ -19,14 +17,6 @@ public class Main {
         Corredor corredor4 = new Fondista("María López", LocalDate.of(2000, 7, 15), 1, 21.097f);
         Corredor corredor5 = new Velocista("Pedro García", LocalDate.of(1995, 8, 5), 1, 11.20f);
         Corredor corredor6 = new Fondista("Laura Martínez", LocalDate.of(2002, 9, 10), 4, 35.00f);
-
-        ArrayList<Corredor> corredores = new ArrayList<>();
-        corredores.add(corredor1);
-        corredores.add(corredor2);
-        corredores.add(corredor3);
-        corredores.add(corredor4);
-        corredores.add(corredor5);
-        corredores.add(corredor6);
 
         Puntuacion puntuacion = new Puntuacion(2024,3F);
 
