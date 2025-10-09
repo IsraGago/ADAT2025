@@ -1,6 +1,9 @@
 package ud1.actividad3.servicio;
 
-import java.io.File;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public class Utilidades {
 
@@ -8,9 +11,13 @@ public class Utilidades {
         return nombre != null && !nombre.trim().isEmpty() && nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\\s]+");
     }
 
-    // public static void crearPadreSiNoExiste(File fichero) {
-    //     if (!fichero.getParentFile().exists()) {
-    //         fichero.getParentFile().mkdirs();
-    //     }
-    // }
+    public static String formatearFecha(long milis, String patronFecha) {
+        if (patronFecha == null || patronFecha.trim().isEmpty()) {
+            patronFecha = "dd/MM/yyyy HH:mm:ss";            
+        }
+        LocalDateTime fecha = LocalDateTime.ofInstant(Instant.ofEpochMilli(milis),
+                ZoneId.systemDefault());
+        DateTimeFormatter formateador = DateTimeFormatter.ofPattern(patronFecha);
+        return formateador.format(fecha);
+    }
 }

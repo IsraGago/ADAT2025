@@ -3,10 +3,10 @@ package ud1.actividad3;
 import java.io.File;
 import java.time.LocalDate;
 
-import ud1.actividad3.modelo.Corredor;
-import ud1.actividad3.modelo.Fondista;
-import ud1.actividad3.modelo.Puntuacion;
-import ud1.actividad3.modelo.Velocista;
+import ud1.actividad3.clases.Corredor;
+import ud1.actividad3.clases.Fondista;
+import ud1.actividad3.clases.Puntuacion;
+import ud1.actividad3.clases.Velocista;
 import ud1.actividad3.persistencia.CorredoresIO;
 
 public class Main {

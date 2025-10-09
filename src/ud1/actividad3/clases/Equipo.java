@@ -1,21 +1,20 @@
-package ud1.actividad3.modelo;
+package ud1.actividad3.clases;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Equipo {
-    public static final long TAMANO_REGISTRO = 200;
-
     private int idEquipo;
     private String nombre;
     private int numPatrocinadores;
-    private Set<Patrocinador> patrocinadores;
-    private boolean estaBorrado;
+    private Set<Patrocinador> patrocinadores = new HashSet<>();
+    private boolean estaBorrado = false;
 
-
-    public int getBytesAEscribir(){
+    public int getBytesAEscribir() {
         int bytesAEscribir = -1;
         try {
-            bytesAEscribir = 4 + nombre.getBytes("UTF-8").length+2 + 4 + 1 + getBytesAEscribirPatrocinadores();
+            bytesAEscribir = 4 + nombre.getBytes("UTF-8").length + 2 + 4 + 1 + getBytesAEscribirPatrocinadores();
+            // bytesAEscribir = Integer.BYTES + nombre.getBytes("UTF-8").length + 2 + Integer.BYTES + 1 + getBytesAEscribirPatrocinadores();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -23,10 +22,15 @@ public class Equipo {
 
     }
 
-    public int getBytesAEscribirPatrocinadores(){
+    @Override
+    public String toString() {
+        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + numPatrocinadores;
+    }
+
+    public int getBytesAEscribirPatrocinadores() {
         int bytesAEscribir = 0;
         for (Patrocinador patrocinador : patrocinadores) {
-            bytesAEscribir+=patrocinador.getBytesAEscribir();
+            bytesAEscribir += patrocinador.getBytesAEscribir();
         }
         return bytesAEscribir;
     }
@@ -88,11 +92,11 @@ public class Equipo {
         return patrocinadores;
     }
 
-    public boolean addPatrocinador(Patrocinador p){
+    public boolean addPatrocinador(Patrocinador p) {
         if (patrocinadores.add(p)) {
             numPatrocinadores = patrocinadores.size();
             return true;
-        } 
+        }
         return false;
     }
 

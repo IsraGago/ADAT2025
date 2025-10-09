@@ -1,4 +1,4 @@
-package ud1.actividad3.modelo;
+package ud1.actividad3.clases;
 
 public class Velocista extends Corredor{
     private static final long serialVersionUID = 3L;
