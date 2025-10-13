@@ -6,15 +6,13 @@ import java.util.Set;
 public class Equipo {
     private int idEquipo;
     private String nombre;
-    private int numPatrocinadores;
     private Set<Patrocinador> patrocinadores = new HashSet<>();
     private boolean estaBorrado = false;
 
     // CONSTRUCTOR
-    public Equipo(String nombre, Set<Patrocinador> patrocinadores) {
+    public Equipo(int id, String nombre) {
+        this.idEquipo = id;
         this.nombre = nombre;
-        this.patrocinadores = patrocinadores;
-        numPatrocinadores = patrocinadores.size();
     }
 
     public int getBytesAEscribir() {
@@ -31,7 +29,7 @@ public class Equipo {
 
     @Override
     public String toString() {
-        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + numPatrocinadores;
+        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + getNumPatrocinadores();
     }
 
     public int getBytesAEscribirPatrocinadores() {
@@ -85,7 +83,7 @@ public class Equipo {
     }
 
     public int getNumPatrocinadores() {
-        return numPatrocinadores;
+        return patrocinadores.size();
     }
 
     public Set<Patrocinador> getPatrocinadores() {
@@ -93,18 +91,14 @@ public class Equipo {
     }
 
     public boolean addPatrocinador(Patrocinador p) {
-        if (patrocinadores.add(p)) {
-            numPatrocinadores = patrocinadores.size();
-            return true;
-        }
-        return false;
+        return patrocinadores.add(p);
     }
 
     public void setPatrocinadores(Set<Patrocinador> patrocinadores) {
         this.patrocinadores = patrocinadores;
     }
 
-    public boolean isEstaBorrado() {
+    public boolean estaBorrado() {
         return estaBorrado;
     }
 

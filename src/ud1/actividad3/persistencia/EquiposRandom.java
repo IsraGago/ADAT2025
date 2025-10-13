@@ -17,7 +17,7 @@ public class EquiposRandom {
         fichero.crearPadreSiNoExiste();
     }
 
-    public void abrirArchivo() {
+    public void abrir() {
         try {
             raf = new RandomAccessFile(fichero, "rw");
         } catch (Exception e) {
@@ -41,7 +41,7 @@ public class EquiposRandom {
         }
         try {
             if (raf != null) {
-                abrirArchivo();
+                abrir();
                 // int numRegistros = (int) Math.ceil((double) fichero.length() / TAMANO_REGISTRO);
                 long posicion = (e.getIdEquipo() - 1L) * TAMANO_REGISTRO;
                 //TODO CALCULAR ID DEL EQUIPO SEGUN SU POSICIÓN PARA DESPUÉS ESCRIBIRLO AHÍ

@@ -51,8 +51,8 @@ public class Corredor implements Serializable {
         return nombre;
     }
 
-    public Puntuacion[] getHistorial() {
-        return historial.toArray(new Puntuacion[0]);
+    public ArrayList<Puntuacion> getHistorial() {
+        return historial;
     }
 
     public void setDorsal(int dorsal) {
@@ -65,6 +65,10 @@ public class Corredor implements Serializable {
         }
         historial.add(p);
         historial.sort((p1,p2) -> Integer.compare(p1.getAnio(),p2.getAnio())); // Ordena las puntuaciones por año
+    }
+
+    public boolean quitarPuntuacion(Puntuacion p){
+        return historial.remove(p);
     }
 
     public void mostrarInformacion() {

@@ -6,6 +6,7 @@ public class Fichero extends File {
     public Fichero(String ruta){
         super(ruta);   
     }
+    
     public boolean crearPadreSiNoExiste(){
         if (!this.getParentFile().exists()) {
             return this.getParentFile().mkdirs();

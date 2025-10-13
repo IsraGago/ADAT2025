@@ -13,7 +13,7 @@ public class CorredoresRead {
     ObjectInputStream ois;
     Fichero fichero;
 
-    CorredoresRead(String ruta) {
+    public CorredoresRead(String ruta) {
         this.fichero = new Fichero(ruta);
     }
 
@@ -56,26 +56,31 @@ public class CorredoresRead {
     }
 
     public ArrayList<Corredor> leerTodos() {
-        if (ois == null)
-            throw new RuntimeException("El fichero no estaba abierto");
         ArrayList<Corredor> lista = new ArrayList<>();
         try {
+            abrir();
             while (true) {
-                lista.add((Corredor) ois.readObject());
+                Corredor corredor = (Corredor) ois.readObject();
+                lista.add(corredor);
             }
         } catch (EOFException eof) {
-            return lista;
+            // Fin del archivo alcanzado, devolver la lista
         } catch (ClassNotFoundException ex) {
-            return null;
+            throw new RuntimeException("Error al leer un objeto del archivo: Clase no encontrada", ex);
         } catch (IOException e) {
-            return null;
+            throw new RuntimeException("Error al leer el archivo", e);
+        } finally {
+            cerrar();
         }
+        return lista;
     }
 
-    public Corredor getCorredor(int dorsal) {
+    public Corredor buscarPorDorsal(int dorsal) {
+
         Corredor corredor = null;
         Corredor temp;
         try {
+            abrir();
             while (true) {
                 temp = (Corredor) ois.readObject();
                 if (temp.getDorsal() == dorsal) {
@@ -84,13 +89,39 @@ public class CorredoresRead {
                 }
             }
         } catch (EOFException eof) {
-            
-        } catch (ClassNotFoundException ex){
+
+        } catch (ClassNotFoundException ex) {
             return null;
-        } catch(Exception e){
+        } catch (Exception e) {
             return null;
+        } finally {
+            cerrar();
         }
         return corredor;
+    }
+
+    public int getUltimoDorsal() {
+
+        int dorsal = 0;
+        Corredor temp;
+        try {
+            abrir();
+            while (true) {
+                temp = (Corredor) ois.readObject();
+                if (temp.getDorsal() > dorsal) {
+                    dorsal = temp.getDorsal();
+                }
+            }
+        } catch (EOFException eof) {
+
+        } catch (ClassNotFoundException ex) {
+            return -1;
+        } catch (Exception e) {
+            return -1;
+        } finally {
+            cerrar();
+        }
+        return dorsal;
     }
 
 }

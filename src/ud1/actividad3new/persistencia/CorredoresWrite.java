@@ -45,9 +45,6 @@ public class CorredoresWrite {
         if (oos == null)
             throw new RuntimeException("El fichero no estaba abierto");
 
-        if (!validarEquipo(corredor.getEquipo()))
-            throw new RuntimeException("El equipo del corredor no es válido: " + corredor);
-
         try {
             oos.writeObject(corredor);
             oos.flush(); // vacía el buffer en el archivo;
@@ -56,9 +53,8 @@ public class CorredoresWrite {
         }
     }
 
-    private boolean validarEquipo(int idEquipo) {
-        // TODO VALIDAR QUE EXISTE EL EQUIPO
-        return true;
-    }
+    
+
+    
 
 }

@@ -1,5 +1,191 @@
 package ud1.actividad3new.logica;
 
+import java.util.List;
+
+import ud1.actividad3new.clases.Corredor;
+import ud1.actividad3new.clases.Puntuacion;
+import ud1.actividad3new.persistencia.CorredoresRead;
+import ud1.actividad3new.persistencia.CorredoresWrite;
+import ud1.actividad3new.persistencia.Fichero;
+
 public class GestorCorredores {
-    
+    public static final String RUTA = "./src/actividad3new/saves/corredores.dat";
+
+    private void guardarCorredor(Corredor corredor) {
+        if (corredor == null) {
+            throw new IllegalArgumentException("El corredor no puede ser nulo.");
+        }
+        if (!validarEquipo(corredor.getEquipo())) {
+            throw new IllegalArgumentException("El equipo con el código " + corredor.getEquipo() + " no existe.");
+        }
+        CorredoresRead read = new CorredoresRead(RUTA);
+        CorredoresWrite write = new CorredoresWrite(RUTA);
+
+        try {
+            read.abrir();
+            corredor.setDorsal(read.getUltimoDorsal() + 1);
+
+            write.abrir();
+            write.escribir(corredor);
+
+        } catch (RuntimeException e) {
+            System.out.println("Eror inesperado al guardar el corredor" + e.getMessage());
+        } finally {
+            read.cerrar();
+            write.cerrar();
+        }
+
+    }
+
+    private void nuevaPuntuacion(int dorsal, Puntuacion puntuacion) {
+        if (puntuacion == null || dorsal <= 0) {
+            throw new IllegalArgumentException("Dorsal o puntuación inválidos");
+        }
+
+        Fichero auxiliar = new Fichero(RUTA + ".tmp");
+        auxiliar.crearPadreSiNoExiste();
+
+        CorredoresRead read = new CorredoresRead(RUTA);
+        CorredoresWrite write = new CorredoresWrite(RUTA + ".tmp");
+
+        try {
+            read.abrir();
+            write.abrir();
+            while (true) {
+                Corredor corredor = read.leer();
+                if (corredor == null)
+                    break;
+
+                if (corredor.getDorsal() == dorsal) {
+                    if (corredor.getHistorial().contains(puntuacion)) {
+                        corredor.quitarPuntuacion(puntuacion);
+                    }
+                    corredor.addPuntuacion(puntuacion);
+                }
+                write.escribir(corredor);
+            }
+        } catch (Exception e) {
+        } finally {
+            read.cerrar();
+            write.cerrar();
+        }
+    }
+
+    public void guardarListaCorredores(List<Corredor> lista) {
+        if (lista == null) {
+            throw new IllegalArgumentException("La lista no puede ser nula.");
+        }
+        CorredoresRead read = new CorredoresRead(RUTA);
+        CorredoresWrite write = new CorredoresWrite(RUTA);
+
+        int dorsal = read.getUltimoDorsal();
+        try {
+            write.abrir();
+            for (Corredor corredor : lista) {
+                dorsal++;
+                corredor.setDorsal(dorsal);
+                write.escribir(corredor);
+                System.out.println("Corredor guardado: " + corredor);
+            }
+        } catch (RuntimeException e) {
+            System.out.println("Error inesperado al guardar la lista de corredores: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado al guardar la lista de corredores: " + e.getMessage());
+        } finally {
+            write.cerrar();
+        }
+
+    }
+
+    public Corredor buscarCorredorPorDorsal(int dorsal) {
+        return new CorredoresRead(RUTA).buscarPorDorsal(dorsal);
+    }
+
+    private boolean validarEquipo(int idEquipo) {
+        // TODO VALIDAR QUE EXISTE EL EQUIPO
+        return true;
+    }
+
+    public void mostrarCorredorPorDorsal(int dorsal) {
+        Corredor corredor = buscarCorredorPorDorsal(dorsal);
+        if (corredor != null) {
+            System.out.println(corredor);
+        } else {
+            System.out.println("No se encontró ningún corredor con el dorsal: " + dorsal);
+        }
+    }
+
+    public void mostrarCorredor(Corredor corredor) {
+        if (corredor == null) {
+            System.out.println("El corredor es nulo");
+            return;
+        }
+        corredor.mostrarInformacion();
+    }
+
+    public void listarTodosLosCorredores() {
+        CorredoresRead read = new CorredoresRead(RUTA);
+        int contador = 0;
+        try {
+            read.abrir();
+            Corredor corredor = null;
+            while ((corredor = read.leer()) != null) {
+                contador++;
+                corredor.mostrarInformacion();
+            }
+        } catch (Exception e) {
+            System.out.println("Error inesperado: " + e.getMessage());
+        } finally {
+            read.cerrar();
+        }
+        if (contador == 0) {
+            System.out.println("El fichero está vacío");
+        } else {
+            System.out.println("FIN DEL ARCHIVO. TOTAL: " + contador + " CORREDORES");
+        }
+    }
+
+    public void borrarCorredor(int dorsal) {
+        Fichero auxiliar = new Fichero(RUTA + ".tmp");
+        auxiliar.crearPadreSiNoExiste();
+
+        CorredoresRead read = new CorredoresRead(RUTA);
+        CorredoresWrite write = new CorredoresWrite(RUTA + ".tmp");
+
+        boolean encontrado = false;
+        Corredor temporal = null;
+        try {
+            read.abrir();
+            write.abrir();
+            while ((temporal = read.leer()) != null) {
+                if (temporal.getDorsal() == dorsal) {
+                    encontrado = true;
+                } else {
+                    write.escribir(temporal);
+                }
+            }
+        } catch (Exception e) {
+            // TODO: handle exception
+        } finally {
+            read.cerrar();
+            write.cerrar();
+        }
+
+        if(encontrado){
+            Fichero original = new Fichero(RUTA);
+            if (!original.delete()) {
+                System.out.println("No se pudo borrar el archivo original.");
+                return;
+            }
+            if (auxiliar.renombrar(RUTA)) {
+                System.out.println("Corredor con dorsal " + dorsal + " borrado.");
+            } else {
+                System.out.println("No se pudo renombrar el archivo auxiliar.");
+            }
+        } else {
+            auxiliar.delete();
+            System.out.println("No se encontró ningún corredor con el dorsal: " + dorsal);
+        }
+
+    }
 }
