@@ -1,4 +1,4 @@
-package ud1.actividad3.clases;
+package ud1.actividad3new.clases;
 
 import java.io.Serializable;
 import java.time.LocalDate;

@@ -2,6 +2,7 @@ package ud1.actividad3.persistencia;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.HashSet;
 
 import ud1.actividad3.clases.Equipo;
 import ud1.actividad3.clases.Patrocinador;
@@ -9,7 +10,7 @@ import ud1.actividad3.clases.Patrocinador;
 public class EquiposRandom {
     Fichero fichero;
     RandomAccessFile raf;
-    public static long TAMANO_REGISTRO = 200;
+    public static long TAMANO_REGISTRO = 200; //TAMAÑO FIJO DE CADA REGISTRO EN BYTES
 
     public EquiposRandom(String ruta) {
         fichero = new Fichero(ruta);
@@ -18,9 +19,9 @@ public class EquiposRandom {
 
     public void abrirArchivo() {
         try {
-            raf = new RandomAccessFile(fichero, null);
+            raf = new RandomAccessFile(fichero, "rw");
         } catch (Exception e) {
-            // TODO: handle exception
+            throw new IllegalArgumentException("El fichero"+ fichero.getAbsolutePath() + " no existe"); 
         }
     }
 
@@ -64,10 +65,28 @@ public class EquiposRandom {
         }
     }
 
-    public Equipo leerEquipo(Equipo e) {
+    public Equipo leerEquipo(int id) {
         try {
             if(raf != null){
+                raf.seek((id - 1L) * TAMANO_REGISTRO);
+                if (!raf.readBoolean()) {
+                    String nombre = raf.readUTF();
+                    int numPatrocinadores = raf.readInt();
+                    Patrocinador[] patrocinadores = new Patrocinador[numPatrocinadores];
+                    HashSet<Patrocinador> setPatrocinadores = new HashSet<>();
 
+                    for (int i = 0; i < patrocinadores.length; i++) {
+                        int idPatrocinador = raf.readInt();
+                        String nombrePatrocinador = raf.readUTF();
+                        float donacion = raf.readFloat();
+                        long segundosFecha = raf.readLong();
+                        patrocinadores[i] = new Patrocinador(nombrePatrocinador,donacion,Patrocinador.longToFecha(segundosFecha));
+                        patrocinadores[i].setId(idPatrocinador);
+                        setPatrocinadores.add(patrocinadores[i]);
+                    }
+                    Equipo equipo = new Equipo(nombre, setPatrocinadores);
+                    return equipo;
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -76,6 +95,7 @@ public class EquiposRandom {
                 cerrarArchivo();
             }
         }
+        return null;
     }
 
     public int numeroRegistrosConBorrados(){
