@@ -54,6 +54,13 @@ public class Patrocinador {
         this.id = id;
     }
 
+    public void setDonacion(float donacion) {
+        this.donacion = donacion;
+    }
+    public void setFechaInicio(LocalDate fechaInicio) {
+        this.fechaInicio = fechaInicio;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

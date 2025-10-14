@@ -1,8 +1,14 @@
 package ud1.actividad3new.logica;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import ud1.actividad3new.persistencia.EquiposRandom;
 import ud1.actividad3new.clases.Corredor;
+import ud1.actividad3new.clases.Equipo;
 import ud1.actividad3new.clases.Puntuacion;
 import ud1.actividad3new.persistencia.CorredoresRead;
 import ud1.actividad3new.persistencia.CorredoresWrite;
@@ -102,8 +108,13 @@ public class GestorCorredores {
     }
 
     private boolean validarEquipo(int idEquipo) {
-        // TODO VALIDAR QUE EXISTE EL EQUIPO
-        return true;
+        EquiposRandom fichero = new EquiposRandom(GestorEquipos.RUTA);
+        try {
+            return fichero.leerEquipo(idEquipo) != null;
+        } catch (Exception e) {
+            
+        }
+        return false;
     }
 
     public void mostrarCorredorPorDorsal(int dorsal) {
@@ -171,7 +182,7 @@ public class GestorCorredores {
             write.cerrar();
         }
 
-        if(encontrado){
+        if (encontrado) {
             Fichero original = new Fichero(RUTA);
             if (!original.delete()) {
                 System.out.println("No se pudo borrar el archivo original.");
@@ -186,6 +197,30 @@ public class GestorCorredores {
             auxiliar.delete();
             System.out.println("No se encontró ningún corredor con el dorsal: " + dorsal);
         }
+    }
 
+    public void mostrarCorredoresPorEquipo() {
+        EquiposRandom archivoEquipos = new EquiposRandom(RUTA);
+        archivoEquipos.abrir();
+        CorredoresRead archivoCorredores = new CorredoresRead(RUTA);
+        archivoCorredores.abrir();
+        Map<String, List<String>> mapa = new LinkedHashMap<>();
+        Corredor c;
+        while ((c = archivoCorredores.leer()) != null) {
+            Equipo equipo = archivoEquipos.leerEquipo(c.getEquipo());
+            if (equipo != null && !equipo.estaBorrado()) {
+                mapa.computeIfAbsent(equipo.getNombre(), k -> new ArrayList<>())
+                        .add(c.getNombre() + "(" + c.getClass().getSimpleName() + ")");
+            }
+        }
+        archivoCorredores.cerrar();
+        archivoEquipos.cerrar();
+
+        for(Entry<String, List<String>> entrada: mapa.entrySet()) {
+            System.out.println(entrada.getKey());
+            for(String corredor : entrada.getValue()){
+                System.out.println("    "+corredor);
+            }
+        }
     }
 }

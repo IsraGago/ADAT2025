@@ -94,6 +94,21 @@ public class Equipo {
         return patrocinadores.add(p);
     }
 
+    public boolean quitarPatrocinador(Patrocinador p){
+        return patrocinadores.remove(p);
+    }
+
+    public boolean editarPatrocinador(Patrocinador p){
+        for (Patrocinador patrocinador : patrocinadores) {
+            if (patrocinador.equals(p)) {
+                patrocinador.setDonacion(p.getDonacion());
+                patrocinador.setFechaInicio(p.getFechaInicio());
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void setPatrocinadores(Set<Patrocinador> patrocinadores) {
         this.patrocinadores = patrocinadores;
     }

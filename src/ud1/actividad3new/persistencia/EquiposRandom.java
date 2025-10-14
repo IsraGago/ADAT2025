@@ -9,6 +9,7 @@ import ud1.actividad3new.clases.Equipo;
 import ud1.actividad3new.clases.Patrocinador;
 
 public class EquiposRandom extends Fichero {
+    //TODO REVISAR SI CERRAR EN CADA MÉTODO
     public RandomAccessFile raf;
     public final static int TAMANO_REGISTRO = 200;
 
@@ -54,6 +55,8 @@ public class EquiposRandom extends Fichero {
             }
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar el equipo: " + e.getMessage(), e);
+        } finally{
+            cerrar();
         }
     }
 
@@ -103,7 +106,14 @@ public class EquiposRandom extends Fichero {
         if (raf == null) {
             abrir();
         }
-        return numeroRegistrosConBorrados() + 1;
+        try {
+            return numeroRegistrosConBorrados() + 1;
+        } catch (Exception e) {
+            System.out.println("Error al acceder al archivo: "+e.getMessage());
+        } finally {
+            cerrar();
+        }
+        return -1;
     }
 
     public int numeroRegistrosConBorrados() {
@@ -113,5 +123,55 @@ public class EquiposRandom extends Fichero {
             System.out.println("Error al calcular el número de registros: " + e.getMessage());
             return -1;
         }
+    }
+
+    public boolean eliminarEquipoPorID(int id){
+        if (raf == null) {
+            abrir();
+        }
+        try {
+            Equipo equipo = leerEquipo(id);
+            if (equipo == null || equipo.estaBorrado()) {
+                System.out.println("El equipo no existe en el fichero.");
+                return false;
+            }
+            equipo.setEstaBorrado(true);
+            guardarEquipo(equipo);
+            System.out.println("Equipo borrado con éxito.");
+            return true;
+        } catch (RuntimeException e) {
+            System.out.println("Error al acceder al fichero: "+e.getMessage());
+        } catch (Exception e){
+            System.out.println("Error inesperado: "+e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean editarOInsertarPatrocinador(int id, Patrocinador patrocinador){
+        if (raf == null) {
+            abrir();
+        }
+        try {
+            Equipo equipo = leerEquipo(id);
+            if (equipo == null || equipo.estaBorrado()) {
+                System.out.println("El equipo no existe en el fichero.");
+                return false;
+            }
+            if (!equipo.editarPatrocinador(patrocinador)) {
+                equipo.addPatrocinador(patrocinador);
+                System.out.println("patrocinador añadido con éxito");
+            } else {
+                System.out.println("patrocinador actualizado con éxito");
+            }
+
+            guardarEquipo(equipo);            
+            return true;
+
+        } catch (RuntimeException e) {
+            System.out.println("Error al acceder al archivo: "+e.getMessage());
+        } catch (Exception e){
+            System.out.println("Error inesperado: "+e.getMessage());
+        }
+        return false;
     }
 }
