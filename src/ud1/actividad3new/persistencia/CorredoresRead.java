@@ -17,6 +17,7 @@ public class CorredoresRead {
         this.fichero = new Fichero(ruta);
     }
 
+    // ABRIR Y CERRAR SOLO PARA LECTURA SECUENCIAL
     public void abrir() {
         try {
             if (ois != null) {

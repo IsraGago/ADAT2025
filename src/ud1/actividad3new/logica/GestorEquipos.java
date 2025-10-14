@@ -14,11 +14,15 @@ public class GestorEquipos {
 
     public Equipo buscarEquipoPorNombre(String nombre) {
         try {
+            if (!fichero.existe()) {
+                return null;
+            }
             if (nombre == null || nombre.isBlank()) {
                 throw new IllegalArgumentException("El nombre del equipo no puede ser nulo o vacío.");
             }
             int id = 1;
             Equipo equipo;
+            
             while ((equipo = fichero.leerEquipo(id)) != null) {
                 if (equipo.getNombre().equalsIgnoreCase(nombre)) {
                     return equipo;

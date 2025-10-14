@@ -1,5 +1,6 @@
 package ud1.actividad3new.logica;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -84,7 +85,7 @@ public class GestorCorredores {
                 return;
             }
             if (auxiliar.renombrar(RUTA)) {
-                System.out.println("Corredor con dorsal " + dorsal + " borrado.");
+                System.out.println("Corredor con dorsal " + dorsal + " editado.");
             } else {
                 System.out.println("No se pudo renombrar el archivo auxiliar.");
             }
@@ -215,24 +216,35 @@ public class GestorCorredores {
         }
     }
 
-    public void mostrarCorredoresPorEquipo() {
+    public Map<String, List<String>> mostrarCorredoresPorEquipo() {
         EquiposRandom archivoEquipos = new EquiposRandom(RUTA);
         CorredoresRead archivoCorredores = new CorredoresRead(RUTA);
         Map<String, List<String>> mapa = new LinkedHashMap<>();
-        Corredor c;
-        while ((c = archivoCorredores.leer()) != null) {
-            Equipo equipo = archivoEquipos.leerEquipo(c.getEquipo());
-            if (equipo != null && !equipo.estaBorrado()) {
-                mapa.computeIfAbsent(equipo.getNombre(), k -> new ArrayList<>())
-                        .add(c.getNombre() + "(" + c.getClass().getSimpleName() + ")");
+
+        try {
+            archivoCorredores.abrir();
+            Corredor c;
+            while ((c = archivoCorredores.leer()) != null) {
+                Equipo equipo = archivoEquipos.leerEquipo(c.getEquipo());
+                if (equipo != null && !equipo.estaBorrado()) {
+                    mapa.computeIfAbsent(equipo.getNombre(), k -> new ArrayList<>())
+                            .add(c.getNombre() + " (" + c.getClass().getSimpleName() + ")");
+                }
             }
+        } catch (Exception e) {
+            System.out.println("Error al leer el archivo de corredores: " + e.getMessage());
+        } finally {
+            archivoCorredores.cerrar();
         }
 
+        // Imprimir los datos
         for (Entry<String, List<String>> entrada : mapa.entrySet()) {
             System.out.println(entrada.getKey());
             for (String corredor : entrada.getValue()) {
                 System.out.println("    " + corredor);
             }
         }
+
+        return mapa;
     }
 }

@@ -17,7 +17,7 @@ public class EquiposRandom extends Fichero {
 
     public void guardarEquipo(Equipo equipo) {
         try (RandomAccessFile raf = new RandomAccessFile(this, "rw")) {
-            int posicion = (equipo.getIdEquipo() - 1) * TAMANO_REGISTRO;
+            int posicion = raf.length() == 0 ? 0 : (equipo.getIdEquipo() - 1) * TAMANO_REGISTRO;
             raf.seek(posicion);
             raf.writeBoolean(equipo.estaBorrado());
             raf.writeInt(equipo.getIdEquipo());
@@ -73,10 +73,13 @@ public class EquiposRandom extends Fichero {
     }
 
     public int calcularNuevoID() {
+        if (!this.existe()) {
+            return 1;
+        }
         try (RandomAccessFile raf = new RandomAccessFile(this, "r")) {
             return numeroRegistrosConBorrados() + 1;
         } catch (Exception e) {
-            System.out.println("Error al acceder al archivo: "+e.getMessage());
+            System.out.println("Error al acceder al archivo: " + e.getMessage());
         }
         return -1;
     }
@@ -90,7 +93,7 @@ public class EquiposRandom extends Fichero {
         }
     }
 
-    public boolean eliminarEquipoPorID(int id){
+    public boolean eliminarEquipoPorID(int id) {
 
         try (RandomAccessFile raf = new RandomAccessFile(this, "rw")) {
             Equipo equipo = leerEquipo(id);
@@ -103,14 +106,14 @@ public class EquiposRandom extends Fichero {
             System.out.println("Equipo borrado con éxito.");
             return true;
         } catch (RuntimeException e) {
-            System.out.println("Error al acceder al fichero: "+e.getMessage());
-        } catch (Exception e){
-            System.out.println("Error inesperado: "+e.getMessage());
+            System.out.println("Error al acceder al fichero: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado: " + e.getMessage());
         }
         return false;
     }
 
-    public boolean editarOInsertarPatrocinador(int id, Patrocinador patrocinador){
+    public boolean editarOInsertarPatrocinador(int id, Patrocinador patrocinador) {
         try (RandomAccessFile raf = new RandomAccessFile(this, "rw")) {
             Equipo equipo = leerEquipo(id);
             if (equipo == null || equipo.estaBorrado()) {
@@ -124,13 +127,13 @@ public class EquiposRandom extends Fichero {
                 System.out.println("patrocinador actualizado con éxito");
             }
 
-            guardarEquipo(equipo);            
+            guardarEquipo(equipo);
             return true;
 
         } catch (RuntimeException e) {
-            System.out.println("Error al acceder al archivo: "+e.getMessage());
-        } catch (Exception e){
-            System.out.println("Error inesperado: "+e.getMessage());
+            System.out.println("Error al acceder al archivo: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado: " + e.getMessage());
         }
         return false;
     }

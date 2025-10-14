@@ -45,13 +45,18 @@ public class Main {
             Equipo equipo5 = new Equipo("Union Atlética", lista5);
 
             GestorEquipos gestorEquipos = new GestorEquipos();
-            gestorEquipos.guardarEquipo(equipo1);
-            gestorEquipos.guardarEquipo(equipo2);
-            gestorEquipos.guardarEquipo(equipo3);
-            gestorEquipos.guardarEquipo(equipo4);
-            gestorEquipos.guardarEquipo(equipo5);
-            gestorEquipos.listarEquipos();
             GestorCorredores gestorCorredores = new GestorCorredores();
+
+            // GUARDAR EQUIPOS
+            // gestorEquipos.guardarEquipo(equipo1);
+            // gestorEquipos.guardarEquipo(equipo2);
+            // gestorEquipos.guardarEquipo(equipo3);
+            // gestorEquipos.guardarEquipo(equipo4);
+            // gestorEquipos.guardarEquipo(equipo5);
+
+            gestorEquipos.listarEquipos();
+            
+            //GUARDAR CORREDORES
             // gestorCorredores.guardarCorredor(corredor1);
             // gestorCorredores.guardarCorredor(corredor2);
             // gestorCorredores.guardarCorredor(corredor3);
@@ -59,8 +64,12 @@ public class Main {
             // gestorCorredores.guardarCorredor(corredor5);
             // gestorCorredores.guardarCorredor(corredor6);
             gestorCorredores.listarTodosLosCorredores();
+
+            // EDITAR PUNTUACION CORREDOR
             gestorCorredores.nuevaPuntuacion(2, new Puntuacion(2024, 9.60f));
             gestorCorredores.mostrarCorredorPorDorsal(2);
+
+            gestorCorredores.mostrarCorredoresPorEquipo();
         } catch (Exception e) {
             System.out.println("Error inesperado en la ejecución: " + e.getMessage());
         }
