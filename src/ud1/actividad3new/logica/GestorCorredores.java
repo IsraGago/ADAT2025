@@ -217,7 +217,7 @@ public class GestorCorredores {
     }
 
     public Map<String, List<String>> mostrarCorredoresPorEquipo() {
-        EquiposRandom archivoEquipos = new EquiposRandom(RUTA);
+        EquiposRandom archivoEquipos = new EquiposRandom(GestorEquipos.RUTA);
         CorredoresRead archivoCorredores = new CorredoresRead(RUTA);
         Map<String, List<String>> mapa = new LinkedHashMap<>();
 
@@ -237,14 +237,48 @@ public class GestorCorredores {
             archivoCorredores.cerrar();
         }
 
-        // Imprimir los datos
         for (Entry<String, List<String>> entrada : mapa.entrySet()) {
             System.out.println(entrada.getKey());
             for (String corredor : entrada.getValue()) {
-                System.out.println("    " + corredor);
+                System.out.println("    - " + corredor);
             }
         }
 
         return mapa;
+    }
+
+    public void numCorredoresPorEquipo() {
+        CorredoresRead archivoCorredores = new CorredoresRead(RUTA);
+        Map<Equipo, Integer> mapa = new LinkedHashMap<>();
+        int totalCorredores = 0;
+        try {
+            archivoCorredores.abrir();
+            Corredor c;
+            while ((c = archivoCorredores.leer()) != null) {
+                Equipo equipo = new GestorEquipos().buscarEquipoPorID(c.getEquipo());
+                if (equipo != null && !equipo.estaBorrado()) {
+                    totalCorredores++;
+                    if (mapa.get(equipo) != null) {
+                        mapa.put(equipo, mapa.get(equipo) + 1);
+                    } else {
+                        mapa.put(equipo, 1);
+                    }
+                }
+            }
+
+            for (Entry<Equipo, Integer> entrada : mapa.entrySet()) {
+                System.out.print(entrada.getKey().getNombre() + " -> " + entrada.getValue() + " corredor");
+                if (entrada.getValue() > 1) {
+                    System.out.println("es");
+                } else {
+                    System.out.println();
+                }
+            }
+            System.out.println("Total de corredores: " + totalCorredores);
+        } catch (Exception e) {
+            // TODO: handle exception
+        } finally {
+            archivoCorredores.cerrar();
+        }
     }
 }

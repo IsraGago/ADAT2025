@@ -63,13 +63,14 @@ public class Main {
             // gestorCorredores.guardarCorredor(corredor4);
             // gestorCorredores.guardarCorredor(corredor5);
             // gestorCorredores.guardarCorredor(corredor6);
-            gestorCorredores.listarTodosLosCorredores();
+            // gestorCorredores.listarTodosLosCorredores();
 
             // EDITAR PUNTUACION CORREDOR
-            gestorCorredores.nuevaPuntuacion(2, new Puntuacion(2024, 9.60f));
-            gestorCorredores.mostrarCorredorPorDorsal(2);
+            // gestorCorredores.nuevaPuntuacion(2, new Puntuacion(2024, 9.60f));
+            // gestorCorredores.mostrarCorredorPorDorsal(2);
 
             gestorCorredores.mostrarCorredoresPorEquipo();
+            gestorCorredores.numCorredoresPorEquipo();
         } catch (Exception e) {
             System.out.println("Error inesperado en la ejecución: " + e.getMessage());
         }

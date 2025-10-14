@@ -34,7 +34,7 @@ public class Equipo {
 
     @Override
     public String toString() {
-        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + getNumPatrocinadores();
+        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + getNumPatrocinadores() +" | " + "Esta Borrado: " + estaBorrado;
     }
 
     public int getBytesAEscribirPatrocinadores() {

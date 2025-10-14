@@ -10,6 +10,7 @@ import ud1.actividad3new.clases.Patrocinador;
 
 public class EquiposRandom extends Fichero {
     public final static int TAMANO_REGISTRO = 200;
+    private RandomAccessFile raf;
 
     public EquiposRandom(String nombreFichero) {
         super(nombreFichero);
@@ -36,6 +37,7 @@ public class EquiposRandom extends Fichero {
 
     public Equipo leerEquipo(int idEquipo) {
         Equipo equipo = null;
+
         try (RandomAccessFile raf = new RandomAccessFile(this, "r")) {
             int posicion = (idEquipo - 1) * TAMANO_REGISTRO;
             if (posicion >= raf.length()) {
