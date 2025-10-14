@@ -5,34 +5,40 @@ import ud1.actividad3new.clases.Equipo;
 
 public class GestorEquipos {
     EquiposRandom fichero;
-    public static final String RUTA = "./src/actividad3new/saves/equipos.dat";
+    public static final String RUTA = "./src/ud1/actividad3new/saves/equipos.dat";
 
-    public GestorEquipos(String nombreFichero) {
-        fichero = new EquiposRandom(nombreFichero);
-        try {
-            fichero.abrir();
-        } catch (Exception e) {
-            System.out.println("Error al abrir el fichero: " + e.getMessage());
-        }
+    public GestorEquipos() {
+        fichero = new EquiposRandom(RUTA);
+        fichero.crearPadreSiNoExiste();
     }
 
     public Equipo buscarEquipoPorNombre(String nombre) {
-        int id = 1;
-        Equipo equipo;
-        while ((equipo = fichero.leerEquipo(id)) != null) {
-            if (equipo.getNombre().equalsIgnoreCase(nombre)) {
-                return equipo;
+        try {
+            if (nombre == null || nombre.isBlank()) {
+                throw new IllegalArgumentException("El nombre del equipo no puede ser nulo o vacío.");
             }
-            id++;
+            int id = 1;
+            Equipo equipo;
+            while ((equipo = fichero.leerEquipo(id)) != null) {
+                if (equipo.getNombre().equalsIgnoreCase(nombre)) {
+                    return equipo;
+                }
+                id++;
+            }
+            return null;
+        } catch (Exception e) {
+            return null;
         }
-        return null;
     }
 
     public boolean guardarEquipo(Equipo equipo) {
+        if (equipo == null) {
+            throw new IllegalArgumentException("El equipo no puede ser nulo.");
+        }
         try {
             if (buscarEquipoPorNombre(equipo.getNombre()) != null) {
                 System.out.printf("El equipo %s ya existe.%n", equipo.getNombre());
-                return false; // El equipo ya existe
+                return false;
             }
             int nuevoId = fichero.calcularNuevoID();
             equipo.setIdEquipo(nuevoId);
@@ -65,11 +71,26 @@ public class GestorEquipos {
         return null;
     }
 
-    public void eliminarEquipoPorID(int idEquipo){
+    public void eliminarEquipoPorID(int idEquipo) {
         if (idEquipo <= 0) {
             System.out.println("El ID del equipo debe ser un número positivo.");
             return;
         }
-        
+
+    }
+
+    public void listarEquipos(){
+        int id = 1;
+        Equipo equipo;
+        try {
+            while ((equipo = fichero.leerEquipo(id)) != null) {
+                if (!equipo.estaBorrado()) {
+                    System.out.println(equipo);
+                }
+                id++;
+            }
+        } catch (Exception e) {
+            System.out.println("Error al listar los equipos: " + e.getMessage());
+        }
     }
 }

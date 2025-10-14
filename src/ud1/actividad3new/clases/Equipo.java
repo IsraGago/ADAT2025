@@ -15,6 +15,11 @@ public class Equipo {
         this.nombre = nombre;
     }
 
+    public Equipo(String nombre, Set<Patrocinador> patrocinadores) {
+        this.nombre = nombre;
+        this.patrocinadores = patrocinadores;
+    }
+
     public int getBytesAEscribir() {
         int bytesAEscribir = -1;
         try {

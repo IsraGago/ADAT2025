@@ -19,4 +19,8 @@ public class Fichero extends File {
         Fichero nuevoFichero = new Fichero(nuevoNombre);
         return this.renameTo(nuevoFichero);
     }
+
+    public boolean existe(){
+        return this.exists();
+    }
 }

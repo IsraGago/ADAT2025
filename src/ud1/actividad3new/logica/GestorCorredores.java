@@ -15,9 +15,9 @@ import ud1.actividad3new.persistencia.CorredoresWrite;
 import ud1.actividad3new.persistencia.Fichero;
 
 public class GestorCorredores {
-    public static final String RUTA = "./src/actividad3new/saves/corredores.dat";
+    public static final String RUTA = "./src/ud1/actividad3new/saves/corredores.dat";
 
-    private void guardarCorredor(Corredor corredor) {
+    public void guardarCorredor(Corredor corredor) {
         if (corredor == null) {
             throw new IllegalArgumentException("El corredor no puede ser nulo.");
         }
@@ -201,7 +201,6 @@ public class GestorCorredores {
 
     public void mostrarCorredoresPorEquipo() {
         EquiposRandom archivoEquipos = new EquiposRandom(RUTA);
-        archivoEquipos.abrir();
         CorredoresRead archivoCorredores = new CorredoresRead(RUTA);
         archivoCorredores.abrir();
         Map<String, List<String>> mapa = new LinkedHashMap<>();
@@ -214,7 +213,7 @@ public class GestorCorredores {
             }
         }
         archivoCorredores.cerrar();
-        archivoEquipos.cerrar();
+
 
         for(Entry<String, List<String>> entrada: mapa.entrySet()) {
             System.out.println(entrada.getKey());
