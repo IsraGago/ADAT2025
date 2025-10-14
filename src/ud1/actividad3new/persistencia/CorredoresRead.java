@@ -19,31 +19,31 @@ public class CorredoresRead {
 
     public void abrir() {
         try {
-            if (fichero.exists()) {
-                ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)));
-            } else {
-                throw new RuntimeException("El archivo no existe: " + fichero.getAbsolutePath());
+            if (ois != null) {
+                throw new RuntimeException("El fichero ya estaba abierto");
             }
+            ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)));
         } catch (IOException e) {
-            throw new RuntimeException("Error al abrir el fichero de corredores: " + e.getMessage(), e);
+            throw new RuntimeException("Error al abrir el fichero: " + e.getMessage(), e);
         }
     }
 
     public void cerrar() {
         if (ois == null)
-            throw new RuntimeException("El fichero no estaba abierto");
-
+            return;
         try {
             ois.close();
+            ois = null;
         } catch (IOException e) {
-            throw new RuntimeException("Error al cerrar el archivo de corredores: " + e.getMessage(), e);
+            throw new RuntimeException("Error al cerrar el fichero: " + e.getMessage(), e);
         }
     }
 
-    public Corredor leer() {
-        if (ois == null)
-            throw new RuntimeException("El fichero no estaba abierto");
 
+    public Corredor leer() {
+        if (ois == null) {
+            return null;
+        }
         try {
             return (Corredor) ois.readObject();
         } catch (EOFException eof) {
@@ -57,8 +57,7 @@ public class CorredoresRead {
 
     public ArrayList<Corredor> leerTodos() {
         ArrayList<Corredor> lista = new ArrayList<>();
-        try {
-            abrir();
+        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)))) {
             while (true) {
                 Corredor corredor = (Corredor) ois.readObject();
                 lista.add(corredor);
@@ -69,8 +68,6 @@ public class CorredoresRead {
             throw new RuntimeException("Error al leer un objeto del archivo: Clase no encontrada", ex);
         } catch (IOException e) {
             throw new RuntimeException("Error al leer el archivo", e);
-        } finally {
-            cerrar();
         }
         return lista;
     }
@@ -79,8 +76,7 @@ public class CorredoresRead {
 
         Corredor corredor = null;
         Corredor temp;
-        try {
-            abrir();
+        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)))) {
             while (true) {
                 temp = (Corredor) ois.readObject();
                 if (temp.getDorsal() == dorsal) {
@@ -94,34 +90,37 @@ public class CorredoresRead {
             return null;
         } catch (Exception e) {
             return null;
-        } finally {
-            cerrar();
         }
         return corredor;
     }
 
-    public int getUltimoDorsal() {
+public int getUltimoDorsal() {
+    int dorsal = 0;
 
-        int dorsal = 0;
-        Corredor temp;
-        try {
-            abrir();
-            while (true) {
-                temp = (Corredor) ois.readObject();
+    if (!fichero.exists()) {
+        return dorsal;
+    }
+
+    try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)))) {
+        while (true) {
+            try {
+                Corredor temp = (Corredor) ois.readObject();
                 if (temp.getDorsal() > dorsal) {
                     dorsal = temp.getDorsal();
                 }
+            } catch (EOFException e) {
+                break;
             }
-        } catch (EOFException eof) {
-
-        } catch (ClassNotFoundException ex) {
-            return -1;
-        } catch (Exception e) {
-            return -1;
-        } finally {
-            cerrar();
         }
-        return dorsal;
+    } catch (ClassNotFoundException e) {
+        System.out.println("Error al leer un objeto del archivo: Clase no encontrada");
+        return -1;
+    } catch (IOException e) {
+        System.out.println("Error al leer el archivo: " + e.getMessage());
+        return -1;
     }
+
+    return dorsal;
+}
 
 }

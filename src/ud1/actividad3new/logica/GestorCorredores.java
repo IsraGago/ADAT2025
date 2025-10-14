@@ -26,24 +26,22 @@ public class GestorCorredores {
         }
         CorredoresRead read = new CorredoresRead(RUTA);
         CorredoresWrite write = new CorredoresWrite(RUTA);
-
         try {
-            read.abrir();
+
             corredor.setDorsal(read.getUltimoDorsal() + 1);
 
             write.abrir();
             write.escribir(corredor);
 
         } catch (RuntimeException e) {
-            System.out.println("Eror inesperado al guardar el corredor" + e.getMessage());
+            System.out.println("Error inesperado al guardar el corredor" + e.getMessage());
         } finally {
-            read.cerrar();
             write.cerrar();
         }
 
     }
 
-    private void nuevaPuntuacion(int dorsal, Puntuacion puntuacion) {
+    public void nuevaPuntuacion(int dorsal, Puntuacion puntuacion) {
         if (puntuacion == null || dorsal <= 0) {
             throw new IllegalArgumentException("Dorsal o puntuación inválidos");
         }
@@ -53,10 +51,11 @@ public class GestorCorredores {
 
         CorredoresRead read = new CorredoresRead(RUTA);
         CorredoresWrite write = new CorredoresWrite(RUTA + ".tmp");
+        boolean encontrado = false;
 
         try {
-            read.abrir();
             write.abrir();
+            read.abrir();
             while (true) {
                 Corredor corredor = read.leer();
                 if (corredor == null)
@@ -66,14 +65,32 @@ public class GestorCorredores {
                     if (corredor.getHistorial().contains(puntuacion)) {
                         corredor.quitarPuntuacion(puntuacion);
                     }
+                    encontrado = true;
                     corredor.addPuntuacion(puntuacion);
                 }
                 write.escribir(corredor);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             read.cerrar();
             write.cerrar();
+        }
+
+        if (encontrado) {
+            Fichero original = new Fichero(RUTA);
+            if (!original.delete()) {
+                System.out.println("No se pudo borrar el archivo original.");
+                return;
+            }
+            if (auxiliar.renombrar(RUTA)) {
+                System.out.println("Corredor con dorsal " + dorsal + " borrado.");
+            } else {
+                System.out.println("No se pudo renombrar el archivo auxiliar.");
+            }
+        } else {
+            auxiliar.delete();
+            System.out.println("No se encontró ningún corredor con el dorsal: " + dorsal);
         }
     }
 
@@ -108,11 +125,12 @@ public class GestorCorredores {
     }
 
     private boolean validarEquipo(int idEquipo) {
-        EquiposRandom fichero = new EquiposRandom(GestorEquipos.RUTA);
+
         try {
+            EquiposRandom fichero = new EquiposRandom(GestorEquipos.RUTA);
             return fichero.leerEquipo(idEquipo) != null;
         } catch (Exception e) {
-            
+
         }
         return false;
     }
@@ -120,7 +138,7 @@ public class GestorCorredores {
     public void mostrarCorredorPorDorsal(int dorsal) {
         Corredor corredor = buscarCorredorPorDorsal(dorsal);
         if (corredor != null) {
-            System.out.println(corredor);
+            corredor.mostrarInformacion();
         } else {
             System.out.println("No se encontró ningún corredor con el dorsal: " + dorsal);
         }
@@ -166,7 +184,6 @@ public class GestorCorredores {
         boolean encontrado = false;
         Corredor temporal = null;
         try {
-            read.abrir();
             write.abrir();
             while ((temporal = read.leer()) != null) {
                 if (temporal.getDorsal() == dorsal) {
@@ -178,7 +195,6 @@ public class GestorCorredores {
         } catch (Exception e) {
             // TODO: handle exception
         } finally {
-            read.cerrar();
             write.cerrar();
         }
 
@@ -202,7 +218,6 @@ public class GestorCorredores {
     public void mostrarCorredoresPorEquipo() {
         EquiposRandom archivoEquipos = new EquiposRandom(RUTA);
         CorredoresRead archivoCorredores = new CorredoresRead(RUTA);
-        archivoCorredores.abrir();
         Map<String, List<String>> mapa = new LinkedHashMap<>();
         Corredor c;
         while ((c = archivoCorredores.leer()) != null) {
@@ -212,13 +227,11 @@ public class GestorCorredores {
                         .add(c.getNombre() + "(" + c.getClass().getSimpleName() + ")");
             }
         }
-        archivoCorredores.cerrar();
 
-
-        for(Entry<String, List<String>> entrada: mapa.entrySet()) {
+        for (Entry<String, List<String>> entrada : mapa.entrySet()) {
             System.out.println(entrada.getKey());
-            for(String corredor : entrada.getValue()){
-                System.out.println("    "+corredor);
+            for (String corredor : entrada.getValue()) {
+                System.out.println("    " + corredor);
             }
         }
     }

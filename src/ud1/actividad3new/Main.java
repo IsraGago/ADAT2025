@@ -8,6 +8,7 @@ import ud1.actividad3new.clases.Corredor;
 import ud1.actividad3new.clases.Equipo;
 import ud1.actividad3new.clases.Fondista;
 import ud1.actividad3new.clases.Patrocinador;
+import ud1.actividad3new.clases.Puntuacion;
 import ud1.actividad3new.clases.Velocista;
 import ud1.actividad3new.logica.GestorCorredores;
 import ud1.actividad3new.logica.GestorEquipos;
@@ -51,13 +52,15 @@ public class Main {
             gestorEquipos.guardarEquipo(equipo5);
             gestorEquipos.listarEquipos();
             GestorCorredores gestorCorredores = new GestorCorredores();
-            gestorCorredores.guardarCorredor(corredor1);
-            gestorCorredores.guardarCorredor(corredor2);
-            gestorCorredores.guardarCorredor(corredor3);
-            gestorCorredores.guardarCorredor(corredor4);
-            gestorCorredores.guardarCorredor(corredor5);
-            gestorCorredores.guardarCorredor(corredor6);
+            // gestorCorredores.guardarCorredor(corredor1);
+            // gestorCorredores.guardarCorredor(corredor2);
+            // gestorCorredores.guardarCorredor(corredor3);
+            // gestorCorredores.guardarCorredor(corredor4);
+            // gestorCorredores.guardarCorredor(corredor5);
+            // gestorCorredores.guardarCorredor(corredor6);
             gestorCorredores.listarTodosLosCorredores();
+            gestorCorredores.nuevaPuntuacion(2, new Puntuacion(2024, 9.60f));
+            gestorCorredores.mostrarCorredorPorDorsal(2);
         } catch (Exception e) {
             System.out.println("Error inesperado en la ejecución: " + e.getMessage());
         }
