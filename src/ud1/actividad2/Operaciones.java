@@ -3,7 +3,6 @@ package ud1.actividad2;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 public class Operaciones {
@@ -69,7 +68,6 @@ public class Operaciones {
                     String curso = partes[0];
                     String numero = partes[1];
                     String nombre = partes[2];
-                    // TODO CREAR LOS DIRECTORIOS
 
                 } else {
                     alumnos.add(

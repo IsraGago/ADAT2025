@@ -6,9 +6,19 @@ import java.util.Set;
 public class Equipo {
     private int idEquipo;
     private String nombre;
-    private int numPatrocinadores;
     private Set<Patrocinador> patrocinadores = new HashSet<>();
     private boolean estaBorrado = false;
+
+    // CONSTRUCTOR
+    public Equipo(int id, String nombre) {
+        this.idEquipo = id;
+        this.nombre = nombre;
+    }
+
+    public Equipo(String nombre, Set<Patrocinador> patrocinadores) {
+        this.nombre = nombre;
+        this.patrocinadores = patrocinadores;
+    }
 
     public int getBytesAEscribir() {
         int bytesAEscribir = -1;
@@ -24,7 +34,7 @@ public class Equipo {
 
     @Override
     public String toString() {
-        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + numPatrocinadores;
+        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + getNumPatrocinadores() +" | " + "Esta Borrado: " + estaBorrado;
     }
 
     public int getBytesAEscribirPatrocinadores() {
@@ -33,13 +43,6 @@ public class Equipo {
             bytesAEscribir += patrocinador.getBytesAEscribir();
         }
         return bytesAEscribir;
-    }
-
-    // CONSTRUCTOR
-    public Equipo(String nombre, Set<Patrocinador> patrocinadores) {
-        this.nombre = nombre;
-        this.patrocinadores = patrocinadores;
-        numPatrocinadores = patrocinadores.size();
     }
 
     @Override
@@ -85,7 +88,7 @@ public class Equipo {
     }
 
     public int getNumPatrocinadores() {
-        return numPatrocinadores;
+        return patrocinadores.size();
     }
 
     public Set<Patrocinador> getPatrocinadores() {
@@ -93,9 +96,20 @@ public class Equipo {
     }
 
     public boolean addPatrocinador(Patrocinador p) {
-        if (patrocinadores.add(p)) {
-            numPatrocinadores = patrocinadores.size();
-            return true;
+        return patrocinadores.add(p);
+    }
+
+    public boolean quitarPatrocinador(Patrocinador p){
+        return patrocinadores.remove(p);
+    }
+
+    public boolean editarPatrocinador(Patrocinador p){
+        for (Patrocinador patrocinador : patrocinadores) {
+            if (patrocinador.equals(p)) {
+                patrocinador.setDonacion(p.getDonacion());
+                patrocinador.setFechaInicio(p.getFechaInicio());
+                return true;
+            }
         }
         return false;
     }
@@ -104,7 +118,7 @@ public class Equipo {
         this.patrocinadores = patrocinadores;
     }
 
-    public boolean isEstaBorrado() {
+    public boolean estaBorrado() {
         return estaBorrado;
     }
 

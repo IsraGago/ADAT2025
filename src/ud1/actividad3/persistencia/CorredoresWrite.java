@@ -1,11 +1,11 @@
-package ud1.actividad3new.persistencia;
+package ud1.actividad3.persistencia;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-import ud1.actividad3new.clases.Corredor;
+import ud1.actividad3.clases.Corredor;
 
 public class CorredoresWrite {
     Fichero fichero;

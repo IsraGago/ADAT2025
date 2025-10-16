@@ -1,4 +1,4 @@
-package ud1.actividad3new.persistencia;
+package ud1.actividad3.persistencia;
 
 import java.io.BufferedInputStream;
 import java.io.EOFException;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 
-import ud1.actividad3new.clases.Corredor;
+import ud1.actividad3.clases.Corredor;
 
 public class CorredoresRead {
     ObjectInputStream ois;

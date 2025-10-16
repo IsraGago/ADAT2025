@@ -15,8 +15,6 @@ public abstract class Archivo {
         return ruta.exists() && ruta.isFile() && ruta.toString().endsWith(extension);
     }
 
-    //TODO COMPROBAR METODOS
-
     public boolean borrar(){
         return ruta.delete();
     }

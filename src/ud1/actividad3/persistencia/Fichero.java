@@ -6,6 +6,7 @@ public class Fichero extends File {
     public Fichero(String ruta){
         super(ruta);   
     }
+    
     public boolean crearPadreSiNoExiste(){
         if (!this.getParentFile().exists()) {
             return this.getParentFile().mkdirs();
@@ -14,9 +15,12 @@ public class Fichero extends File {
         }
     }
 
-    //TODO OPERACIONES CON ARCHIVOS 
     public boolean renombrar(String nuevoNombre){
         Fichero nuevoFichero = new Fichero(nuevoNombre);
         return this.renameTo(nuevoFichero);
+    }
+
+    public boolean existe(){
+        return this.exists();
     }
 }

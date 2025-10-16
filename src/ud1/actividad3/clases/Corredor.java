@@ -51,8 +51,8 @@ public class Corredor implements Serializable {
         return nombre;
     }
 
-    public Puntuacion[] getHistorial() {
-        return historial.toArray(new Puntuacion[0]);
+    public ArrayList<Puntuacion> getHistorial() {
+        return historial;
     }
 
     public void setDorsal(int dorsal) {
@@ -67,9 +67,49 @@ public class Corredor implements Serializable {
         historial.sort((p1,p2) -> Integer.compare(p1.getAnio(),p2.getAnio())); // Ordena las puntuaciones por año
     }
 
+    public boolean quitarPuntuacion(Puntuacion p){
+        return historial.remove(p);
+    }
+
     public void mostrarInformacion() {
         System.out.println("CORREDOR " + this.getClass().getSimpleName().toUpperCase() + ": " + this);
         System.out.println("NOMBRE: " + this.getNombre() + " - FECHA NACIMIENTO: " + this.getFechanacimiento()
                 + " - EQUIPO: " + this.getEquipo() + " - DORSAL: " + this.getDorsal()+ " - PUNTUACIONES: "+this.historial);
     }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+        result = prime * result + ((fechanacimiento == null) ? 0 : fechanacimiento.hashCode());
+        result = prime * result + equipo;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Corredor other = (Corredor) obj;
+        if (nombre == null) {
+            if (other.nombre != null)
+                return false;
+        } else if (!nombre.equals(other.nombre))
+            return false;
+        if (fechanacimiento == null) {
+            if (other.fechanacimiento != null)
+                return false;
+        } else if (!fechanacimiento.equals(other.fechanacimiento))
+            return false;
+        if (equipo != other.equipo)
+            return false;
+        return true;
+    }
+
+    
 }

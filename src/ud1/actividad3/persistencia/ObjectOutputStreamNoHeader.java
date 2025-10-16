@@ -1,4 +1,5 @@
-package ud1.actividad3.servicio;
+package ud1.actividad3.persistencia;
+
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;

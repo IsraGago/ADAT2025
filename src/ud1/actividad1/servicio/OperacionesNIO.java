@@ -1,11 +1,8 @@
 package ud1.actividad1.servicio;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.AccessDeniedException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileVisitResult;
-import java.nio.file.FileVisitor;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -14,10 +11,8 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.stream.Stream;
 
-import ud1.actividad1.excepciones.ArchivoNoExisteException;
 import ud1.actividad1.excepciones.DirectorioNoExisteException;
 import ud1.actividad1.excepciones.NoEsDirectorioException;
 

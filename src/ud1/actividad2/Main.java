@@ -2,7 +2,7 @@ package ud1.actividad2;
 
 public class Main {
     public static void main(String[] args) {
-        final String CARPETA = "./src/ud1/actividad2/ficheros/"; // TODO CAMBIAR PARA ENTREGAR
+        final String CARPETA = "./src/ud1/actividad2/ficheros/";
         final String FICHERO_SALIDA_NUMLINEAS = CARPETA + "Salida.txt";
         final String FICHERO_SALIDA_REPETICIONES = CARPETA + "RepeticionesPalabraEspecifica.txt";
         final String FICHERO_SALIDA_REPETICIONES_AMPLIACION = CARPETA + "Repeticiones.txt";

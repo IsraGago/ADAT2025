@@ -1,4 +1,4 @@
-package ud1.actividad3new.logica;
+package ud1.actividad3.logica;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import ud1.actividad3new.persistencia.EquiposRandom;
-import ud1.actividad3new.clases.Corredor;
-import ud1.actividad3new.clases.Equipo;
-import ud1.actividad3new.clases.Puntuacion;
-import ud1.actividad3new.persistencia.CorredoresRead;
-import ud1.actividad3new.persistencia.CorredoresWrite;
-import ud1.actividad3new.persistencia.Fichero;
+import ud1.actividad3.clases.Corredor;
+import ud1.actividad3.clases.Equipo;
+import ud1.actividad3.clases.Puntuacion;
+import ud1.actividad3.persistencia.CorredoresRead;
+import ud1.actividad3.persistencia.CorredoresWrite;
+import ud1.actividad3.persistencia.EquiposRandom;
+import ud1.actividad3.persistencia.Fichero;
 
 public class GestorCorredores {
     public static final String RUTA = "./src/ud1/actividad3new/saves/corredores.dat";

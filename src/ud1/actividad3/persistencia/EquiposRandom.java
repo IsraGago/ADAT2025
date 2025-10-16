@@ -1,108 +1,142 @@
 package ud1.actividad3.persistencia;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashSet;
+import java.util.Set;
 
 import ud1.actividad3.clases.Equipo;
 import ud1.actividad3.clases.Patrocinador;
 
-public class EquiposRandom {
-    Fichero fichero;
-    RandomAccessFile raf;
-    public static long TAMANO_REGISTRO = 200; //TAMAÑO FIJO DE CADA REGISTRO EN BYTES
+public class EquiposRandom extends Fichero {
+    public final static int TAMANO_REGISTRO = 200;
+    private RandomAccessFile raf;
 
-    public EquiposRandom(String ruta) {
-        fichero = new Fichero(ruta);
-        fichero.crearPadreSiNoExiste();
+    public EquiposRandom(String nombreFichero) {
+        super(nombreFichero);
     }
 
-    public void abrir() {
-        try {
-            raf = new RandomAccessFile(fichero, "rw");
+    public void guardarEquipo(Equipo equipo) {
+        try (RandomAccessFile raf = new RandomAccessFile(this, "rw")) {
+            int posicion = raf.length() == 0 ? 0 : (equipo.getIdEquipo() - 1) * TAMANO_REGISTRO;
+            raf.seek(posicion);
+            raf.writeBoolean(equipo.estaBorrado());
+            raf.writeInt(equipo.getIdEquipo());
+            raf.writeUTF(equipo.getNombre());
+            raf.writeInt(equipo.getNumPatrocinadores());
+
+            for (Patrocinador patrocinador : equipo.getPatrocinadores()) {
+                raf.writeUTF(patrocinador.getNombre());
+                raf.writeFloat(patrocinador.getDonacion());
+                raf.writeLong(patrocinador.fechaToLong());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar el equipo: " + e.getMessage(), e);
+        }
+    }
+
+    public Equipo leerEquipo(int idEquipo) {
+        Equipo equipo = null;
+
+        try (RandomAccessFile raf = new RandomAccessFile(this, "r")) {
+            int posicion = (idEquipo - 1) * TAMANO_REGISTRO;
+            if (posicion >= raf.length()) {
+                return equipo;
+            }
+
+            raf.seek(posicion);
+            boolean estaBorrado = raf.readBoolean();
+            if (estaBorrado) {
+                return equipo;
+            }
+            int id = raf.readInt();
+            String nombre = raf.readUTF();
+            int numPatrocinadores = raf.readInt();
+            equipo = new Equipo(id, nombre);
+
+            Set<Patrocinador> patrocinadores = equipo.getPatrocinadores();
+            for (int i = 0; i < numPatrocinadores; i++) {
+                String nombrePatrocinador = raf.readUTF();
+                float donacion = raf.readFloat();
+                long fechaLong = raf.readLong();
+                Patrocinador patrocinador = new Patrocinador(nombrePatrocinador, donacion,
+                        Patrocinador.longToFecha(fechaLong));
+                patrocinadores.add(patrocinador);
+            }
+
+            equipo.setPatrocinadores(patrocinadores);
+
+        } catch (EOFException e) {
+            throw new RuntimeException("Fin de fichero alcanzado inesperadamente: " + e.getMessage(), e);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al leer el equipo: " + e.getMessage(), e);
+        }
+        return equipo;
+    }
+
+    public int calcularNuevoID() {
+        if (!this.existe()) {
+            return 1;
+        }
+        try (RandomAccessFile raf = new RandomAccessFile(this, "r")) {
+            return numeroRegistrosConBorrados() + 1;
         } catch (Exception e) {
-            throw new IllegalArgumentException("El fichero"+ fichero.getAbsolutePath() + " no existe"); 
+            System.out.println("Error al acceder al archivo: " + e.getMessage());
         }
+        return -1;
     }
 
-    public void cerrarArchivo() {
-        try {
-            raf.close();
-        } catch (Exception e) {
-
-        }
-    }
-    // A lA HORA DE LEER DE VUELTA HACES UN BUCLE HASTA EL NÚMERO DE PATROCINADORES
-    // PARA RECUPERARLOS
-
-    public void escribirEquipo(Equipo e) {
-        if (TAMANO_REGISTRO < e.getBytesAEscribir()) {
-            throw new IllegalArgumentException("El objeto excede el tamaño máximo: " + TAMANO_REGISTRO);
-        }
-        try {
-            if (raf != null) {
-                abrir();
-                // int numRegistros = (int) Math.ceil((double) fichero.length() / TAMANO_REGISTRO);
-                long posicion = (e.getIdEquipo() - 1L) * TAMANO_REGISTRO;
-                //TODO CALCULAR ID DEL EQUIPO SEGUN SU POSICIÓN PARA DESPUÉS ESCRIBIRLO AHÍ
-                raf.seek(posicion);
-                raf.writeBoolean(e.isEstaBorrado());
-                raf.writeInt(e.getIdEquipo());
-                raf.writeUTF(e.getNombre());
-                raf.writeInt(e.getNumPatrocinadores());
-                for (Patrocinador patrocinador : e.getPatrocinadores()) {
-                    raf.writeUTF(patrocinador.getNombre());
-                    raf.writeFloat(patrocinador.getDonacion());
-                    raf.writeLong(patrocinador.fechaToLong());
-                }
-            }
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        } finally {
-            if (raf != null) {
-                cerrarArchivo();
-            }
-        }
-    }
-
-    public Equipo leerEquipo(int id) {
-        try {
-            if(raf != null){
-                raf.seek((id - 1L) * TAMANO_REGISTRO);
-                if (!raf.readBoolean()) {
-                    String nombre = raf.readUTF();
-                    int numPatrocinadores = raf.readInt();
-                    Patrocinador[] patrocinadores = new Patrocinador[numPatrocinadores];
-                    HashSet<Patrocinador> setPatrocinadores = new HashSet<>();
-
-                    for (int i = 0; i < patrocinadores.length; i++) {
-                        int idPatrocinador = raf.readInt();
-                        String nombrePatrocinador = raf.readUTF();
-                        float donacion = raf.readFloat();
-                        long segundosFecha = raf.readLong();
-                        patrocinadores[i] = new Patrocinador(nombrePatrocinador,donacion,Patrocinador.longToFecha(segundosFecha));
-                        patrocinadores[i].setId(idPatrocinador);
-                        setPatrocinadores.add(patrocinadores[i]);
-                    }
-                    Equipo equipo = new Equipo(nombre, setPatrocinadores);
-                    return equipo;
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            if (raf != null) {
-                cerrarArchivo();
-            }
-        }
-        return null;
-    }
-
-    public int numeroRegistrosConBorrados(){
-        try {
+    public int numeroRegistrosConBorrados() {
+        try (RandomAccessFile raf = new RandomAccessFile(this, "r")) {
             return (int) Math.ceil((double) raf.length() / TAMANO_REGISTRO);
-        } catch (Exception e) {
-            return 0;
+        } catch (IOException e) {
+            System.out.println("Error al calcular el número de registros: " + e.getMessage());
+            return -1;
         }
+    }
+
+    public boolean eliminarEquipoPorID(int id) {
+
+        try (RandomAccessFile raf = new RandomAccessFile(this, "rw")) {
+            Equipo equipo = leerEquipo(id);
+            if (equipo == null || equipo.estaBorrado()) {
+                System.out.println("El equipo no existe en el fichero.");
+                return false;
+            }
+            equipo.setEstaBorrado(true);
+            guardarEquipo(equipo);
+            System.out.println("Equipo borrado con éxito.");
+            return true;
+        } catch (RuntimeException e) {
+            System.out.println("Error al acceder al fichero: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public boolean editarOInsertarPatrocinador(int id, Patrocinador patrocinador) {
+        try (RandomAccessFile raf = new RandomAccessFile(this, "rw")) {
+            Equipo equipo = leerEquipo(id);
+            if (equipo == null || equipo.estaBorrado()) {
+                System.out.println("El equipo no existe en el fichero.");
+                return false;
+            }
+            if (!equipo.editarPatrocinador(patrocinador)) {
+                equipo.addPatrocinador(patrocinador);
+                System.out.println("patrocinador añadido con éxito");
+            } else {
+                System.out.println("patrocinador actualizado con éxito");
+            }
+
+            guardarEquipo(equipo);
+            return true;
+
+        } catch (RuntimeException e) {
+            System.out.println("Error al acceder al archivo: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Error inesperado: " + e.getMessage());
+        }
+        return false;
     }
 }
