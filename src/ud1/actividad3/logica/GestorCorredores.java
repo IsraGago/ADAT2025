@@ -1,6 +1,5 @@
 package ud1.actividad3.logica;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -16,7 +15,7 @@ import ud1.actividad3.persistencia.EquiposRandom;
 import ud1.actividad3.persistencia.Fichero;
 
 public class GestorCorredores {
-    public static final String RUTA = "./src/ud1/actividad3new/saves/corredores.dat";
+    public static final String RUTA = "./src/ud1/actividad3/saves/corredores.dat";
 
     public void guardarCorredor(Corredor corredor) {
         if (corredor == null) {

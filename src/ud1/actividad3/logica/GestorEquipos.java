@@ -5,7 +5,7 @@ import ud1.actividad3.persistencia.EquiposRandom;
 
 public class GestorEquipos {
     EquiposRandom fichero;
-    public static final String RUTA = "./src/ud1/actividad3new/saves/equipos.dat";
+    public static final String RUTA = "./src/ud1/actividad3/saves/equipos.dat";
 
     public GestorEquipos() {
         fichero = new EquiposRandom(RUTA);
