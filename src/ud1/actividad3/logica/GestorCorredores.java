@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 
 import ud1.actividad3.clases.Corredor;
 import ud1.actividad3.clases.Equipo;
-import ud1.actividad3.clases.Patrocinador;
 import ud1.actividad3.clases.Puntuacion;
 import ud1.actividad3.persistencia.CorredoresRead;
 import ud1.actividad3.persistencia.CorredoresWrite;
@@ -173,6 +172,23 @@ public class GestorCorredores {
         } else {
             System.out.println("FIN DEL ARCHIVO. TOTAL: " + contador + " CORREDORES");
         }
+    }
+
+    public ArrayList<Corredor> obtenerTodosLosCorredores() {
+        ArrayList<Corredor> lista = new ArrayList<>();
+        CorredoresRead read = new CorredoresRead(RUTA);
+        try {
+            read.abrir();
+            Corredor corredor = null;
+            while ((corredor = read.leer()) != null) {
+                lista.add(corredor);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally{
+            read.cerrar();
+        }
+        return lista;
     }
 
     public void borrarCorredor(int dorsal) {

@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Velocista extends Corredor {
     private float velocidadMedia; // EN KM/H
 
-    public Velocista(String codigo, int dorsal, String nombre, LocalDate fecha, int equipo, float velocidadMedia) {
+    public Velocista(String codigo, int dorsal, String nombre, LocalDate fecha, String equipo, float velocidadMedia) {
         super(codigo,dorsal,nombre,fecha,equipo);
         if (velocidadMedia <= 0) {
             throw new IllegalArgumentException("La velocidad media debe ser positiva");

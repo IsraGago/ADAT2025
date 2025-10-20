@@ -10,29 +10,10 @@ public class Corredor {
     protected String codigo;
     protected String nombre;
     protected LocalDate fechanacimiento;
-    protected int equipo;
+    protected String equipo;
     protected ArrayList<Puntuacion> historial;
 
-    // TODO HACER QUE EQUIPO SEA STRING
-
-    // public Corredor(String nombre, LocalDate fechanacimiento, int equipo) {
-    //     if (!Utilidades.esNombreValido(nombre)) {
-    //         throw new IllegalArgumentException("Nombre no válido");
-    //     }
-    //     if (fechanacimiento == null || fechanacimiento.isAfter(LocalDate.now())) {
-    //         throw new IllegalArgumentException("Fecha de nacimiento no válida");
-    //     }
-    //     if (equipo < 0) {
-    //         throw new IllegalArgumentException("El número de equipo no puede ser negativo");
-    //     }
-        
-    //     this.nombre = nombre;
-    //     this.fechanacimiento = fechanacimiento;
-    //     this.equipo = equipo;
-    //     historial = new ArrayList<>();
-    // }
-
-    public Corredor(String codigo,int dorsal, String nombre, LocalDate fechanacimiento, int equipo){
+    public Corredor(String codigo,int dorsal, String nombre, LocalDate fechanacimiento, String equipo){
         if (Utilidades.esCodigoValido(codigo)) {
             throw new IllegalArgumentException("El código no tiene un formato válido.");
         }
@@ -42,8 +23,8 @@ public class Corredor {
         if (fechanacimiento == null || fechanacimiento.isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Fecha de nacimiento no válida");
         }
-        if (equipo < 0) {
-            throw new IllegalArgumentException("El número de equipo no puede ser negativo");
+        if (equipo == null || equipo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El equipo no puede ser nulo o vacío");
         }
         if (dorsal < 1) {
             throw new IllegalArgumentException("El dorsal debe ser mayor que 0");
@@ -68,7 +49,7 @@ public class Corredor {
         return codigo;
     }
 
-    public int getEquipo() {
+    public String getEquipo() {
         return equipo;
     }
 
@@ -121,7 +102,7 @@ public class Corredor {
         int result = 1;
         result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
         result = prime * result + ((fechanacimiento == null) ? 0 : fechanacimiento.hashCode());
-        result = prime * result + equipo;
+        result = prime * result + ((equipo == null) ? 0 : equipo.hashCode());
         return result;
     }
 
@@ -144,9 +125,14 @@ public class Corredor {
                 return false;
         } else if (!fechanacimiento.equals(other.fechanacimiento))
             return false;
-        if (equipo != other.equipo)
+        if (equipo == null) {
+            if (other.equipo != null)
+                return false;
+        } else if (!equipo.equals(other.equipo))
             return false;
         return true;
     }
+
+    
 
 }

@@ -2,6 +2,7 @@ package ud1.actividad3;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import ud1.actividad3.clases.Corredor;
@@ -11,6 +12,7 @@ import ud1.actividad3.clases.Patrocinador;
 import ud1.actividad3.clases.Velocista;
 import ud1.actividad3.logica.GestorCorredores;
 import ud1.actividad3.logica.GestorEquipos;
+import ud1.actividad3.clases.Puntuacion;
 
 
 public class Main {
@@ -47,31 +49,43 @@ public class Main {
             GestorEquipos gestorEquipos = new GestorEquipos();
             GestorCorredores gestorCorredores = new GestorCorredores();
 
-            // GUARDAR EQUIPOS
-            // gestorEquipos.guardarEquipo(equipo1);
-            // gestorEquipos.guardarEquipo(equipo2);
-            // gestorEquipos.guardarEquipo(equipo3);
-            // gestorEquipos.guardarEquipo(equipo4);
-            // gestorEquipos.guardarEquipo(equipo5);
+            //GUARDAR EQUIPOS
+            System.out.println("\nGUARDANDO EQUIPOS\n");
+            gestorEquipos.guardarEquipo(equipo1);
+            gestorEquipos.guardarEquipo(equipo2);
+            gestorEquipos.guardarEquipo(equipo3);
+            gestorEquipos.guardarEquipo(equipo4);
+            gestorEquipos.guardarEquipo(equipo5);
 
             gestorEquipos.listarEquipos();
             
             //GUARDAR CORREDORES
-            // gestorCorredores.guardarCorredor(corredor1);
-            // gestorCorredores.guardarCorredor(corredor2);
-            // gestorCorredores.guardarCorredor(corredor3);
-            // gestorCorredores.guardarCorredor(corredor4);
-            // gestorCorredores.guardarCorredor(corredor5);
-            // gestorCorredores.guardarCorredor(corredor6);
-            // gestorCorredores.listarTodosLosCorredores();
+            System.out.println("\nGUARDANDO CORREDORES\n");
+            gestorCorredores.guardarCorredor(corredor1);
+            gestorCorredores.guardarCorredor(corredor2);
+            gestorCorredores.guardarCorredor(corredor3);
+            gestorCorredores.guardarCorredor(corredor4);
+            gestorCorredores.guardarCorredor(corredor5);
+            gestorCorredores.guardarCorredor(corredor6);
+            gestorCorredores.listarTodosLosCorredores();
 
-            // EDITAR PUNTUACION CORREDOR
-            // gestorCorredores.nuevaPuntuacion(2, new Puntuacion(2024, 9.60f));
-            // gestorCorredores.mostrarCorredorPorDorsal(2);
+            //EDITAR PUNTUACION CORREDOR
+            System.out.println("\nEDITANDO PUNTUACION CORREDOR\n");
+            gestorCorredores.nuevaPuntuacion(2, new Puntuacion(2024, 9.60f));
+            gestorCorredores.mostrarCorredorPorDorsal(2);
 
+            System.out.println("\nMOSTRAR CORREDORES POR EQUIPO\n");
             gestorCorredores.mostrarCorredoresPorEquipo();
+            System.out.println("\nMOSTRAR NUMERO DE CORREDORES POR EQUIPO\n");
             gestorCorredores.numCorredoresPorEquipo();
-            gestorEquipos.corredoresPatrocinadosPor(cocacola); // TODO COMPROBAR SI FUNCIONA
+            System.out.println("\nMOSTRAR DONACIONES Y CORREDORES POR EQUIPO\n");
+            gestorEquipos.mostrarDonacionesYCorredoresPorEquipo();
+            System.out.println("\nCORREDORES PATROCINADOS POR COCA-COLA\n");
+            gestorEquipos.corredoresPatrocinadosPor(cocacola);
+            System.out.println("\nMEDIA PUNTUACIONES POR EQUIPO\n");
+            gestorEquipos.mediaPuntuacionesPorEquipo();
+            
+
         } catch (Exception e) {
             System.out.println("Error inesperado en la ejecución: " + e.getMessage());
         }

@@ -2,6 +2,7 @@ package ud1.actividad4.clases;
 
 import java.util.HashSet;
 import java.util.Set;
+import ud1.actividad4.clases.Patrocinador;
 
 public class Equipo {
     private int idEquipo;
