@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 
 import ud1.actividad3.clases.Corredor;
 import ud1.actividad3.clases.Equipo;
+import ud1.actividad3.clases.Patrocinador;
 import ud1.actividad3.clases.Puntuacion;
 import ud1.actividad3.persistencia.CorredoresRead;
 import ud1.actividad3.persistencia.CorredoresWrite;

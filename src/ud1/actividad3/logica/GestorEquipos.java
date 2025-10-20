@@ -1,6 +1,11 @@
 package ud1.actividad3.logica;
 
+import java.util.ArrayList;
+
+import ud1.actividad3.clases.Corredor;
 import ud1.actividad3.clases.Equipo;
+import ud1.actividad3.clases.Patrocinador;
+import ud1.actividad3.persistencia.CorredoresRead;
 import ud1.actividad3.persistencia.EquiposRandom;
 
 public class GestorEquipos {
@@ -22,7 +27,7 @@ public class GestorEquipos {
             }
             int id = 1;
             Equipo equipo;
-            
+
             while ((equipo = fichero.leerEquipo(id)) != null) {
                 if (equipo.getNombre().equalsIgnoreCase(nombre)) {
                     return equipo;
@@ -83,7 +88,7 @@ public class GestorEquipos {
 
     }
 
-    public void listarEquipos(){
+    public void listarEquipos() {
         int id = 1;
         Equipo equipo;
         try {
@@ -95,6 +100,42 @@ public class GestorEquipos {
             }
         } catch (Exception e) {
             System.out.println("Error al listar los equipos: " + e.getMessage());
+        }
+    }
+
+    public void corredoresPatrocinadosPor(Patrocinador patrocinador) {
+        EquiposRandom archivoEquipos = new EquiposRandom(RUTA);
+        CorredoresRead archivoCorredores = new CorredoresRead(RUTA);
+        ArrayList<Equipo> equipos = new ArrayList<>();
+        int id = 1;
+        Equipo e;
+        try {
+            
+            while ((e = fichero.leerEquipo(id)) != null) {
+                for (Patrocinador p : e.getPatrocinadores()) {
+                    if (p.equals(patrocinador)) {
+                        equipos.add(e);
+                        break;
+                    }
+                }
+            }
+            archivoCorredores.abrir();
+            if (equipos.size() > 0) {
+                System.out.println("Patrocinador: "+patrocinador.getNombre());
+                System.out.println("Corredores patrocinados:");
+                Corredor corredor;
+                while ((corredor = archivoCorredores.leer()) != null) {
+                    for (Equipo equipo : equipos) {
+                        if (corredor.getEquipo() == equipo.getIdEquipo()) {
+                            System.out.println("    -"+corredor.getNombre()+"("+equipo.getNombre()+")");
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("Se ha producido un error: " + ex.getMessage());
+        } finally{
+            archivoCorredores.cerrar();
         }
     }
 }

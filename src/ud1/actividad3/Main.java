@@ -24,7 +24,8 @@ public class Main {
             Corredor corredor6 = new Fondista("Laura Martínez", LocalDate.of(2002, 9, 10), 4, 35.00f);
 
             Set<Patrocinador> lista1 = new HashSet<>();
-            lista1.add(new Patrocinador("Coca-Cola", 15000.0f, LocalDate.of(2023, 1, 15)));
+            Patrocinador cocacola = new Patrocinador("Coca-Cola", 15000.0f, LocalDate.of(2023, 1, 15));
+            lista1.add(cocacola);
             lista1.add(new Patrocinador("Nike", 22000.0f, LocalDate.of(2024, 3, 10)));
             Equipo equipo1 = new Equipo("Atlético Norte", lista1);
             Set<Patrocinador> lista2 = new HashSet<>();
@@ -70,6 +71,7 @@ public class Main {
 
             gestorCorredores.mostrarCorredoresPorEquipo();
             gestorCorredores.numCorredoresPorEquipo();
+            gestorEquipos.corredoresPatrocinadosPor(cocacola); // TODO COMPROBAR SI FUNCIONA
         } catch (Exception e) {
             System.out.println("Error inesperado en la ejecución: " + e.getMessage());
         }
