@@ -35,8 +35,8 @@ public class XMLDOMUtils {
 
             // CARGAR DOCUMENTO EN MEMORIA
             Document documento = db.parse(new File(rutaFichero));
-            documento.normalize(); // QUITAR LOS ENTERS (?)
-
+            // documento.normalize(); // QUITAR LOS ENTERS (?)
+            documento.getDocumentElement().normalize();
             return documento;
         } catch (ParserConfigurationException ex) {
             throw new ExcepcionXML("Error de configuracion del parser: " + ex.getMessage());
@@ -51,10 +51,14 @@ public class XMLDOMUtils {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         switch (validacion) {
             case DTD:
+                // TIENES QUE TENER EL DOCTYPE EN EL XML PARA QUE FUNCIONE LA VALIDACIÓN DTD
                 dbf.setValidating(true);
                 dbf.setIgnoringElementContentWhitespace(true); // PARA QUE NO CUENTE ENTER NI TABULACIONES
                 break;
             case XSD:
+                // TIENES QUE TENER EL ESQUEMA ASOCIADO EN EL XML PARA QUE FUNCIONE LA
+                // VALIDACIÓN XSD
+                // dbf.setValidating(true);
                 dbf.setNamespaceAware(true);
                 dbf.setIgnoringElementContentWhitespace(true);
                 dbf.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);

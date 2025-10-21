@@ -14,7 +14,7 @@ public class Corredor {
     protected ArrayList<Puntuacion> historial;
 
     public Corredor(String codigo,int dorsal, String nombre, LocalDate fechanacimiento, String equipo){
-        if (Utilidades.esCodigoValido(codigo)) {
+        if (!Utilidades.esCodigoValido(codigo)) {
             throw new IllegalArgumentException("El código no tiene un formato válido.");
         }
         if (!Utilidades.esNombreValido(nombre)) {
@@ -38,7 +38,7 @@ public class Corredor {
 
     @Override
     public String toString() {
-        return nombre;
+        return nombre+" ("+this.getClass().getSimpleName().toUpperCase()+")";
     }
 
     public int getDorsal() {

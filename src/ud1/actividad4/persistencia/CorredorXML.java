@@ -34,7 +34,7 @@ public class CorredorXML {
         return lista;
     }
 
-    public Corredor crearCorredor(Element corredorElem) {
+    private Corredor crearCorredor(Element corredorElem) {
         // ATRIBUTOS
         String codigo = corredorElem.getAttribute("codigo");
         int dorsal = Integer.parseInt(corredorElem.getAttribute("dorsal"));
@@ -44,7 +44,6 @@ public class CorredorXML {
         LocalDate fecha = LocalDate.parse(XMLDOMUtils.obtenerTexto(corredorElem, "fecha_nacimiento"));
 
         Corredor corredor = switch (corredorElem.getTagName()) {
-            // TODO AÑADIR EL CÓDIGO DE CORREDOR
             case "fondista" -> {
                 float distancia = Float.parseFloat(XMLDOMUtils.obtenerTexto(corredorElem, "distancia_max"));
                 yield new Fondista(codigo, dorsal, nombre, fecha, equipo, distancia);
@@ -67,7 +66,7 @@ public class CorredorXML {
 
     private ArrayList<Puntuacion> cargarHistorial(Element corredorElem) {
         ArrayList<Puntuacion> listaPuntuaciones = new ArrayList<>();
-        Element historialElem = (Element) corredorElem.getElementsByTagName("historial").item(0);
+        Element historialElem = (Element) corredorElem.getElementsByTagName("historial").item(0); // DEVUELVE NULO SI EL INDICE NO EXISTE
         if (historialElem != null) {
             NodeList puntuaciones = historialElem.getElementsByTagName("puntuacion");
             for (int i = 0; i < puntuaciones.getLength(); i++) {
@@ -80,22 +79,28 @@ public class CorredorXML {
         return listaPuntuaciones;
     }
 
-    private Corredor getCorredor(String codigo, Document doc){
+    public Corredor getCorredor(String codigo, Document doc) {
         Element corredorElem = doc.getElementById(codigo);
         return crearCorredor(corredorElem);
+    }
 
-        // Corredor corredorABuscar = null;
-        // NodeList nodos = raiz.getChildNodes();
-        // Element raiz = doc.getDocumentElement();
-        // for (int i = 0; i < nodos.getLength(); i++) {
-        //     if (nodos.item(i) instanceof Element corredorElem) {
-        //         Corredor corredor = crearCorredor(corredorElem);
-        //         if (corredor.getCodigo() == codigo) {
-        //             corredorABuscar = corredor;
-        //             break;
-        //         }
-        //     }
-        // }
-        // return corredorABuscar;
+    public Corredor getCorredor(int dorsal, Document doc) {
+        Element raiz = doc.getDocumentElement();
+        Corredor corredorABuscar = null;
+        NodeList nodos = raiz.getChildNodes();
+        for (int i = 0; i < nodos.getLength(); i++) {
+            if (nodos.item(i) instanceof Element corredorElem) {
+                // Corredor corredor = crearCorredor(corredorElem);
+                // if (corredor.getDorsal() == dorsal) {
+                //     corredorABuscar = corredor;
+                //     break;
+                // }
+                if (Integer.parseInt(corredorElem.getAttribute("dorsal")) == dorsal) {
+                    corredorABuscar = crearCorredor(corredorElem);
+                    break;
+                }
+            }
+        }
+        return corredorABuscar;
     }
 }
