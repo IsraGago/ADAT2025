@@ -28,21 +28,21 @@ public class GestorCorredores {
             System.out.println("No se ha cargado ningún documento XML.");
             return;
         }
-        corredorXML.cargarCorredores(this.documentoXML).forEach(System.out::println);
+        corredorXML.cargarCorredores().forEach(System.out::println);
     }
 
     public Corredor getCorredor(String codCorredor) {
         if (!Utilidades.esCodigoValido(codCorredor)) {
             return null;
         }
-        return corredorXML.getCorredor(codCorredor, documentoXML);
+        return corredorXML.getCorredor(codCorredor);
     }
 
     public Corredor getCorredor(int dorsal) {
         if (dorsal < 0) {
             return null;
         }
-        return corredorXML.getCorredor(dorsal, documentoXML);
+        return corredorXML.getCorredor(dorsal);
     }
 
     public void addCorredor(Corredor corredor){

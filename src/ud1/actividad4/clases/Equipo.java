@@ -5,13 +5,14 @@ import java.util.Set;
 import ud1.actividad4.clases.Patrocinador;
 
 public class Equipo {
-    private int idEquipo;
+    private String idEquipo;
     private String nombre;
     private Set<Patrocinador> patrocinadores = new HashSet<>();
     private boolean estaBorrado = false;
+    private int numPatrocinadores;
 
     // CONSTRUCTOR
-    public Equipo(int id, String nombre) {
+    public Equipo(String id, String nombre) {
         this.idEquipo = id;
         this.nombre = nombre;
     }
@@ -72,11 +73,11 @@ public class Equipo {
     }
 
     // GETTERS Y SETTERS
-    public int getIdEquipo() {
+    public String getIdEquipo() {
         return idEquipo;
     }
 
-    public void setIdEquipo(int idEquipo) {
+    public void setIdEquipo(String idEquipo) {
         this.idEquipo = idEquipo;
     }
 

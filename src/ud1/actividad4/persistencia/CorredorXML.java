@@ -26,9 +26,9 @@ public class CorredorXML {
         return documentoXML;
     }
 
-    public List<Corredor> cargarCorredores(Document doc) {
+    public List<Corredor> cargarCorredores() {
         List<Corredor> lista = new ArrayList<>();
-        Element raiz = doc.getDocumentElement();
+        Element raiz = documentoXML.getDocumentElement();
         NodeList nodos = raiz.getChildNodes();
         for (int i = 0; i < nodos.getLength(); i++) {
             if (nodos.item(i) instanceof Element corredorElem) { // guarda la instancia en la variable si da true
@@ -88,13 +88,13 @@ public class CorredorXML {
         return listaPuntuaciones;
     }
 
-    public Corredor getCorredor(String codigo, Document doc) {
-        Element corredorElem = doc.getElementById(codigo);
+    public Corredor getCorredor(String codigo) {
+        Element corredorElem = documentoXML.getElementById(codigo);
         return crearCorredor(corredorElem);
     }
 
-    public Corredor getCorredor(int dorsal, Document doc) {
-        Element raiz = doc.getDocumentElement();
+    public Corredor getCorredor(int dorsal) {
+        Element raiz = documentoXML.getDocumentElement();
         Corredor corredorABuscar = null;
         NodeList nodos = raiz.getChildNodes();
         for (int i = 0; i < nodos.getLength(); i++) {
@@ -152,7 +152,7 @@ public class CorredorXML {
     }
 
     public boolean eliminarCorredorPorDorsal(int dorsal) {
-        Corredor corredorAeliminar = getCorredor(dorsal, documentoXML);
+        Corredor corredorAeliminar = getCorredor(dorsal);
         return eliminarCorredorPorCodigo(corredorAeliminar.getCodigo());
     }
 
@@ -175,4 +175,6 @@ public class CorredorXML {
         Element puntuacionElem = XMLDOMUtils.addElement(documentoXML, "puntuacion", puntuacion.getPuntos()+"", historial);
         XMLDOMUtils.addAtributo(documentoXML, "anio", puntuacion.getAnio()+"", puntuacionElem);
     }
+
+    //TODO GUARDAR CAMBIOS
 }
