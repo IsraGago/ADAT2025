@@ -19,5 +19,7 @@ public class Main {
         System.out.println("------------------\nMOSTRAR CORREDOR SEGÚN DORSAL");
         Corredor corredorBuscarDorsal = gestor.getCorredor(2);
         corredorBuscarDorsal.mostrarInformacion();
+
+        
     }
 }

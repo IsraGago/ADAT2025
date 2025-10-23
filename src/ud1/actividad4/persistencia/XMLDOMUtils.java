@@ -1,15 +1,29 @@
 package ud1.actividad4.persistencia;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 public class XMLDOMUtils {
@@ -78,5 +92,96 @@ public class XMLDOMUtils {
             return lista.item(0).getTextContent(); // DENTRO DEL PADRE SOLO HAY UN ITEM QUE ES EL TEXTO
         }
         return "";
+    }
+
+    public static void guardarDocumento(Document doc, String rutaDesitno) {
+        try {
+            TransformerFactory factory = TransformerFactory.newInstance();
+            Transformer transformer = factory.newTransformer();
+
+            // evitar espacios excesivos
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(new FileWriter(rutaDesitno));
+            transformer.transform(source, result);
+        } catch (TransformerException | IOException e) {
+            throw new ExcepcionXML("Error al guardar el documento XML:" + e.getMessage());
+        }
+    }
+
+    public static Attr addAtributo(Document documento, String nombre, String valor, Element padre) {
+        Attr atributo = documento.createAttribute(nombre);
+        atributo.setValue(valor);
+        padre.setAttributeNode(atributo);
+        // element.setAttribute(nombre, valor);
+        return atributo;
+    }
+
+    public static Attr addAtributoId(Document documento, String nombre, String valorId, Element padre) {
+        Attr atributo = documento.createAttribute(nombre);
+        atributo.setValue(valorId);
+        padre.setAttributeNode(atributo);
+        // element.setAttribute(nombre, valor);
+        padre.setIdAttributeNode(atributo, true);
+        return atributo;
+    }
+
+    public static Element addElement(Document documento, String nombre, String valor, Element padre) {
+        Element elemento = documento.createElement(nombre);
+        Text texto = documento.createTextNode(valor);
+        padre.appendChild(elemento);
+        elemento.appendChild(texto);
+        return elemento;
+    }
+
+    public static boolean eliminarElemento(Element elemento){
+        if (elemento != null && elemento.getParentNode() != null) {
+            elemento.getParentNode().removeChild(elemento);
+            return true;
+        }
+        return false;
+    }
+
+    public static void modificarAtributo(Element elemento,String nombre, String valor ){
+        elemento.setAttribute(nombre, valor); // TODO REVISAR SI FUNCIONA
+    }
+    public static void updateValorElemento(Element elemento, String valor){
+        elemento.setTextContent(valor);
+    }
+
+    public static Element buscarElementoPorID(Document doc, String idValue){
+        return doc.getElementById(idValue);
+    }
+
+    private Object evaluarXPath (Object contexto,String expresion, QName tipoResultado){
+        // CONTEXTO ES EL NODO DESDE EL QUE EMPIEZA A BUSCAR, NORMALMENTE EL RAIZ
+        try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            return xPath.evaluate(expresion, xPath, tipoResultado);
+        } catch (Exception e) {
+            throw new ExcepcionXML("Error al evaluar la expresión XPath: "+e.getMessage());
+        }
+    }
+
+    private Node evaluarXPathNode(Object contexto,String expresion){
+        return (Node) evaluarXPath(contexto,expresion,XPathConstants.NODE);
+    }
+
+    private Boolean evaluarXPathBoolean(Object contexto,String expresion){
+        return (Boolean) evaluarXPath(contexto, expresion, XPathConstants.BOOLEAN);
+    }
+
+    private NodeList evaluarXPathNodeList(Object contexto,String expresion){
+        return (NodeList) evaluarXPath(contexto, expresion, XPathConstants.NODESET);
+    }
+
+    private Double evaluarXPathNumber(Object contexto,String expresion){
+        return (Double) evaluarXPath(contexto, expresion, XPathConstants.NUMBER);
+    }
+
+    private String evaluarXPathString(Object contexto,String expresion){
+        return (String) evaluarXPath(contexto, expresion, XPathConstants.STRING);
     }
 }

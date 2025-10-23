@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import ud1.actividad4.clases.Corredor;
@@ -14,8 +15,15 @@ import ud1.actividad4.clases.Puntuacion;
 import ud1.actividad4.clases.Velocista;
 
 public class CorredorXML {
+    Document documentoXML;
+
     public Document cargarDocumentoXML(String rutaXML, TipoValidacion validacion) throws ExcepcionXML {
-        return XMLDOMUtils.cargarDocumentoXML(rutaXML, validacion);
+        try {
+            documentoXML = XMLDOMUtils.cargarDocumentoXML(rutaXML, validacion);
+        } catch (Exception e) {
+            throw new ExcepcionXML("Error al cargar el documento XML: "+e.getMessage());
+        }
+        return documentoXML;
     }
 
     public List<Corredor> cargarCorredores(Document doc) {
@@ -66,7 +74,8 @@ public class CorredorXML {
 
     private ArrayList<Puntuacion> cargarHistorial(Element corredorElem) {
         ArrayList<Puntuacion> listaPuntuaciones = new ArrayList<>();
-        Element historialElem = (Element) corredorElem.getElementsByTagName("historial").item(0); // DEVUELVE NULO SI EL INDICE NO EXISTE
+        Element historialElem = (Element) corredorElem.getElementsByTagName("historial").item(0); // DEVUELVE NULO SI EL
+                                                                                                  // INDICE NO EXISTE
         if (historialElem != null) {
             NodeList puntuaciones = historialElem.getElementsByTagName("puntuacion");
             for (int i = 0; i < puntuaciones.getLength(); i++) {
@@ -92,8 +101,8 @@ public class CorredorXML {
             if (nodos.item(i) instanceof Element corredorElem) {
                 // Corredor corredor = crearCorredor(corredorElem);
                 // if (corredor.getDorsal() == dorsal) {
-                //     corredorABuscar = corredor;
-                //     break;
+                // corredorABuscar = corredor;
+                // break;
                 // }
                 if (Integer.parseInt(corredorElem.getAttribute("dorsal")) == dorsal) {
                     corredorABuscar = crearCorredor(corredorElem);
@@ -102,5 +111,68 @@ public class CorredorXML {
             }
         }
         return corredorABuscar;
+    }
+
+    public void insertarCorredor(Corredor corredor) {
+
+        Element raiz = documentoXML.getDocumentElement();
+        String nombre = corredor.getClass().getSimpleName();
+
+        // CREAR ELEMENTO CORREDOR Y COLGARLO DEL RAIZ
+        Element corredorElement = XMLDOMUtils.addElement(documentoXML, nombre, null, raiz);
+
+        // ELEMENTOS COMUNES {nombre y fecha}
+        XMLDOMUtils.addElement(documentoXML, "nombre", corredor.getNombre(), corredorElement);
+        XMLDOMUtils.addElement(documentoXML, "fecha_nacimiento", corredor.getFechanacimiento().toString(),
+                corredorElement);
+        // ATRIBUTOS {codigo, dorsal y equipo}
+        XMLDOMUtils.addAtributo(documentoXML, "codigo", corredor.getCodigo(), corredorElement);
+        XMLDOMUtils.addAtributo(documentoXML, "dorsal", corredor.getDorsal() + "", corredorElement);
+        XMLDOMUtils.addAtributo(documentoXML, "equipo", corredor.getEquipo(), corredorElement);
+
+        // ELEMENTO ESPECÍFICO {velocidad_media | distacia_max}
+        if (corredor instanceof Velocista v) {
+            XMLDOMUtils.addElement(documentoXML, "velocidad_media", v.getVelocidadMedia() + "", corredorElement);
+        } else if (corredor instanceof Fondista f) {
+            XMLDOMUtils.addElement(documentoXML, "distacia_max", f.getDistanciaMax() + "", corredorElement);
+        }
+
+        // HISTORIAL
+        Element historial = XMLDOMUtils.addElement(documentoXML, "historial", null, corredorElement);
+        for (Puntuacion puntuacion : corredor.getHistorial()) {
+            XMLDOMUtils.addElement(documentoXML, "puntuacion", puntuacion.getPuntos()+"", historial);
+            XMLDOMUtils.addAtributo(documentoXML, "anio", puntuacion.getAnio()+"", historial);
+        }
+
+    }
+
+    public boolean eliminarCorredorPorCodigo(String codigo) {
+        Element corredorElem = XMLDOMUtils.buscarElementoPorID(documentoXML, codigo);
+        return XMLDOMUtils.eliminarElemento(corredorElem);
+    }
+
+    public boolean eliminarCorredorPorDorsal(int dorsal) {
+        Corredor corredorAeliminar = getCorredor(dorsal, documentoXML);
+        return eliminarCorredorPorCodigo(corredorAeliminar.getCodigo());
+    }
+
+    public int getUltimoDorsal(){
+        Element raiz = documentoXML.getDocumentElement();
+        NodeList hijos = raiz.getChildNodes();
+
+        for (int i = hijos.getLength() -1 ; i >= 0; i--) {
+            Node nodo = hijos.item(i);
+            if (nodo instanceof Element corredorElement) {
+                Corredor corredor = crearCorredor(corredorElement);
+                return corredor.getDorsal();
+            }
+        }
+        return -1;
+    }
+
+    public void addPuntuacion(String codigo,Puntuacion puntuacion){
+        Element historial = (Element) documentoXML.getElementById(codigo).getElementsByTagName("historial").item(0);
+        Element puntuacionElem = XMLDOMUtils.addElement(documentoXML, "puntuacion", puntuacion.getPuntos()+"", historial);
+        XMLDOMUtils.addAtributo(documentoXML, "anio", puntuacion.getAnio()+"", puntuacionElem);
     }
 }
