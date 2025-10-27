@@ -13,6 +13,7 @@ import ud1.actividad4.clases.Corredor;
 import ud1.actividad4.clases.Fondista;
 import ud1.actividad4.clases.Puntuacion;
 import ud1.actividad4.clases.Velocista;
+import ud1.actividad4.servicio.Utilidades;
 
 public class CorredorXML {
     Document documentoXML;
@@ -21,7 +22,7 @@ public class CorredorXML {
         try {
             documentoXML = XMLDOMUtils.cargarDocumentoXML(rutaXML, validacion);
         } catch (Exception e) {
-            throw new ExcepcionXML("Error al cargar el documento XML: "+e.getMessage());
+            throw new ExcepcionXML("Error al cargar el documento XML: " + e.getMessage());
         }
         return documentoXML;
     }
@@ -44,22 +45,33 @@ public class CorredorXML {
 
     private Corredor crearCorredor(Element corredorElem) {
         // ATRIBUTOS
-        String codigo = corredorElem.getAttribute("codigo");
-        int dorsal = Integer.parseInt(corredorElem.getAttribute("dorsal"));
+        String codigo;
+        if (corredorElem.getAttribute("codigo").isEmpty()) {
+            codigo = calcularSiguienteCodigo(getUltimoCodigo());
+        } else {
+            codigo = corredorElem.getAttribute("codigo");
+        }
+
+        int dorsal;
+        if (corredorElem.getAttribute("dorsal").isEmpty()) {
+            dorsal = getUltimoDorsal() + 1;
+        } else {
+            dorsal = Integer.parseInt(corredorElem.getAttribute("dorsal"));
+        }
         String equipo = corredorElem.getAttribute("equipo");
         // ETIQUETAS
         String nombre = XMLDOMUtils.obtenerTexto(corredorElem, "nombre");
         LocalDate fecha = LocalDate.parse(XMLDOMUtils.obtenerTexto(corredorElem, "fecha_nacimiento"));
 
-        Corredor corredor = switch (corredorElem.getTagName()) {
+        Corredor corredor = switch (corredorElem.getTagName().toLowerCase()) {
             case "fondista" -> {
                 float distancia = Float.parseFloat(XMLDOMUtils.obtenerTexto(corredorElem, "distancia_max"));
-                yield new Fondista(codigo, dorsal, nombre, fecha, equipo, distancia);
+                yield new Fondista(nombre, fecha, equipo, distancia);
             }
 
             case "velocista" -> {
                 float velocidad = Float.parseFloat(XMLDOMUtils.obtenerTexto(corredorElem, "velocidad_media"));
-                yield new Velocista(codigo, dorsal, nombre, fecha, equipo, velocidad);
+                yield new Velocista(nombre, fecha, equipo, velocidad);
             }
 
             default -> {
@@ -68,6 +80,8 @@ public class CorredorXML {
         };
         if (corredor != null) {
             corredor.setHistorial(cargarHistorial(corredorElem));
+            corredor.setDorsal(dorsal);
+            corredor.setCodigo(codigo);
         }
         return corredor;
     }
@@ -125,9 +139,9 @@ public class CorredorXML {
         XMLDOMUtils.addElement(documentoXML, "nombre", corredor.getNombre(), corredorElement);
         XMLDOMUtils.addElement(documentoXML, "fecha_nacimiento", corredor.getFechanacimiento().toString(),
                 corredorElement);
-        // ATRIBUTOS {codigo, dorsal y equipo}
-        XMLDOMUtils.addAtributo(documentoXML, "codigo", corredor.getCodigo(), corredorElement);
-        XMLDOMUtils.addAtributo(documentoXML, "dorsal", corredor.getDorsal() + "", corredorElement);
+        // ATRIBUTOS {codigo (ID), dorsal y equipo}
+        XMLDOMUtils.addAtributoId(documentoXML, "codigo", calcularSiguienteCodigo(getUltimoCodigo()), corredorElement);
+        XMLDOMUtils.addAtributo(documentoXML, "dorsal", (getUltimoDorsal() + 1) + "", corredorElement);
         XMLDOMUtils.addAtributo(documentoXML, "equipo", corredor.getEquipo(), corredorElement);
 
         // ELEMENTO ESPECÍFICO {velocidad_media | distacia_max}
@@ -140,8 +154,8 @@ public class CorredorXML {
         // HISTORIAL
         Element historial = XMLDOMUtils.addElement(documentoXML, "historial", null, corredorElement);
         for (Puntuacion puntuacion : corredor.getHistorial()) {
-            XMLDOMUtils.addElement(documentoXML, "puntuacion", puntuacion.getPuntos()+"", historial);
-            XMLDOMUtils.addAtributo(documentoXML, "anio", puntuacion.getAnio()+"", historial);
+            XMLDOMUtils.addElement(documentoXML, "puntuacion", puntuacion.getPuntos() + "", historial);
+            XMLDOMUtils.addAtributo(documentoXML, "anio", puntuacion.getAnio() + "", historial);
         }
 
     }
@@ -156,25 +170,67 @@ public class CorredorXML {
         return eliminarCorredorPorCodigo(corredorAeliminar.getCodigo());
     }
 
-    public int getUltimoDorsal(){
+    public int getUltimoDorsal() {
         Element raiz = documentoXML.getDocumentElement();
         NodeList hijos = raiz.getChildNodes();
 
-        for (int i = hijos.getLength() -1 ; i >= 0; i--) {
+        for (int i = hijos.getLength() - 1; i >= 0; i--) {
             Node nodo = hijos.item(i);
             if (nodo instanceof Element corredorElement) {
-                Corredor corredor = crearCorredor(corredorElement);
-                return corredor.getDorsal();
+                if (!corredorElement.getAttribute("dorsal").isEmpty()) {
+                    return Integer.parseInt(corredorElement.getAttribute("dorsal"));
+                }
             }
         }
         return -1;
     }
 
-    public void addPuntuacion(String codigo,Puntuacion puntuacion){
-        Element historial = (Element) documentoXML.getElementById(codigo).getElementsByTagName("historial").item(0);
-        Element puntuacionElem = XMLDOMUtils.addElement(documentoXML, "puntuacion", puntuacion.getPuntos()+"", historial);
-        XMLDOMUtils.addAtributo(documentoXML, "anio", puntuacion.getAnio()+"", puntuacionElem);
+    public String getUltimoCodigo() {
+        Element raiz = documentoXML.getDocumentElement();
+        NodeList hijos = raiz.getChildNodes();
+
+        for (int i = hijos.getLength() - 1; i >= 0; i--) {
+            Node nodo = hijos.item(i);
+            if (nodo instanceof Element corredorElement) {
+
+                // String ultimoCodigo =
+                // corredorElement.getElementsByTagName("codigo").item(0).getTextContent();
+                String ultimoCodigo = corredorElement.getAttribute("codigo");
+                if (ultimoCodigo != null && !ultimoCodigo.isEmpty()) {
+                    int parteNumerica = Integer.parseInt(ultimoCodigo.substring(1));
+                    return "C" + (parteNumerica < 10 ? "0" : "") + parteNumerica;
+                }
+            }
+        }
+        return null;
     }
 
-    //TODO GUARDAR CAMBIOS
+    public String calcularSiguienteCodigo(String codigo) {
+        if (!Utilidades.esCodigoValido(codigo)) {
+            return null;
+        }
+        int parteNumerica = Integer.parseInt(codigo.substring(1)) + 1;
+        return "C" + (parteNumerica < 10 ? "0" : "") + parteNumerica;
+    }
+
+    public void addPuntuacion(String codigoCorredor, Puntuacion puntuacion) {
+        Element historial = (Element) documentoXML.getElementById(codigoCorredor).getElementsByTagName("historial").item(0);
+
+        NodeList nodosPuntuaciones = historial.getElementsByTagName("puntuacion");
+        boolean existe = false;
+        for (int i = 0; i < nodosPuntuaciones.getLength(); i++) {
+            Element p = (Element) nodosPuntuaciones.item(i); // instanceof (?)
+            if (Integer.parseInt(p.getAttribute("anio")) == puntuacion.getAnio()) {
+                existe = true;
+                // TODO: COMPROBAR SI EDITA BIEN
+                p.setTextContent(puntuacion.getPuntos()+"");
+
+            }
+        }
+        if (!existe) {
+            Element puntuacionElem = XMLDOMUtils.addElement(documentoXML, "puntuacion", puntuacion.getPuntos() + "",
+                    historial);
+            XMLDOMUtils.addAtributo(documentoXML, "anio", puntuacion.getAnio() + "", puntuacionElem);
+        }
+    }
 }

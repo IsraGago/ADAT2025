@@ -5,6 +5,7 @@ import ud1.actividad4.clases.Corredor;
 import ud1.actividad4.persistencia.CorredorXML;
 import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
+import ud1.actividad4.persistencia.XMLDOMUtils;
 import ud1.actividad4.servicio.Utilidades;
 
 import org.w3c.dom.Document;
@@ -21,7 +22,6 @@ public class GestorCorredores {
             System.out.println("Error al cargar el documento XML: " + e.getMessage());
         }
     }
-
 
     public void mostrarCorredores() {
         if (this.documentoXML == null) {
@@ -45,15 +45,41 @@ public class GestorCorredores {
         return corredorXML.getCorredor(dorsal);
     }
 
-    public void addCorredor(Corredor corredor){
-        corredorXML.insertarCorredor(corredor);
+    public void addCorredor(Corredor corredor) {
+        if (corredor != null) {
+            corredorXML.insertarCorredor(corredor);
+        }
     }
 
-    public void eliminarCorredor(String codigo){
+    public void eliminarCorredor(String codigo) {
+        if (!Utilidades.esCodigoValido(codigo)) {
+            throw new IllegalArgumentException("ERROR: El código no tiene un formato correcto");
+        }
         corredorXML.eliminarCorredorPorCodigo(codigo);
     }
 
-    public void addPuntuacion(String codigoCorredor,Puntuacion puntuacion){
-        corredorXML.addPuntuacion(codigoCorredor,puntuacion);
+    public void addPuntuacion(String codigoCorredor, Puntuacion puntuacion) {
+        if (!Utilidades.esCodigoValido(codigoCorredor)) {
+            throw new IllegalArgumentException("ERROR: El código no tiene un formato correcto");
+        }
+        if (puntuacion == null) {
+            throw new IllegalArgumentException("ERROR: La puntuación no puede ser nula");
+        }
+        corredorXML.addPuntuacion(codigoCorredor, puntuacion);
+    }
+
+    public void guardarFicheroXML(String rutaFichero) {
+        if (rutaFichero == null || rutaFichero.isEmpty()) {
+            throw new IllegalArgumentException("ERROR: La ruta no puede estar vacío");
+        }
+        XMLDOMUtils.guardarDocumento(documentoXML, rutaFichero);
+    }
+
+    public int getUltimoDorsal() {
+        return corredorXML.getUltimoDorsal();
+    }
+
+    public String getUltimoCodigo(){
+        return corredorXML.getUltimoCodigo();
     }
 }

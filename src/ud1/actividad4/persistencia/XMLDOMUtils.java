@@ -10,8 +10,10 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.XPath;
@@ -136,7 +138,7 @@ public class XMLDOMUtils {
         return elemento;
     }
 
-    public static boolean eliminarElemento(Element elemento){
+    public static boolean eliminarElemento(Element elemento) {
         if (elemento != null && elemento.getParentNode() != null) {
             elemento.getParentNode().removeChild(elemento);
             return true;
@@ -144,44 +146,81 @@ public class XMLDOMUtils {
         return false;
     }
 
-    public static void modificarAtributo(Element elemento,String nombre, String valor ){
+    public static void modificarAtributo(Element elemento, String nombre, String valor) {
         elemento.setAttribute(nombre, valor); // TODO REVISAR SI FUNCIONA
     }
-    public static void updateValorElemento(Element elemento, String valor){
+
+    public static void updateValorElemento(Element elemento, String valor) {
         elemento.setTextContent(valor);
     }
 
-    public static Element buscarElementoPorID(Document doc, String idValue){
+    public static Element buscarElementoPorID(Document doc, String idValue) {
         return doc.getElementById(idValue);
     }
 
-    private Object evaluarXPath (Object contexto,String expresion, QName tipoResultado){
+    private Object evaluarXPath(Object contexto, String expresion, QName tipoResultado) {
         // CONTEXTO ES EL NODO DESDE EL QUE EMPIEZA A BUSCAR, NORMALMENTE EL RAIZ
         try {
             XPath xPath = XPathFactory.newInstance().newXPath();
             return xPath.evaluate(expresion, xPath, tipoResultado);
         } catch (Exception e) {
-            throw new ExcepcionXML("Error al evaluar la expresión XPath: "+e.getMessage());
+            throw new ExcepcionXML("Error al evaluar la expresión XPath: " + e.getMessage());
         }
     }
 
-    private Node evaluarXPathNode(Object contexto,String expresion){
-        return (Node) evaluarXPath(contexto,expresion,XPathConstants.NODE);
+    private Node evaluarXPathNode(Object contexto, String expresion) {
+        return (Node) evaluarXPath(contexto, expresion, XPathConstants.NODE);
     }
 
-    private Boolean evaluarXPathBoolean(Object contexto,String expresion){
+    private Boolean evaluarXPathBoolean(Object contexto, String expresion) {
         return (Boolean) evaluarXPath(contexto, expresion, XPathConstants.BOOLEAN);
     }
 
-    private NodeList evaluarXPathNodeList(Object contexto,String expresion){
+    private NodeList evaluarXPathNodeList(Object contexto, String expresion) {
         return (NodeList) evaluarXPath(contexto, expresion, XPathConstants.NODESET);
     }
 
-    private Double evaluarXPathNumber(Object contexto,String expresion){
+    private Double evaluarXPathNumber(Object contexto, String expresion) {
         return (Double) evaluarXPath(contexto, expresion, XPathConstants.NUMBER);
     }
 
-    private String evaluarXPathString(Object contexto,String expresion){
+    private String evaluarXPathString(Object contexto, String expresion) {
         return (String) evaluarXPath(contexto, expresion, XPathConstants.STRING);
+    }
+
+    public void guardarDocumentoXML(String rutaSalida, Document documento) {
+
+        TransformerFactory transFact;
+        try {
+            transFact = TransformerFactory.newInstance();
+            documento.normalize();
+            // añadimos sangrado cada tres espacios
+            transFact.setAttribute("indent-number", 3);
+
+            try {
+                Transformer trans;
+                trans = transFact.newTransformer();
+                trans.setOutputProperty(OutputKeys.INDENT, "yes");
+                trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+                DOMSource domSource = new DOMSource(documento);
+                // creamos fichero para escribir en modo texto
+                FileWriter sw = new FileWriter(rutaSalida);
+                // escribimos todo el arbol en el fichero
+                StreamResult sr = new StreamResult(sw);
+                trans.transform(domSource, sr);
+                
+
+            } catch (TransformerConfigurationException ex) {
+                System.out.println(" ");
+                throw new ExcepcionXML("ERROR al construir el motor de transformación: "+ex.getMessage());
+            } catch (IOException ex) {
+                throw new ExcepcionXML("ERROR de entrada/salida: " + ex.getMessage());
+            } catch(TransformerException ex){
+                throw new ExcepcionXML("ERROR al transformar: "+ex.getMessage());
+            }
+        } catch (TransformerFactoryConfigurationError e) {
+            throw new ExcepcionXML("ERROR a la hora de implementar la transformación: "+e.getMessage());
+        }
+
     }
 }

@@ -11,12 +11,10 @@ public class Corredor {
     protected String nombre;
     protected LocalDate fechanacimiento;
     protected String equipo;
-    protected ArrayList<Puntuacion> historial;
+    protected ArrayList<Puntuacion> historial = new ArrayList<>();
 
-    public Corredor(String codigo,int dorsal, String nombre, LocalDate fechanacimiento, String equipo){
-        if (!Utilidades.esCodigoValido(codigo)) {
-            throw new IllegalArgumentException("El código no tiene un formato válido.");
-        }
+    public Corredor(String nombre, LocalDate fechanacimiento, String equipo){
+        
         if (!Utilidades.esNombreValido(nombre)) {
             throw new IllegalArgumentException("Nombre no válido");
         }
@@ -26,11 +24,7 @@ public class Corredor {
         if (equipo == null || equipo.trim().isEmpty()) {
             throw new IllegalArgumentException("El equipo no puede ser nulo o vacío");
         }
-        if (dorsal < 1) {
-            throw new IllegalArgumentException("El dorsal debe ser mayor que 0");
-        }
-        this.codigo = codigo;
-        this.dorsal = dorsal;
+
         this.nombre = nombre;
         this.fechanacimiento = fechanacimiento;
         this.equipo = equipo;
@@ -74,6 +68,9 @@ public class Corredor {
     }
 
     public void setCodigo(String codigo) {
+        if (!Utilidades.esCodigoValido(codigo)) {
+            throw new IllegalArgumentException("El código no tiene un formato válido.");
+        }
         this.codigo = codigo;
     }
 
@@ -91,7 +88,7 @@ public class Corredor {
 
     public void mostrarInformacion() {
         System.out.println("CORREDOR " + this.getClass().getSimpleName().toUpperCase() + ": " + this);
-        System.out.println("NOMBRE: " + this.getNombre() + " - FECHA NACIMIENTO: " + this.getFechanacimiento()
+        System.out.println("NOMBRE: " + this.getNombre() +" - CÓDIGO: "+codigo+ " - FECHA NACIMIENTO: " + this.getFechanacimiento()
                 + " - EQUIPO: " + this.getEquipo() + " - DORSAL: " + this.getDorsal() + " - PUNTUACIONES: "
                 + this.historial);
     }
