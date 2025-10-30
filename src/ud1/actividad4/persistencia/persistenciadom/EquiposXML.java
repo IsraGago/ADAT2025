@@ -1,4 +1,4 @@
-package ud1.actividad4.persistencia;
+package ud1.actividad4.persistencia.persistenciadom;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,6 +11,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 import ud1.actividad4.clases.Patrocinador;
+import ud1.actividad4.persistencia.ExcepcionXML;
+import ud1.actividad4.persistencia.TipoValidacion;
 import ud1.actividad4.clases.Equipo;
 
 public class EquiposXML {

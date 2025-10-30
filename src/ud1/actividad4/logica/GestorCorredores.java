@@ -1,11 +1,13 @@
 package ud1.actividad4.logica;
 
 import ud1.actividad4.clases.Puntuacion;
-import ud1.actividad4.clases.Corredor;
-import ud1.actividad4.persistencia.CorredorXML;
 import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
-import ud1.actividad4.persistencia.XMLDOMUtils;
+import ud1.actividad4.persistencia.persistenciadom.CorredorXML;
+import ud1.actividad4.persistencia.persistenciadom.XMLDOMUtils;
+import ud1.actividad4.persistencia.persistenciasax.CorredorSAXHandler;
+import ud1.actividad4.persistencia.persistenciasax.XMLSAXUtils;
+import ud1.actividad4.clases.Corredor;
 import ud1.actividad4.servicio.Utilidades;
 
 import org.w3c.dom.Document;
@@ -13,11 +15,15 @@ import org.w3c.dom.Document;
 public class GestorCorredores {
     private Document documentoXML;
     private final CorredorXML corredorXML = new CorredorXML();
+    private String rutaXML = "";
+    TipoValidacion tipoValidacion = null;
 
-    public void cargarDocumento(String rutaXML, TipoValidacion validacion) {
+    public void cargarDocumento(String rutaXML, TipoValidacion tipoValidacion) {
         try {
-            this.documentoXML = corredorXML.cargarDocumentoXML(rutaXML, validacion);
+            this.documentoXML = corredorXML.cargarDocumentoXML(rutaXML, tipoValidacion);
             System.out.println("Documento XML cargado correctamente");
+            this.rutaXML = rutaXML;
+            this.tipoValidacion = tipoValidacion;
         } catch (ExcepcionXML e) {
             System.out.println("Error al cargar el documento XML: " + e.getMessage());
         }
@@ -79,7 +85,13 @@ public class GestorCorredores {
         return corredorXML.getUltimoDorsal();
     }
 
-    public String getUltimoCodigo(){
+    public String getUltimoCodigo() {
         return corredorXML.getUltimoCodigo();
+    }
+
+    // SAX
+    public void mostrarCorredoresSax() {
+        CorredorSAXHandler handler = new CorredorSAXHandler();
+        XMLSAXUtils.procesarDocumento(rutaXML, handler, tipoValidacion);
     }
 }

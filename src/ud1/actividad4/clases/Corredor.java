@@ -13,6 +13,10 @@ public class Corredor {
     protected String equipo;
     protected ArrayList<Puntuacion> historial = new ArrayList<>();
 
+    public Corredor(){
+        
+    }
+
     public Corredor(String nombre, LocalDate fechanacimiento, String equipo){
         
         if (!Utilidades.esNombreValido(nombre)) {
@@ -101,6 +105,18 @@ public class Corredor {
         result = prime * result + ((fechanacimiento == null) ? 0 : fechanacimiento.hashCode());
         result = prime * result + ((equipo == null) ? 0 : equipo.hashCode());
         return result;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setFechaNacimiento(LocalDate fechanacimiento) {
+        this.fechanacimiento = fechanacimiento;
+    }
+
+    public void setEquipo(String equipo) {
+        this.equipo = equipo;
     }
 
     @Override

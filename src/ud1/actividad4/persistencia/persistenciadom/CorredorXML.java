@@ -1,4 +1,4 @@
-package ud1.actividad4.persistencia;
+package ud1.actividad4.persistencia.persistenciadom;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -13,6 +13,8 @@ import ud1.actividad4.clases.Corredor;
 import ud1.actividad4.clases.Fondista;
 import ud1.actividad4.clases.Puntuacion;
 import ud1.actividad4.clases.Velocista;
+import ud1.actividad4.persistencia.ExcepcionXML;
+import ud1.actividad4.persistencia.TipoValidacion;
 import ud1.actividad4.servicio.Utilidades;
 
 public class CorredorXML {

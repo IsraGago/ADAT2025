@@ -5,6 +5,10 @@ import java.time.LocalDate;
 public class Velocista extends Corredor {
     private float velocidadMedia; // EN KM/H
 
+    public Velocista(){
+        
+    }
+
     public Velocista(String nombre, LocalDate fecha, String equipo, float velocidadMedia) {
         super(nombre,fecha,equipo);
         if (velocidadMedia <= 0) {

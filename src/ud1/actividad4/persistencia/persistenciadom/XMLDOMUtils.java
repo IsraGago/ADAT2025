@@ -1,4 +1,4 @@
-package ud1.actividad4.persistencia;
+package ud1.actividad4.persistencia.persistenciadom;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -27,6 +27,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
+
+import ud1.actividad4.persistencia.ExcepcionXML;
+import ud1.actividad4.persistencia.SimpleErrorHandler;
+import ud1.actividad4.persistencia.TipoValidacion;
 
 public class XMLDOMUtils {
 
