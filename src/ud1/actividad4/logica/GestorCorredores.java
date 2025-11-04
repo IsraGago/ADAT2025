@@ -92,8 +92,6 @@ public class GestorCorredores {
         return corredorXML.getUltimoCodigo();
     }
 
-    public
-
     // SAX
 
     public ArrayList<Corredor> cargarCorredoresSAX() {
