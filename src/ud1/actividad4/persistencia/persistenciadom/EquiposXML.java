@@ -82,4 +82,19 @@ public class EquiposXML {
     public void addPatrocinador(Patrocinador patrocinador) {
 
     }
+
+    public String getNombreEquipo(String id){
+        String nombre;
+        Element raiz = documentoXML.getDocumentElement();
+        NodeList nodos = raiz.getElementsByTagName("equipo");
+        for (int i = 0; i < nodos.getLength(); i++) {
+            if (nodos.item(i) instanceof Element equipoElement) {
+                Equipo equipo = crearEquipo(equipoElement);
+                if (equipoElement.getAttribute("id").equalsIgnoreCase(id)) {
+                    return XMLDOMUtils.obtenerTexto(equipoElement, "nombre");
+                }
+            }
+        }
+        return null;
+    }
 }

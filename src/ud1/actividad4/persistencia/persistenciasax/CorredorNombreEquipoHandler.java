@@ -7,17 +7,25 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import ud1.actividad4.clases.Puntuacion;
+import ud1.actividad4.logica.GestorEquipos;
 import ud1.actividad4.clases.Corredor;
 import ud1.actividad4.clases.Fondista;
+import ud1.actividad4.clases.Puntuacion;
 import ud1.actividad4.clases.Velocista;
 
-public class CorredorSAXHandler extends DefaultHandler {
+public class CorredorNombreEquipoHandler extends DefaultHandler {
     private final ArrayList<Corredor> corredores = new ArrayList<>();
     private Corredor corredorActual;
     private ArrayList<Puntuacion> historialActual;
     private String contenidoActual = "";
     private String anioActual;
+    private GestorEquipos gestor;
+    private String nombreEquipoBuscar;
+
+    public CorredorNombreEquipoHandler(String nombreEquipoBuscar,GestorEquipos gestor) {
+        this.gestor = gestor;
+        this.nombreEquipoBuscar = nombreEquipoBuscar;
+    }
 
     public ArrayList<Corredor> getCorredores() {
         return corredores;
@@ -63,7 +71,10 @@ public class CorredorSAXHandler extends DefaultHandler {
 
         switch (qName.toLowerCase()) {
             case "velocista", "fondista" -> {
-                corredores.add(corredorActual);
+                String nombreEquipo = gestor.getNombreEquipo(corredorActual.getEquipo());
+                if (nombreEquipo != null && nombreEquipo.equalsIgnoreCase(nombreEquipoBuscar)) {
+                    corredores.add(corredorActual);
+                }
             }
 
             case "historial" -> {

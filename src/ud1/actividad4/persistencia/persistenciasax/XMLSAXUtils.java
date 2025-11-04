@@ -41,7 +41,7 @@ public class XMLSAXUtils {
             SAXParser parser = factory.newSAXParser();
             parser.parse(ficheroXML, handler);
         } catch (Exception e) {
-            throw new ExcepcionXML(rutaFicheroXML);
+            throw new ExcepcionXML(rutaFicheroXML,e);
         }
     }
 

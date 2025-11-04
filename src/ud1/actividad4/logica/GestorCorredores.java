@@ -5,10 +5,13 @@ import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
 import ud1.actividad4.persistencia.persistenciadom.CorredorXML;
 import ud1.actividad4.persistencia.persistenciadom.XMLDOMUtils;
+import ud1.actividad4.persistencia.persistenciasax.CorredorNombreEquipoHandler;
 import ud1.actividad4.persistencia.persistenciasax.CorredorSAXHandler;
 import ud1.actividad4.persistencia.persistenciasax.XMLSAXUtils;
 import ud1.actividad4.clases.Corredor;
 import ud1.actividad4.servicio.Utilidades;
+
+import java.util.ArrayList;
 
 import org.w3c.dom.Document;
 
@@ -21,7 +24,7 @@ public class GestorCorredores {
     public void cargarDocumento(String rutaXML, TipoValidacion tipoValidacion) {
         try {
             this.documentoXML = corredorXML.cargarDocumentoXML(rutaXML, tipoValidacion);
-            System.out.println("Documento XML cargado correctamente");
+            System.out.println("Documento XML cargado correctamente: " + rutaXML);
             this.rutaXML = rutaXML;
             this.tipoValidacion = tipoValidacion;
         } catch (ExcepcionXML e) {
@@ -89,9 +92,40 @@ public class GestorCorredores {
         return corredorXML.getUltimoCodigo();
     }
 
+    public
+
     // SAX
-    public void mostrarCorredoresSax() {
+
+    public ArrayList<Corredor> cargarCorredoresSAX() {
         CorredorSAXHandler handler = new CorredorSAXHandler();
         XMLSAXUtils.procesarDocumento(rutaXML, handler, tipoValidacion);
+        return handler.getCorredores();
+    }
+
+    public ArrayList<Corredor> cargarCorredoresPorEquipoSAX(String nombreEquipo, String rutaXMLEquipos) {
+        GestorEquipos gestorEquipos = new GestorEquipos();
+        gestorEquipos.cargarDocumento(rutaXMLEquipos, tipoValidacion);
+        CorredorNombreEquipoHandler handler = new CorredorNombreEquipoHandler(nombreEquipo, gestorEquipos);
+        XMLSAXUtils.procesarDocumento(rutaXML, handler, tipoValidacion);
+        return handler.getCorredores();
+    }
+
+    public void mostrarCorredoresPorEquipoSAX(String nombreEquipo, String rutaXMLEquipos) {
+        ArrayList<Corredor> corredores = cargarCorredoresPorEquipoSAX(nombreEquipo, rutaXMLEquipos);
+        if (corredores.size() != 0) {
+            for (Corredor corredor : corredores) {
+                corredor.mostrarInformacion();
+            }
+        } else {
+            System.out.printf("El equipo %s no existe en el archivo XML.",nombreEquipo);
+        }
+
+    }
+
+    public void mostrarTodosLosCorredoresSAX() {
+        ArrayList<Corredor> corredores = cargarCorredoresSAX();
+        for (Corredor corredor : corredores) {
+            corredor.mostrarInformacion();
+        }
     }
 }
