@@ -30,4 +30,12 @@ public class GestorEquipos {
         }
         return gestor.getNombreEquipo(id);
     }
+
+    public String getIdEquipo(String nombre){
+        if (this.documentoXML == null) {
+            System.out.println("No se ha cargado ningún documento XML.");
+            return null;
+        }
+        return gestor.getIdEquipo(nombre);
+    }
 }

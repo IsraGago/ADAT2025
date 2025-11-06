@@ -5,6 +5,7 @@ import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
 import ud1.actividad4.persistencia.persistenciadom.CorredorXML;
 import ud1.actividad4.persistencia.persistenciadom.XMLDOMUtils;
+import ud1.actividad4.persistencia.persistenciasax.ActualizacionesSAXHandler;
 import ud1.actividad4.persistencia.persistenciasax.CorredorNombreEquipoHandler;
 import ud1.actividad4.persistencia.persistenciasax.CorredorSAXHandler;
 import ud1.actividad4.persistencia.persistenciasax.XMLSAXUtils;
@@ -92,6 +93,20 @@ public class GestorCorredores {
         return corredorXML.getUltimoCodigo();
     }
 
+    public ArrayList<Corredor> cargarCorredoresPorEquipoDOM(String nombreEquipo, String rutaXMLEquipos) {
+        GestorEquipos gestorEquipos = new GestorEquipos();
+        gestorEquipos.cargarDocumento(rutaXMLEquipos, TipoValidacion.DTD);
+        String codigoEquipo = gestorEquipos.getIdEquipo(nombreEquipo);
+        ArrayList<Corredor> corredores = new ArrayList<>();
+        for (Corredor corredor : cargarCorredoresSAX()) {
+            if (corredor.getEquipo().equalsIgnoreCase(codigoEquipo)) {
+                corredores.add(corredor);
+            }
+            
+        }
+        return corredores;
+    }
+
     // SAX
 
     public ArrayList<Corredor> cargarCorredoresSAX() {
@@ -125,5 +140,11 @@ public class GestorCorredores {
         for (Corredor corredor : corredores) {
             corredor.mostrarInformacion();
         }
+    }
+
+    public static void aplicarAcualizaciones(String rutaEquipos,String rutaActualizaciones,String rutaSalida){
+        Document documentoDOM = XMLDOMUtils.cargarDocumentoXML(rutaEquipos, TipoValidacion.DTD);
+        ActualizacionesSAXHandler handler = new ActualizacionesSAXHandler(documentoDOM,rutaSalida);
+        XMLSAXUtils.procesarDocumento(rutaActualizaciones, handler, TipoValidacion.NO_VALIDAR);
     }
 }

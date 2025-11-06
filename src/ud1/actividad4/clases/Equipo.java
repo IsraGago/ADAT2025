@@ -12,6 +12,10 @@ public class Equipo {
     private int numPatrocinadores;
 
     // CONSTRUCTOR
+
+    public Equipo() {
+    }
+
     public Equipo(String id, String nombre) {
         this.idEquipo = id;
         this.nombre = nombre;

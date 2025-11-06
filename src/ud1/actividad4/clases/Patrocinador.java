@@ -10,6 +10,9 @@ public class Patrocinador {
     private float donacion; // 4 BYTES
     private LocalDate fechaInicio; // 8 BYTES
 
+    public Patrocinador() {
+    }
+
     public Patrocinador(String nombre, float donacion, LocalDate fechaInicio) {
         this.nombre = nombre;
         this.donacion = donacion;
@@ -52,6 +55,10 @@ public class Patrocinador {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public void setDonacion(float donacion) {
