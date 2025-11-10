@@ -125,7 +125,7 @@ public class GestorCorredores {
 
     public void mostrarCorredoresPorEquipoSAX(String nombreEquipo, String rutaXMLEquipos) {
         ArrayList<Corredor> corredores = cargarCorredoresPorEquipoSAX(nombreEquipo, rutaXMLEquipos);
-        if (corredores.size() != 0) {
+        if (!corredores.isEmpty()) {
             for (Corredor corredor : corredores) {
                 corredor.mostrarInformacion();
             }
@@ -147,4 +147,10 @@ public class GestorCorredores {
         ActualizacionesSAXHandler handler = new ActualizacionesSAXHandler(documentoDOM,rutaSalida);
         XMLSAXUtils.procesarDocumento(rutaActualizaciones, handler, TipoValidacion.NO_VALIDAR);
     }
+
+    // StAX cursor
+
+
+    // StAX eventos
+
 }
