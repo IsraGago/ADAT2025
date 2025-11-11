@@ -9,10 +9,18 @@ import ud1.actividad4.persistencia.persistenciasax.ActualizacionesSAXHandler;
 import ud1.actividad4.persistencia.persistenciasax.CorredorNombreEquipoHandler;
 import ud1.actividad4.persistencia.persistenciasax.CorredorSAXHandler;
 import ud1.actividad4.persistencia.persistenciasax.XMLSAXUtils;
+import ud1.actividad4.persistencia.persistenciastax.staxcursor.CorredoresStaxCursor;
+import ud1.actividad4.persistencia.persistenciastax.staxcursor.XMLStaxUtilsCursor;
 import ud1.actividad4.clases.Corredor;
+import ud1.actividad4.persistencia.persistenciastax.staxeventos.CorredoresStaxEventos;
+import ud1.actividad4.persistencia.persistenciastax.staxeventos.XMLStaxUtilsEventos;
 import ud1.actividad4.servicio.Utilidades;
 
 import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamReader;
 
 import org.w3c.dom.Document;
 
@@ -102,7 +110,7 @@ public class GestorCorredores {
             if (corredor.getEquipo().equalsIgnoreCase(codigoEquipo)) {
                 corredores.add(corredor);
             }
-            
+
         }
         return corredores;
     }
@@ -130,7 +138,7 @@ public class GestorCorredores {
                 corredor.mostrarInformacion();
             }
         } else {
-            System.out.printf("El equipo %s no existe en el archivo XML.",nombreEquipo);
+            System.out.printf("El equipo %s no existe en el archivo XML.", nombreEquipo);
         }
 
     }
@@ -142,15 +150,35 @@ public class GestorCorredores {
         }
     }
 
-    public static void aplicarAcualizaciones(String rutaEquipos,String rutaActualizaciones,String rutaSalida){
+    public static void aplicarAcualizaciones(String rutaEquipos, String rutaActualizaciones, String rutaSalida) {
         Document documentoDOM = XMLDOMUtils.cargarDocumentoXML(rutaEquipos, TipoValidacion.DTD);
-        ActualizacionesSAXHandler handler = new ActualizacionesSAXHandler(documentoDOM,rutaSalida);
+        ActualizacionesSAXHandler handler = new ActualizacionesSAXHandler(documentoDOM, rutaSalida);
         XMLSAXUtils.procesarDocumento(rutaActualizaciones, handler, TipoValidacion.NO_VALIDAR);
     }
 
     // StAX cursor
 
+    public void mostrarCorredoresStaxCursor(String rutaXML, TipoValidacion validacion) {
+        try {
+            List<Corredor> corredores = CorredoresStaxCursor.leerCorredores(rutaXML, validacion);
+            for (Corredor corredor : corredores) {
+                corredor.mostrarInformacion();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-    // StAX eventos
+    public void mostrarCorredoresStaxEventos(String rutaXmlCorredores, TipoValidacion validacion) {
+        try {
+            List<Corredor> corredores = CorredoresStaxEventos.leerCorredores(rutaXmlCorredores, validacion);
+            for (Corredor corredor : corredores) {
+                corredor.mostrarInformacion();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }
