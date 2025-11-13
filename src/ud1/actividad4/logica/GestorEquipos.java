@@ -38,4 +38,12 @@ public class GestorEquipos {
         }
         return gestor.getIdEquipo(nombre);
     }
+
+    public void generarDonacionesStAXCursor(String rutaEntrada,String rutaSalida){
+        try{
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

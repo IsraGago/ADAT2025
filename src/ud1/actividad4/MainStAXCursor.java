@@ -7,6 +7,7 @@ public class MainStAXCursor {
     static final String RUTA_XML_CORREDORES = "./src/ud1/actividad4/archivos/corredores.xml";
     public static void main(String[] args) {
         GestorCorredores gestorCorredores = new GestorCorredores();
-        gestorCorredores.mostrarCorredoresStaxCursor(RUTA_XML_CORREDORES,TipoValidacion.NO_VALIDAR);
+        //gestorCorredores.mostrarCorredoresStaxCursor(RUTA_XML_CORREDORES,TipoValidacion.NO_VALIDAR);
+        gestorCorredores.mostrarCorredoresPorEquipoCursor(RUTA_XML_CORREDORES,TipoValidacion.NO_VALIDAR,"E1");
     }
 }

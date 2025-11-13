@@ -169,6 +169,15 @@ public class GestorCorredores {
         }
     }
 
+    public void mostrarCorredoresPorEquipoCursor(String rutaXML, TipoValidacion validacion, String equipoBuscado) {
+        XMLStreamReader reader = XMLStaxUtilsCursor.cargarDocumentos(rutaXML, validacion);
+        List<Corredor> corredoresPorEquipo = CorredoresStaxCursor.leerCorredoresPorEquipo(reader, equipoBuscado);
+        for (Corredor corredor : corredoresPorEquipo) {
+            corredor.mostrarInformacion();
+        }
+    }
+
+    // StAX eventos
     public void mostrarCorredoresStaxEventos(String rutaXmlCorredores, TipoValidacion validacion) {
         try {
             List<Corredor> corredores = CorredoresStaxEventos.leerCorredores(rutaXmlCorredores, validacion);

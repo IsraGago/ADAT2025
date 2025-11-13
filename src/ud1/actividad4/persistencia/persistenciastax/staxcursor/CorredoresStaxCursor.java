@@ -6,9 +6,7 @@ import ud1.actividad4.clases.Puntuacion;
 import ud1.actividad4.clases.Velocista;
 import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
-import ud1.actividad4.persistencia.persistenciastax.staxeventos.XMLStaxUtilsEventos;
 
-import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLStreamReader;
 
 import java.time.LocalDate;
@@ -50,9 +48,63 @@ public class CorredoresStaxCursor {
         return corredores;
     }
 
+
+
+     public static List<Corredor> leerCorredoresPorEquipo(XMLStreamReader reader, String equipoBuscado) {
+        List<Corredor> corredores = new ArrayList<>();
+        try {
+            while (reader.hasNext()) {
+
+                int tipo = reader.next();
+
+                switch (tipo) {
+                    case XMLStreamReader.START_ELEMENT -> {
+                        String nombreEtiqueta = XMLStaxUtilsCursor.obtenerNombreEtiqueta(reader).toLowerCase();
+                        switch (nombreEtiqueta) {
+                            case "velocista", "fondista" -> {
+                                String equipo = XMLStaxUtilsCursor.leerAtributo(reader, "equipo");
+
+                                if (equipoBuscado.equalsIgnoreCase(equipo)) {
+                                    corredorActual = crearCorredor(nombreEtiqueta);
+                                    String codigo = XMLStaxUtilsCursor.leerAtributo(reader, "codigo");
+                                    String dorsal = XMLStaxUtilsCursor.leerAtributo(reader, "dorsal");
+                                    corredorActual.setCodigo(codigo);
+                                    corredorActual.setDorsal(Integer.parseInt(dorsal));
+                                    corredorActual.setEquipo(equipo);
+                                } else {
+                                    corredorActual = null;
+                                }
+
+                            }
+                            case "historial" -> {
+                                historialActual = new ArrayList<>();
+                            }
+                            case "puntuacion" -> {
+                                anioActual = XMLStaxUtilsCursor.leerAtributo(reader, "anio");
+                            }
+                        }
+                    }
+                    case XMLStreamReader.CHARACTERS -> {
+                        // contenidoActual += XMLStaxUtilsCursor.leerTexto(reader);
+                        contenidoActual = XMLStaxUtilsCursor.leerTexto(reader);
+                    }
+                    case XMLStreamReader.END_ELEMENT -> {
+                        // TODO: HAY UN PROBLEMA AQUI, PARECE QUE NO LLEGAN LAS ETIQUETAS DE FINAL DE CORREDOR
+                        endElement(reader);
+                    }
+
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return corredores;
+    }
+
     private static void endElement(XMLStreamReader reader) {
         if (corredorActual != null) {
-            String nombreEtiqueta = XMLStaxUtilsCursor.obtenerNombre(reader).toLowerCase();
+            String nombreEtiqueta = XMLStaxUtilsCursor.obtenerNombreEtiqueta(reader).toLowerCase();
             switch (nombreEtiqueta) {
                 case "velocista", "fondista" -> {
                     corredores.add(corredorActual);
@@ -87,7 +139,7 @@ public class CorredoresStaxCursor {
     }
 
     private static void startElement(XMLStreamReader reader) {
-        String nombreEtiqueta = XMLStaxUtilsCursor.obtenerNombre(reader).toLowerCase();
+        String nombreEtiqueta = XMLStaxUtilsCursor.obtenerNombreEtiqueta(reader).toLowerCase();
         switch (nombreEtiqueta) {
             case "velocista", "fondista" -> {
                 corredorActual = crearCorredor(nombreEtiqueta);
@@ -106,55 +158,6 @@ public class CorredoresStaxCursor {
                 anioActual = XMLStaxUtilsCursor.leerAtributo(reader, "anio");
             }
         }
-    }
-
-    public List<Corredor> leerCorredoresPorEquipo(XMLStreamReader reader, String equipoBuscado) {
-        // TODO VER SI FUNCIONA
-        List<Corredor> corredores = new ArrayList<>();
-        try {
-            while (reader.hasNext()) {
-
-                int tipo = reader.next();
-
-                switch (tipo) {
-                    case XMLStreamReader.START_ELEMENT -> {
-                        String nombreEtiqueta = XMLStaxUtilsCursor.obtenerNombre(reader).toLowerCase();
-                        switch (nombreEtiqueta) {
-                            case "velocista", "fondista" -> {
-                                String equipo = XMLStaxUtilsCursor.leerAtributo(reader, "equipo");
-
-                                if (equipoBuscado.equalsIgnoreCase(equipo)) {
-                                    corredorActual = crearCorredor(nombreEtiqueta);
-                                    String codigo = XMLStaxUtilsCursor.leerAtributo(reader, "codigo");
-                                    String dorsal = XMLStaxUtilsCursor.leerAtributo(reader, "dorsal");
-                                    corredorActual.setCodigo(codigo);
-                                    corredorActual.setDorsal(Integer.parseInt(dorsal));
-                                    corredorActual.setEquipo(equipo);
-                                }
-
-                            }
-                            case "historial" -> {
-                                historialActual = new ArrayList<>();
-                            }
-                            case "puntuacion" -> {
-                                anioActual = XMLStaxUtilsCursor.leerAtributo(reader, "anio");
-                            }
-                        }
-                    }
-                    case XMLStreamReader.CHARACTERS -> {
-                        // contenidoActual += XMLStaxUtilsCursor.leerTexto(reader);
-                        contenidoActual = XMLStaxUtilsCursor.leerTexto(reader);
-                    }
-                    case XMLStreamReader.END_ELEMENT -> {
-                        endElement(reader);
-                    }
-
-                }
-            }
-
-        } catch (Exception e) {
-        }
-        return corredores;
     }
 
 

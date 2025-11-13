@@ -2,12 +2,12 @@ package ud1.actividad4.persistencia.persistenciastax.staxeventos;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
-import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.*;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
@@ -91,5 +91,59 @@ public class XMLStaxUtilsEventos {
             return atributo != null ? atributo.getValue() : null;
         }
         return null;
+    }
+
+    public static XMLEventWriter crearWriterStax(String rutaSalida) {
+        try {
+            XMLOutputFactory factory = XMLOutputFactory.newFactory();
+            return factory.createXMLEventWriter(new FileWriter(rutaSalida));
+        } catch (XMLStreamException e) {
+            throw new ExcepcionXML("Error al inicializar la factoría o el Writer.", e);
+        } catch (IOException e) {
+            throw new ExcepcionXML("Error de I/O al intentar crear el archivo de salida: " + rutaSalida, e);
+        }
+    }
+
+
+    public static XMLEventFactory crearFactoryEventos() {
+        try {
+            return XMLEventFactory.newFactory();
+        } catch (FactoryConfigurationError e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addDeclaracionXML(XMLEventWriter writer, XMLEventFactory factory) {
+        try {
+            writer.add(factory.createStartDocument("UTF-8", "1.0"));
+        } catch (Exception e) {
+            throw new ExcepcionXML("Error al crear la declaracion XML incicial.", e);
+        }
+    }
+
+    public static void addSaltoDelinea(XMLEventWriter writer, int nivel, XMLEventFactory fabrica) {
+        try {
+            String identacion = "\n" + "    ".repeat(nivel);
+            writer.add(fabrica.createCharacters(identacion));
+        } catch (XMLStreamException e) {
+            throw new ExcepcionXML("Error al añadir salto de linea o identación.", e);
+        }
+    }
+
+    public static void addStartElemento(XMLEventWriter writer, String nombre, XMLEventFactory fabrica) {
+        try {
+            // todo combrobar
+            writer.add(fabrica.createStartElement(null,null,nombre));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void addAtributo(XMLEventWriter writer, XMLEventFactory fabrica, String nombre, String valor) {
+        try {
+            writer.add(fabrica.createAttribute(nombre, valor));
+        } catch (XMLStreamException e) {
+            throw new ExcepcionXML("Error al crear el atributo: " + nombre, e);
+        }
     }
 }
