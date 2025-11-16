@@ -190,4 +190,12 @@ public class GestorCorredores {
     }
 
 
+    public void mostrarCorredoresPorEquipoEventos(String ruta, TipoValidacion tipoValidacion, String codEquipo) {
+
+        List<Corredor> corredoresPorEquipo = CorredoresStaxEventos.leerCorredoresPorEquipo(ruta, tipoValidacion, codEquipo);
+        for (Corredor corredor : corredoresPorEquipo) {
+            corredor.mostrarInformacion();
+        }
+
+    }
 }

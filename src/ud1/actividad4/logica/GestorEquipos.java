@@ -5,6 +5,10 @@ import org.w3c.dom.Document;
 import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
 import ud1.actividad4.persistencia.persistenciadom.EquiposXML;
+import ud1.actividad4.persistencia.persistenciastax.staxcursor.EquipoStaxCursor;
+import ud1.actividad4.persistencia.persistenciastax.staxeventos.EquipoStaxEventos;
+
+import java.util.Map;
 
 public class GestorEquipos {
     private Document documentoXML;
@@ -39,9 +43,38 @@ public class GestorEquipos {
         return gestor.getIdEquipo(nombre);
     }
 
+    //STAX CURSOR
     public void generarDonacionesStAXCursor(String rutaEntrada,String rutaSalida){
         try{
 
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void calcularDonacionTotalPorPatrocinadorCursor(String rutaEntrada,String rutaSalida){
+        try{
+            Map<String,Double> donacionesPorEquipo =  EquipoStaxCursor.calcularDonaciones(rutaEntrada);
+            EquipoStaxCursor.escribirDonacionesTotales(rutaSalida,donacionesPorEquipo);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    //STAX EVENTOS
+    public void generarDonacionesStAXEventos(String rutaEntrada,String rutaSalida){
+        try{
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void calcularDonacionTotalPorPatrocinadorEventos(String rutaEntrada, String rutaSalida) {
+        try{
+            Map<String,Double> donacionesPorEquipo =  EquipoStaxEventos.calcularDonaciones(rutaEntrada);
+            EquipoStaxEventos.escribirDonacionesTotales(rutaSalida,donacionesPorEquipo);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

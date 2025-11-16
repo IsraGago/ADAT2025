@@ -132,8 +132,7 @@ public class XMLStaxUtilsEventos {
 
     public static void addStartElemento(XMLEventWriter writer, String nombre, XMLEventFactory fabrica) {
         try {
-            // todo combrobar
-            writer.add(fabrica.createStartElement(null,null,nombre));
+            writer.add(fabrica.createStartElement("", "", nombre));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -144,6 +143,33 @@ public class XMLStaxUtilsEventos {
             writer.add(fabrica.createAttribute(nombre, valor));
         } catch (XMLStreamException e) {
             throw new ExcepcionXML("Error al crear el atributo: " + nombre, e);
+        }
+    }
+
+    public static void addEndElemento(XMLEventWriter writer, XMLEventFactory fabrica, String nombre) {
+        try {
+            writer.add(fabrica.createEndElement("", "", nombre));
+        } catch (XMLStreamException e) {
+            throw new ExcepcionXML("Error al cerrar el elemento: " + nombre, e);
+        }
+    }
+
+    public static void addTextoElemento(XMLEventWriter writer, XMLEventFactory fabrica, String texto) {
+        try {
+            if (texto != null) {
+                writer.add(fabrica.createCharacters(texto));
+            }
+        } catch (XMLStreamException e) {
+            throw new ExcepcionXML("Error al escribir texto en un elemento", e);
+        }
+    }
+
+    public static void addEndDocumento(XMLEventWriter writer, XMLEventFactory fabrica) {
+        try {
+            writer.add(fabrica.createEndDocument());
+            writer.close();
+        } catch (XMLStreamException e) {
+            throw new ExcepcionXML("Error al finalizar el documento XML", e);
         }
     }
 }

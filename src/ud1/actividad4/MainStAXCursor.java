@@ -1,13 +1,16 @@
 package ud1.actividad4;
 
+import ud1.actividad4.clases.RutasFicheros;
 import ud1.actividad4.logica.GestorCorredores;
+import ud1.actividad4.logica.GestorEquipos;
 import ud1.actividad4.persistencia.TipoValidacion;
 
 public class MainStAXCursor {
-    static final String RUTA_XML_CORREDORES = "./src/ud1/actividad4/archivos/corredores.xml";
     public static void main(String[] args) {
         GestorCorredores gestorCorredores = new GestorCorredores();
-        //gestorCorredores.mostrarCorredoresStaxCursor(RUTA_XML_CORREDORES,TipoValidacion.NO_VALIDAR);
-        gestorCorredores.mostrarCorredoresPorEquipoCursor(RUTA_XML_CORREDORES,TipoValidacion.NO_VALIDAR,"E1");
+        GestorEquipos gestorEquipos = new GestorEquipos();
+//        gestorCorredores.mostrarCorredoresStaxCursor(RutasFicheros.RUTA_XML_CORREDORES.getRuta(), TipoValidacion.NO_VALIDAR);
+//        gestorCorredores.mostrarCorredoresPorEquipoCursor(RutasFicheros.RUTA_XML_CORREDORES.getRuta(), TipoValidacion.NO_VALIDAR, "E1");
+        gestorEquipos.calcularDonacionTotalPorPatrocinadorCursor(RutasFicheros.RUTA_XML_EQUIPOS.getRuta(), RutasFicheros.RUTA_XML_SALIDA_DONACIONES.getRuta());
     }
 }

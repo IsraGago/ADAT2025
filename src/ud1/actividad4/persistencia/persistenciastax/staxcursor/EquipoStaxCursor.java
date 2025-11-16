@@ -72,6 +72,7 @@ public class EquipoStaxCursor {
         try{
             writer = XMLStaxUtilsCursor.crearWriterStax(rutaSalida);
             XMLStaxUtilsCursor.addDeclaracionXML(writer);
+            XMLStaxUtilsCursor.addSaltoDeLinea(writer,0);
             XMLStaxUtilsCursor.addStartElemento(writer,"donaciones");
 
             for (Map.Entry<String,Double> entrada : mapaDonaciones.entrySet()){

@@ -8,7 +8,6 @@ import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
 
 import javax.xml.stream.XMLStreamReader;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,9 +48,9 @@ public class CorredoresStaxCursor {
     }
 
 
+    public static List<Corredor> leerCorredoresPorEquipo(XMLStreamReader reader, String equipoBuscado) {
+        corredores = new ArrayList<>();
 
-     public static List<Corredor> leerCorredoresPorEquipo(XMLStreamReader reader, String equipoBuscado) {
-        List<Corredor> corredores = new ArrayList<>();
         try {
             while (reader.hasNext()) {
 

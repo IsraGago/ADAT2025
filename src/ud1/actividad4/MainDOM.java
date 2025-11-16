@@ -4,16 +4,15 @@ import java.time.LocalDate;
 
 import ud1.actividad4.clases.Corredor;
 import ud1.actividad4.clases.Puntuacion;
+import ud1.actividad4.clases.RutasFicheros;
 import ud1.actividad4.clases.Velocista;
 import ud1.actividad4.logica.GestorCorredores;
 import ud1.actividad4.persistencia.TipoValidacion;
 
 public class MainDOM {
     public static void main(String[] args) {
-        final String RUTA_XML_CORREDORES = "./src/ud1/actividad4/archivos/corredores.xml";
-        final String RUTA_SALIDA_CORREDORES = "./src/ud1/actividad4/archivos/corredores-dom.xml";
         GestorCorredores gestor = new GestorCorredores();
-        gestor.cargarDocumento(RUTA_XML_CORREDORES,TipoValidacion.DTD);
+        gestor.cargarDocumento(RutasFicheros.RUTA_XML_CORREDORES.getRuta(),TipoValidacion.DTD);
         System.out.println("------------------\n LISTAR CORREDORES");
         gestor.mostrarCorredores();
 
@@ -22,8 +21,8 @@ public class MainDOM {
         buscarCorredorPorDorsal(gestor);
 
         crearYGuardarCorredor(gestor);
-        
-        gestor.guardarFicheroXML(RUTA_SALIDA_CORREDORES);
+
+        gestor.guardarFicheroXML(RutasFicheros.RUTA_SALIDA_CORREDORES.getRuta());
 
         
     }

@@ -6,8 +6,10 @@ import ud1.actividad4.clases.Puntuacion;
 import ud1.actividad4.clases.Velocista;
 import ud1.actividad4.persistencia.ExcepcionXML;
 import ud1.actividad4.persistencia.TipoValidacion;
+import ud1.actividad4.persistencia.persistenciastax.staxcursor.XMLStaxUtilsCursor;
 
 import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.events.XMLEvent;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.List;
 
 public class CorredoresStaxEventos {
 
-    private static List<Corredor> corredores = new ArrayList<>();
+    private static List<Corredor> corredores;
     private static String contenidoActual = "";
     private static Corredor corredorActual = null;
     private static ArrayList<Puntuacion> historialActual = null;
@@ -23,12 +25,59 @@ public class CorredoresStaxEventos {
 
     public static List<Corredor> leerCorredores(String rutaXmlCorredores, TipoValidacion validacion) throws ExcepcionXML {
         XMLEventReader reader = XMLStaxUtilsEventos.cargarDocumentos(rutaXmlCorredores, validacion);
+        corredores = new ArrayList<>();
         try {
             while (reader.hasNext()) {
                 XMLEvent evento = reader.nextEvent();
 
                 if (evento.isStartElement()) {
                     startElement(evento);
+                } else if (evento.isEndElement()) {
+                    endElement(evento);
+                } else if (evento.isCharacters()) {
+                    contenidoActual = XMLStaxUtilsEventos.leerTexto(evento);
+                }
+
+            }
+        } catch (Exception e) {
+            throw new ExcepcionXML(e.getMessage());
+        }
+        return corredores;
+    }
+
+    public static List<Corredor> leerCorredoresPorEquipo(String rutaXmlCorredores, TipoValidacion validacion, String equipoBuscado) {
+        XMLEventReader reader = XMLStaxUtilsEventos.cargarDocumentos(rutaXmlCorredores, validacion);
+
+        corredores = new ArrayList<>();
+        try {
+            while (reader.hasNext()) {
+                XMLEvent evento = reader.nextEvent();
+
+                if (evento.isStartElement()) {
+                    String nombreEtiqueta = XMLStaxUtilsEventos.obtenerNombreEtiqueta(evento);
+                    switch (nombreEtiqueta) {
+                        case "velocista", "fondista" -> {
+                            String equipo = XMLStaxUtilsEventos.leerAtributo(evento, "equipo");
+
+                            if (equipoBuscado.equalsIgnoreCase(equipo)) {
+                                corredorActual = crearCorredor(nombreEtiqueta);
+                                String codigo = XMLStaxUtilsEventos.leerAtributo(evento, "codigo");
+                                String dorsal = XMLStaxUtilsEventos.leerAtributo(evento, "dorsal");
+                                corredorActual.setCodigo(codigo);
+                                corredorActual.setDorsal(Integer.parseInt(dorsal));
+                                corredorActual.setEquipo(equipo);
+                            } else {
+                                corredorActual = null;
+                            }
+
+                        }
+                        case "historial" -> {
+                            historialActual = new ArrayList<>();
+                        }
+                        case "puntuacion" -> {
+                            anioActual = XMLStaxUtilsEventos.leerAtributo(evento, "anio");
+                        }
+                    }
                 } else if (evento.isEndElement()) {
                     endElement(evento);
                 } else if (evento.isCharacters()) {
