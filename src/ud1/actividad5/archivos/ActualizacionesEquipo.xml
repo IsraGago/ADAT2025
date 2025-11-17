@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Actualizaciones>
+ <!-- Caso 1: Actualizar donación y fecha de un patrocinador existente -->
+ <Patrocinador idEquipo="E1" nombreEquipo="Rápidos del Norte">
+ <nombre>Adidas</nombre>
+ <Donacion fecha="2024-10-12">2500.0</Donacion>
+ </Patrocinador>
+ <!-- Caso 2: Añadir nuevo patrocinador a equipo existente -->
+ <Patrocinador idEquipo="E2" nombreEquipo="Truenos del Oeste">
+ <nombre>Columbia</nombre>
+ <Donacion fecha="2025-03-01">1800.0</Donacion>
+ </Patrocinador>
+
+ <!-- Caso 5: Añadir patrocinador a equipo nuevo -->
+ <Patrocinador idEquipo="E9" nombreEquipo="Relámpagos del Este">
+ <nombre>Joma</nombre>
+ <Donacion fecha="2025-05-10">1200.0</Donacion>
+ </Patrocinador>
+</Actualizaciones>
