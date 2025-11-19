@@ -1,7 +1,7 @@
-package ud1.actividad4jaxb.logica;
+package ud1.actividad5.logica;
 
-import ud1.actividad4jaxb.clases.clasesEquipo.Equipos;
-import ud1.actividad4jaxb.persistencia.EquiposJAXB;
+import ud1.actividad5.clases.clasesEquipo.Equipos;
+import ud1.actividad5.persistencia.EquiposJAXB;
 
 public class GestorEquipos {
     public void mostrarTodosLosEquiposJAXB(String ruta) {

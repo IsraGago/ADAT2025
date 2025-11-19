@@ -1,12 +1,12 @@
-package ud1.actividad4jaxb.clases.clasesCorredor;
+package ud1.actividad5.clases.clasesCorredor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
 import jakarta.xml.bind.annotation.*;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import ud1.actividad4jaxb.clases.LocalDateAdapter;
-import ud1.actividad4jaxb.servicio.Utilidades;
+import ud1.actividad5.clases.LocalDateAdapter;
+import ud1.actividad5.servicio.Utilidades;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlSeeAlso({Fondista.class, Velocista.class})

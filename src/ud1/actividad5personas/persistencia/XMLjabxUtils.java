@@ -1,4 +1,4 @@
-package ud1.actividad5.clases;
+package ud1.actividad5personas.persistencia;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;

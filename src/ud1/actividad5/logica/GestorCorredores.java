@@ -1,8 +1,8 @@
-package ud1.actividad4jaxb.logica;
+package ud1.actividad5.logica;
 
 
-import ud1.actividad4jaxb.clases.clasesCorredor.Corredores;
-import ud1.actividad4jaxb.persistencia.CorredoresJAXB;
+import ud1.actividad5.clases.clasesCorredor.Corredores;
+import ud1.actividad5.persistencia.CorredoresJAXB;
 
 public class GestorCorredores {
     public void mostrarTodosLosCorredoresJAXB(String ruta) {
