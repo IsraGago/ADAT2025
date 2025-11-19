@@ -1,17 +1,30 @@
-package ud1.actividad5.clases.clasesCorredor;
+package ud1.actividad4jaxb.clases.clasesCorredor;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import ud1.actividad4.clases.Puntuacion;
-import ud1.actividad4.servicio.Utilidades;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import ud1.actividad4jaxb.clases.LocalDateAdapter;
+import ud1.actividad4jaxb.servicio.Utilidades;
 
-public class Corredor {
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlSeeAlso({Fondista.class, Velocista.class})
+// @XmlType(propOrder ={"codigo","dorsal","equipo","nombre","fechaNacimiento","historial"})
+@XmlTransient
+public abstract class Corredor {
+    @XmlAttribute(name = "dorsal",required = true)
     protected int dorsal;
+    @XmlElement(name = "codigo")
     protected String codigo;
+    @XmlElement(name = "nombre")
     protected String nombre;
-    protected LocalDate fechanacimiento;
+    @XmlElement(name = "fecha_nacimiento")
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
+    protected LocalDate fechaNacimienteo;
+    @XmlAttribute(name = "equipo",required = true)
     protected String equipo;
+    @XmlElement(name = "puntuacion")
     protected ArrayList<Puntuacion> historial = new ArrayList<>();
 
     public Corredor(){
@@ -31,7 +44,7 @@ public class Corredor {
         }
 
         this.nombre = nombre;
-        this.fechanacimiento = fechanacimiento;
+        this.fechaNacimienteo = fechanacimiento;
         this.equipo = equipo;
     }
 
@@ -52,8 +65,8 @@ public class Corredor {
         return equipo;
     }
 
-    public LocalDate getFechanacimiento() {
-        return fechanacimiento;
+    public LocalDate getFechaNacimienteo() {
+        return fechaNacimienteo;
     }
 
     public String getNombre() {
@@ -93,7 +106,7 @@ public class Corredor {
 
     public void mostrarInformacion() {
         System.out.println("CORREDOR " + this.getClass().getSimpleName().toUpperCase() + ": " + this);
-        System.out.println("NOMBRE: " + this.getNombre() +" - CÓDIGO: "+codigo+ " - FECHA NACIMIENTO: " + this.getFechanacimiento()
+        System.out.println("NOMBRE: " + this.getNombre() +" - CÓDIGO: "+codigo+ " - FECHA NACIMIENTO: " + this.getFechaNacimienteo()
                 + " - EQUIPO: " + this.getEquipo() + " - DORSAL: " + this.getDorsal() + " - PUNTUACIONES: "
                 + this.historial);
     }
@@ -103,7 +116,7 @@ public class Corredor {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
-        result = prime * result + ((fechanacimiento == null) ? 0 : fechanacimiento.hashCode());
+        result = prime * result + ((fechaNacimienteo == null) ? 0 : fechaNacimienteo.hashCode());
         result = prime * result + ((equipo == null) ? 0 : equipo.hashCode());
         return result;
     }
@@ -113,7 +126,7 @@ public class Corredor {
     }
 
     public void setFechaNacimiento(LocalDate fechanacimiento) {
-        this.fechanacimiento = fechanacimiento;
+        this.fechaNacimienteo = fechanacimiento;
     }
 
     public void setEquipo(String equipo) {
@@ -134,10 +147,10 @@ public class Corredor {
                 return false;
         } else if (!nombre.equals(other.nombre))
             return false;
-        if (fechanacimiento == null) {
-            if (other.fechanacimiento != null)
+        if (fechaNacimienteo == null) {
+            if (other.fechaNacimienteo != null)
                 return false;
-        } else if (!fechanacimiento.equals(other.fechanacimiento))
+        } else if (!fechaNacimienteo.equals(other.fechaNacimienteo))
             return false;
         if (equipo == null) {
             if (other.equipo != null)

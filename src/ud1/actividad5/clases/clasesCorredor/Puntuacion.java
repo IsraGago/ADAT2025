@@ -1,10 +1,20 @@
-package ud1.actividad5.clases.clasesCorredor;
+package ud1.actividad4jaxb.clases.clasesCorredor;
+
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlValue;
 
 import java.time.LocalDate;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Puntuacion implements Comparable<Puntuacion> {
+    @XmlAttribute(name = "anio")
     private int anio;
+    @XmlValue
     private float puntos;
+
+    public Puntuacion() {}
 
     public Puntuacion(int anio, float puntos) {
         if (anio < 1900 || anio > LocalDate.now().getYear()) {

@@ -1,4 +1,4 @@
-package ud1.actividad5.persistencia;
+package ud1.actividad4jaxb.persistencia;
 
 public class ExcepcionXML extends RuntimeException {
     public ExcepcionXML(String mensaje){

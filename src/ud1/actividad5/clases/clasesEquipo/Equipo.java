@@ -1,4 +1,4 @@
-package ud1.actividad5.clases.clasesEquipo;
+package ud1.actividad4jaxb.clases.clasesEquipo;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;

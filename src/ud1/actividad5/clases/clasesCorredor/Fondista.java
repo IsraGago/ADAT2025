@@ -1,10 +1,13 @@
-package ud1.actividad5.clases.clasesCorredor;
+package ud1.actividad4jaxb.clases.clasesCorredor;
 
-import ud1.actividad4.clases.Corredor;
+import jakarta.xml.bind.annotation.*;
 
 import java.time.LocalDate;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(propOrder ={"codigo","dorsal","equipo","nombre","fechaNacimiento","distanciaMax","historial"})
 public class Fondista extends Corredor {
+    @XmlElement(name = "distacia_max")
     private float distanciaMax; // en KM
 
     public Fondista(){

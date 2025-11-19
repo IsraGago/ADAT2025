@@ -1,10 +1,15 @@
-package ud1.actividad5.clases.clasesCorredor;
+package ud1.actividad4jaxb.clases.clasesCorredor;
 
-import ud1.actividad4.clases.Corredor;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
 
 import java.time.LocalDate;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(propOrder ={"codigo","dorsal","equipo","nombre","fechaNacimiento","velocidadMedia","historial"})
 public class Velocista extends Corredor {
+    @XmlElement(name = "velocidad_media")
     private float velocidadMedia; // EN KM/H
 
     public Velocista(){

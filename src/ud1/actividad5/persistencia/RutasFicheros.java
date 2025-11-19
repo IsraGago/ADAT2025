@@ -1,4 +1,4 @@
-package ud1.actividad5.persistencia;
+package ud1.actividad4jaxb.persistencia;
 
 public enum RutasFicheros {
     RUTA_XML_CORREDORES("./src/ud1/actividad5/archivos/corredores.xml"),
