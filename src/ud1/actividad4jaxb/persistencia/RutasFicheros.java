@@ -1,10 +1,10 @@
-package ud1.actividad5.persistencia;
+package ud1.actividad4jaxb.persistencia;
 
 public enum RutasFicheros {
-    RUTA_XML_CORREDORES("./src/ud1/actividad5/archivos/corredores.xml"),
-    RUTA_XML_EQUIPOS("./src/ud1/actividad5/archivos/equipos.xml"),
-    RUTA_XML_SALIDA_DONACIONES("./src/ud1/actividad5/archivos/DonacionesTotales.xml"),
-    RUTA_SALIDA_CORREDORES("./src/ud1/actividad5/archivos/corredores-dom.xml");
+    RUTA_XML_CORREDORES("./src/ud1/actividad4jaxb/archivos/corredores.xml"),
+    RUTA_XML_EQUIPOS("./src/ud1/actividad4jaxb/archivos/equipos.xml"),
+    RUTA_XML_SALIDA_DONACIONES("./src/ud1/actividad4jaxb/archivos/DonacionesTotales.xml"),
+    RUTA_SALIDA_CORREDORES("./src/ud1/actividad4jaxb/archivos/corredores-dom.xml");
 
     private final String ruta;
 

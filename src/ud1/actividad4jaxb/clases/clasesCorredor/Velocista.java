@@ -1,9 +1,8 @@
-package ud1.actividad5.clases.clasesCorredor;
+package ud1.actividad4jaxb.clases.clasesCorredor;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlType;
 
 import java.time.LocalDate;
 

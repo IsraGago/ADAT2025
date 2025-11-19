@@ -1,7 +1,6 @@
-package ud1.actividad5.clases.clasesCorredor;
+package ud1.actividad4jaxb.clases.clasesCorredor;
 
 import jakarta.xml.bind.annotation.*;
-import ud1.actividad5.clases.clasesEquipo.Equipo;
 
 import java.util.List;
 

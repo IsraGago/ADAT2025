@@ -1,4 +1,4 @@
-package ud1.actividad5.clases.clasesEquipo;
+package ud1.actividad4jaxb.clases.clasesEquipo;
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -6,7 +6,7 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlValue;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import ud1.actividad3.servicio.Utilidades;
-import ud1.actividad5.clases.LocalDateAdapter;
+import ud1.actividad4jaxb.clases.LocalDateAdapter;
 
 import java.time.LocalDate;
 

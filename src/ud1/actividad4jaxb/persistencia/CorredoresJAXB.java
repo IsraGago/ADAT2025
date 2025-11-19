@@ -1,9 +1,9 @@
-package ud1.actividad5.persistencia;
+package ud1.actividad4jaxb.persistencia;
 
 import jakarta.xml.bind.JAXBException;
 import ud1.actividad4.persistencia.ExcepcionXML;
-import ud1.actividad5.clases.XMLjabxUtils;
-import ud1.actividad5.clases.clasesCorredor.Corredores;
+import ud1.actividad4jaxb.clases.XMLjabxUtils;
+import ud1.actividad4jaxb.clases.clasesCorredor.Corredores;
 
 public class CorredoresJAXB {
     public static Corredores leerCorredores(String rutaXML) {

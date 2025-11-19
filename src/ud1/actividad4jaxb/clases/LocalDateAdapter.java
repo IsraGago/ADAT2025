@@ -1,4 +1,4 @@
-package ud1.actividad5.clases;
+package ud1.actividad4jaxb.clases;
 
 import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
