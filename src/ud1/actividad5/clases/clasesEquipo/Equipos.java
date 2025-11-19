@@ -36,6 +36,6 @@ public class Equipos {
     }
 
     public Equipo getEquipo() {
-        return equipos.getFirst();
+        return equipos.isEmpty() ? null : equipos.get(0);
     }
 }

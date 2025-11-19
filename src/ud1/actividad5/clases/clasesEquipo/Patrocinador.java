@@ -22,6 +22,9 @@ public class Patrocinador {
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private LocalDate fechaInicio;
 
+    public Patrocinador() {
+    }
+
     public Patrocinador(String nombre, float donacion, LocalDate fechaInicio) {
         this.nombre = nombre;
         this.donacion = donacion;
@@ -79,7 +82,7 @@ public class Patrocinador {
 
     @Override
     public String toString() {
-        return String.format("%s | donación: %2.f | %s", nombre, donacion,
+        return String.format("%s | donación: %.2f | %s", nombre, donacion,
                 Utilidades.formatearFecha(fechaToLong(), "dd/MM/yyyy"));
     }
 

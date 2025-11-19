@@ -33,10 +33,10 @@ public class Equipo {
     }
 
 
-//    @Override
-//    public String toString() {
-//        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + getNumPatrocinadores() +" | " + "Esta Borrado: " + estaBorrado;
-//    }
+    @Override
+    public String toString() {
+        return "ID: "+idEquipo+" | "+"Nombre: " + nombre + " | " + "Nº Patrocinadores: " + getNumPatrocinadores();
+    }
 
 
     @Override
@@ -79,6 +79,10 @@ public class Equipo {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public int getNumPatrocinadores() {
+        return patrocinadores != null ? patrocinadores.getPatrocinadores().size() : 0;
     }
 
 

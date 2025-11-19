@@ -14,7 +14,7 @@ public class Patrocinadores {
     private int numPatrocinadores;
 
     @XmlElement(name = "patrocinador", required = true)
-    private Set<Patrocinadores> patrocinadores = new HashSet<>();
+    private Set<Patrocinador> patrocinadores = new HashSet<>();
 
     public Patrocinadores() {
     }
@@ -31,11 +31,11 @@ public class Patrocinadores {
         this.numPatrocinadores = numPatrocinadores;
     }
 
-    public Set<Patrocinadores> getPatrocinadores() {
+    public Set<Patrocinador> getPatrocinadores() {
         return patrocinadores;
     }
 
-    public void setPatrocinadores(Set<Patrocinadores> patrocinadores) {
+    public void setPatrocinadores(Set<Patrocinador> patrocinadores) {
         this.patrocinadores = patrocinadores;
     }
 }
