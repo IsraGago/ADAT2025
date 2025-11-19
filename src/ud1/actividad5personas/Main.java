@@ -31,6 +31,7 @@ public class Main {
         List<Persona> personas = new ArrayList<>();
         Telefonos telefonos = new Telefonos();
         telefonos.getTelefonos().add(new Telefono("622096700","móvil"));
+        telefonos.getTelefonos().add(new Telefono("6882937909","fijo"));
         Trabajador trabajadorConEmail = new Trabajador(
                 "Israel Gago",
                 LocalDate.now(),
@@ -47,16 +48,16 @@ public class Main {
                 new Empresa("Servicio Movil","Camionero"));
         personas.add(trabajadorConTelefono);
 
-        telefonos.getTelefonos().add(new Telefono("6882937909","fijo"));
+
 
         Estudiante estudiante = new Estudiante(
                 "Mario Gago",
                 LocalDate.now(),
-                telefonos, "Universidad de Pontevedra",
+                new Email("mariogago@gmail.com"), "Universidad de Pontevedra",
                 "Ingeniería Informática"
         );
 
-        personas.add(new Estudiante());
+        personas.add(estudiante);
         Registro registro = new Registro(1, LocalDate.now(), categorias, personas);
         RegistrosJABX.guardarRegistro(registro,ruta);
     }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Registro version="1.0" fechaCreacion="19-11-25">
+    <Categorias>Categoria1 Categoria2 Categoria3</Categorias>
+    <Personas>
+        <Trabajador>
+            <Nombre>Israel Gago</Nombre>
+            <FechaNacimiento>19-11-25</FechaNacimiento>
+            <Email>isragagoacuna@gmail.com</Email>
+            <Empresa puesto="Administrador de sistemas">CDM</Empresa>
+            <Salario>1800.0</Salario>
+        </Trabajador>
+        <Trabajador>
+            <Nombre>Delio Gago</Nombre>
+            <FechaNacimiento>19-11-25</FechaNacimiento>
+            <Telefonos>
+                <Telefono tipo="móvil">622096700</Telefono>
+                <Telefono tipo="fijo">6882937909</Telefono>
+            </Telefonos>
+            <Empresa puesto="Camionero">Servicio Movil</Empresa>
+            <Salario>1800.0</Salario>
+        </Trabajador>
+        <Estudiante>
+            <Nombre>Mario Gago</Nombre>
+            <FechaNacimiento>19-11-25</FechaNacimiento>
+            <Email>mariogago@gmail.com</Email>
+            <Universidad>Universidad de Pontevedra</Universidad>
+            <Carrera>Ingeniería Informática</Carrera>
+        </Estudiante>
+    </Personas>
+</Registro>
