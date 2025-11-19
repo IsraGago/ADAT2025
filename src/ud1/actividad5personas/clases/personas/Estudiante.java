@@ -1,10 +1,12 @@
-package ud1.actividad5personas.logica.personas;
+package ud1.actividad5personas.clases.personas;
 
 
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import ud1.actividad5personas.clases.contactos.Contacto;
+
+import java.time.LocalDate;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Estudiante extends Persona {
@@ -26,6 +28,18 @@ public class Estudiante extends Persona {
     }
 
     public void setCarrera(String carrera) {
+        this.carrera = carrera;
+    }
+
+    @Override
+    public String toString() {
+        return getNombre()+", estudia en "+getUniversidad()+" la carrera de: "+getCarrera()+"\n";
+    }
+
+    public Estudiante(){}
+    public Estudiante(String nombre, LocalDate fechaNacimiento, Contacto contacto, String universidad, String carrera) {
+        super(nombre,fechaNacimiento,contacto);
+        this.universidad = universidad;
         this.carrera = carrera;
     }
 }
