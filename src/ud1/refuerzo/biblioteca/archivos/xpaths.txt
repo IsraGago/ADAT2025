@@ -1,0 +1,3 @@
+//seccion[@nombre ="Redes"]//libro // los libros de la seccion de Redes
+count(//seccion[@nombre ="Redes"]//libro) // cantidad de libros de redes
+//seccion/@nombre // todos los nombres de las secciones
