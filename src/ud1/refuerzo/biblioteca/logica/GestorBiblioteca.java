@@ -7,6 +7,7 @@ import ud1.refuerzo.biblioteca.clases.Seccion;
 import ud1.refuerzo.biblioteca.excepciones.ExcepcionXML;
 import ud1.refuerzo.biblioteca.persistencia.BibliotecaXML;
 import ud1.refuerzo.biblioteca.persistencia.TipoValidacion;
+import ud1.refuerzo.biblioteca.persistencia.XMLDOMUtils;
 
 import java.util.*;
 
@@ -73,5 +74,14 @@ public class GestorBiblioteca {
         bibliotecaXML.modificarEstadoCopia(isbn, numCopia, nuevoEstado);
         System.out.println("Estado de la copia modificado correctamente.");
 
+    }
+
+    public void guardarCambios(String rutaDestino){
+        if (documentoXML == null) {
+            System.out.println("No se ha cargado ningún documento XML.");
+            return;
+        }
+        XMLDOMUtils.guardarDocumento(documentoXML,rutaDestino);
+        System.out.println("Cambios guardados correctamente en el documento XML: " + rutaXML);
     }
 }

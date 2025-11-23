@@ -29,5 +29,6 @@ public class Main {
                 new ArrayList<>(List.of( new Copia(1,"Disponible"))));
         gestor.addLibro(libro, "POO");
         gestor.mostrarLibrosPorSeccion("POO");
+        gestor.guardarCambios(RutasFicheros.RUTA_XML_CAMBIOS.getRuta());
     }
 }
