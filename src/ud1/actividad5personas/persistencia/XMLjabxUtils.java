@@ -10,11 +10,22 @@ import java.io.File;
 public class XMLjabxUtils {
 
     public static <T> void marshal(T objeto,String rutaArchivo) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(objeto.getClass());
-        Marshaller marshaller = context.createMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        try{
+            JAXBContext context = JAXBContext.newInstance(objeto.getClass());
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 
-        marshaller.marshal(objeto, new File(rutaArchivo));
+            marshaller.marshal(objeto, new File(rutaArchivo));
+        } catch(JAXBException e){
+            System.err.println("JAXBException: " + e.getMessage());
+            Throwable linked = e.getLinkedException();
+            if (linked != null){
+                System.err.println("Linked exception: " + linked.getMessage());
+                linked.printStackTrace();
+            } else {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static <T> T unmarshal(Class<T> clase,String rutaArchivo) throws JAXBException {
