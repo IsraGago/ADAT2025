@@ -1,10 +1,7 @@
 package ud2.actividad1.utilidades;
 
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 import static ud2.actividad1.utilidades.TipoSGBD.*;
 
@@ -51,12 +48,43 @@ public class GestorConexiones {
         return sb.toString();
     }
 
+    public static ResultSet ejecutarConsulta(Connection con,String sqlConsulta,Object... parametros) throws SQLException {
+        PreparedStatement stmt = con.prepareStatement(sqlConsulta);
+        for (int i = 0; i < parametros.length; i++) {
+            stmt.setObject(i + 1, parametros[i]);
+        }
+        return stmt.executeQuery();
+    }
+
+    // permite sentencias DDL y DML
+    public static void ejecutarSentencia(Connection con,String sqlConsulta,Object... parametros) throws SQLException {
+        try (PreparedStatement stmt = con.prepareStatement(sqlConsulta)) {
+            setParametros(stmt, parametros);
+            stmt.executeUpdate();
+        }
+    }
+
+    private static void setParametros(PreparedStatement stmt, Object... parametros) throws SQLException {
+        for (int i = 0; i < parametros.length; i++) {
+            stmt.setObject(i+1,parametros[i]);
+        }
+    }
+
+    public  static void borrarTablas(Connection con, String... tablas) throws SQLException {
+        try (Statement st = con.createStatement()) {
+
+        }catch (SQLException e){
+            con.rollback();
+        } finally {
+            con.setAutoCommit(true);
+        }
+    }
     public static void cerrarConexion(Connection con) {
         if (con != null) {
             try {
                 con.close();
             } catch (SQLException e) {
-                System.err.println("Error al cerrar la conexión: " + e.getMessage());
+                throw new RuntimeException(e);
             }
         }
     }
