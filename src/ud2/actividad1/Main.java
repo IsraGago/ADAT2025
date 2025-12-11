@@ -9,10 +9,13 @@ import java.sql.SQLException;
 public class Main {
     public static void main(String[] args){
         String baseDatos = "BDEMPRESA25";
+        String rutaSQLite = "D:\\igagoacun\\0\\compartida\\bdempresa\\dbEmpresa.db";
         String usuario = "sa";
         String password = "abc123.";
         try{
-            Connection con = GestorConexiones.getConnection(TipoSGBD.SQLSERVER,baseDatos,usuario,password);
+//            Connection con = GestorConexiones.getConnection(TipoSGBD.SQLSERVER,baseDatos,usuario,password);
+//            Connection con = GestorConexiones.getConnection(TipoSGBD.MYSQL,baseDatos,usuario,password);
+            Connection con = GestorConexiones.getConnection(TipoSGBD.SQLITE,rutaSQLite,usuario,password);
             System.out.println(GestorConexiones.obtenerMetadatos(con));
         } catch (SQLException e) {
             throw new RuntimeException(e);
