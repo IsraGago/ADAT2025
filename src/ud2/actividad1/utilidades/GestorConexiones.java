@@ -5,6 +5,8 @@ import ud2.actividad1.clases.Departamento;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static ud2.actividad1.utilidades.TipoSGBD.*;
 
@@ -150,13 +152,28 @@ public class GestorConexiones {
         return departamentos;
     }
 
-    public static boolean existeDepartamento(Connection con, String nombre) throws SQLException {
-        String sql = "select count(NomeDepartamento) from DEPARTAMENTO where NomeDepartamento = '" + nombre + "'";
+    public static Map<Integer,String> getDepartamentosConProyectos(Connection con) throws SQLException {
+        String sql = "SELECT *" +
+                "From DEPARTAMENTO" +
+                "where NumDepartamento in (select distinct NumDepartControla from PROXECTO);";
         ResultSet rs = ejecutarConsulta(con, sql);
-        if (rs.next()) {
-            return rs.getInt(1) > 0;
-        } else return false;
+        Map<Integer,String> departamentosConProyectos = new HashMap<>();
+        while (rs.next()) {
+            departamentosConProyectos.put(rs.getInt("NumDepartamento"), rs.getString("NSSDirector"));
+        }
+        return departamentosConProyectos;
     }
+
+    public static
+
+    // TODO:
+//    public static boolean existeDepartamento(Connection con, String nombre) throws SQLException {
+//        String sql = "select count(NomeDepartamento) from DEPARTAMENTO where NomeDepartamento = '" + nombre + "'";
+//        ResultSet rs = ejecutarConsulta(con, sql);
+//        if (rs.next()) {
+//            return rs.getInt(1) > 0;
+//        } else return false;
+//    }
 
     public static int getUltimoNumDepartamento(Connection con) throws SQLException {
         String sql = "SELECT  max(NumDepartamento) from DEPARTAMENTO";
@@ -200,7 +217,7 @@ public class GestorConexiones {
                 "    Parentesto TEXT NOT NULL,\n" +
                 "    Sexo TEXT NOT NULL CHECK (Sexo in ('H','M')) DEFAULT 'M'\n" +
                 ")";
-        if ( borrarSiExsisten && tablaExiste(con, "FAMILIAR") && tablaExiste(con, "VEHICULO")) {
+        if ( borrarSiExsisten && tablaExiste(con, "FAMILIAR") || tablaExiste(con, "VEHICULO")) {
             borrarTablas(con,"FAMILIAR","VEHICULO");
         }
         ejecutarLoteTransaccional(con, sqlVehiculos, sqlFamiliares);

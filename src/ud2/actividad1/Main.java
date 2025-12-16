@@ -16,14 +16,9 @@ public class Main {
         String password = "abc123.";
         boolean borrarTablasSiExsisten = true;
         try{
-//            Connection con = GestorConexiones.getConnection(TipoSGBD.SQLSERVER,baseDatos,usuario,password);
-//            Connection con = GestorConexiones.getConnection(TipoSGBD.MYSQL,baseDatos,usuario,password);
-//            Connection con = GestorConexiones.getConnection(TipoSGBD.SQLITE,rutaSQLite,usuario,password);
-//            System.out.println(GestorConexiones.obtenerMetadatos(con));
             GestorEmpresa gestorEmpresa = new GestorEmpresa(TipoSGBD.SQLITE,rutaSQLite,usuario,password);
             gestorEmpresa.mostrarMetadatos();
             gestorEmpresa.mostrarDepartamentos();
-            // gestorEmpresa.insertarDepartamento("Nuevo departamento","54321342");
             gestorEmpresa.crearTablasExtra(borrarTablasSiExsisten);
         } catch (SQLException e) {
             throw new RuntimeException(e);
