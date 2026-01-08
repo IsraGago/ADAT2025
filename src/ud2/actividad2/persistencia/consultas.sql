@@ -3,12 +3,20 @@ SELECT *
 From DEPARTAMENTO
 where NumDepartamento in (select distinct NumDepartControla from PROXECTO);
 
+Select d.NumDepartamento,d.NomeDepartamento from DEPARTAMENTO d where exists ()
+
 --2
 select d.NumDepartamento, d.NomeDepartamento, Nome, Apelido1, Apelido2
 from EMPREGADO e
          inner join DEPARTAMENTO d
                     on e.NSS = d.NSSDirector
 where NumDepartamento in (select distinct NumDepartControla from PROXECTO);
+
+--consulta pepa
+select d.NumDepartamento, d.NomeDepartamento, Nome, Apelido1, Apelido2
+from DEPARTAMENTO d join EMPREGADO e
+on d.NSSDirector = e.NSS
+where exists( SELECT 1 from EMPREGADO_PROXECTO ep where ep.NSSEmpregado = e.NSS);
 
 --3 //
 Select NSS,
@@ -19,21 +27,20 @@ Select NSS,
            - (strftime('%m-%d', 'now') < strftime('%m-%d', DataNacemento)) AS edad
 from EMPREGADO;
 
---4 // TODO: hacer case
-SELECT
-    e.Nome || ' ' || e.Apelido1 || ' ' || COALESCE(e.Apelido2, '') AS Empregado,
-    CASE
-        WHEN ef.NSS IS NOT NULL THEN 'Fixo'
-        WHEN et.NSS IS NOT NULL THEN 'Temporal'
-        ELSE 'Sen categoría'
-    END AS Tipo
+--4
+SELECT e.Nome || ' ' || e.Apelido1 || ' ' || COALESCE(e.Apelido2, '') AS empleado,
+       CASE
+           WHEN ef.NSS IS NOT NULL THEN 'Fixo'
+           WHEN et.NSS IS NOT NULL THEN 'Temporal'
+           ELSE 'Sen categoría'
+           END                                                        AS tipo
 FROM EMPREGADO e
-JOIN DEPARTAMENTO d
-    ON e.NumDepartamentoPertenece = d.NumDepartamento
-LEFT JOIN EMPREGADOFIXO ef
-    ON e.NSS = ef.NSS
-LEFT JOIN EMPREGADOTEMPORAL et
-    ON e.NSS = et.NSS
+         JOIN DEPARTAMENTO d
+              ON e.NumDepartamentoPertenece = d.NumDepartamento
+         LEFT JOIN EMPREGADOFIXO ef
+                   ON e.NSS = ef.NSS
+         LEFT JOIN EMPREGADOTEMPORAL et
+                   ON e.NSS = et.NSS
 WHERE d.NomeDepartamento = 'PERSOAL';
 
 

@@ -1,7 +1,7 @@
-package ud2.actividad1.utilidades;
+package ud2.actividad2.utilidades;
 
 
-import ud2.actividad1.clases.Departamento;
+import ud2.actividad2.clases.Departamento;
 
 import java.io.File;
 import java.sql.*;
@@ -9,12 +9,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ud2.actividad1.utilidades.TipoSGBD.*;
+import static ud2.actividad2.utilidades.TipoSGBD.*;
 
 
 public class GestorConexiones {
     public static final String PUERTO_SQLSERVER = "1433";
     public static final String PUERTO_MYSQL = "3306";
+
+    public static Connection getConnection(TipoSGBD tipo, String rutaSqlite) throws SQLException {
+        if (tipo == TipoSGBD.SQLITE) {
+            return getConnection(tipo, rutaSqlite, "", "");
+        } else {
+            throw new UnsupportedOperationException("Este método solo puede usarse para conexiones SQLITE.");
+        }
+    }
 
     public static Connection getConnection(TipoSGBD tipo, String baseDatos, String usuario, String password) throws SQLException {
         String url;
@@ -38,7 +46,11 @@ public class GestorConexiones {
             }
         }
         if (tipo == SQLITE) {
-            return DriverManager.getConnection(url);
+            Connection con = DriverManager.getConnection(url);
+            try (Statement st = con.createStatement()) {
+                st.execute("PRAGMA foreign_keys = ON");
+            }
+            return con;
         } else {
             return DriverManager.getConnection(url, usuario, password);
         }
@@ -139,89 +151,10 @@ public class GestorConexiones {
             }
         } catch (RuntimeException e) {
             throw new RuntimeException(e);
-        }
-        finally {
+        } finally {
             con.setAutoCommit(true);
         }
     }
 
-    public static ArrayList<Departamento> getDepartamentos(Connection con) throws SQLException {
-        ResultSet rs = ejecutarConsulta(con, "SELECT * FROM DEPARTAMENTO");
-        ArrayList<Departamento> departamentos = new ArrayList<>();
-        while (rs.next()) {
-            Departamento departamento = new Departamento(rs.getInt("NumDepartamento"), rs.getString("NomeDepartamento"), rs.getString("NSSDirector"));
-            departamentos.add(departamento);
-        }
-        return departamentos;
-    }
 
-    public static Map<Integer,String> getDepartamentosConProyectos(Connection con) throws SQLException {
-        String sql = "SELECT *" +
-                "From DEPARTAMENTO" +
-                "where NumDepartamento in (select distinct NumDepartControla from PROXECTO);";
-        ResultSet rs = ejecutarConsulta(con, sql);
-        Map<Integer,String> departamentosConProyectos = new HashMap<>();
-        while (rs.next()) {
-            departamentosConProyectos.put(rs.getInt("NumDepartamento"), rs.getString("NSSDirector"));
-        }
-        return departamentosConProyectos;
-    }
-
-
-    // TODO:
-    public static boolean existeDepartamento(Connection con, String nombre) throws SQLException {
-        String sql = "select count(NomeDepartamento) from DEPARTAMENTO where NomeDepartamento = '" + nombre + "'";
-        ResultSet rs = ejecutarConsulta(con, sql);
-        if (rs.next()) {
-            return rs.getInt(1) > 0;
-        } else return false;
-    }
-
-    public static int getUltimoNumDepartamento(Connection con) throws SQLException {
-        String sql = "SELECT  max(NumDepartamento) from DEPARTAMENTO";
-        ResultSet rs = ejecutarConsulta(con, sql);
-        if (rs.next()) {
-            return rs.getInt(1);
-        } else return 0;
-    }
-
-    public static boolean insertarDepartamento(Connection con, String nombre, String nssDirector) throws SQLException {
-        if (existeDepartamento(con, nombre)) {
-            return false;
-        }
-        String sql = "insert into DEPARTAMENTO (NumDepartamento, NomeDepartamento, NSSDirector)VALUES (?,?,?);";
-//        PreparedStatement stmt = con.prepareStatement(sql);
-//        stmt.setInt(1, getUltimoNumDepartamento(con));
-//        stmt.setString(2, nombre);
-//        stmt.setString(3, nssDirector);
-        ejecutarSentencia(con, sql, getUltimoNumDepartamento(con) + 1, nombre, nssDirector);
-        // TODO RETORNAR SI SE EJECUTÓ BIEN
-        return false;
-    }
-
-    public static void crearTablas(Connection con,boolean borrarSiExsisten) throws SQLException {
-        String sqlVehiculos = "Create Table VEHICULO(\n" +
-                "    Codigo INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                "    Matricula TEXT NOT NULL UNIQUE,\n" +
-                "    Marca Text NOT NULL,\n" +
-                "    Modelo TEXT NOT NULL,\n" +
-                "    Tipo TEXT NOT NULL CHECK (Tipo in ('G','D'))\n" +
-                ")";
-
-        String sqlFamiliares = "Create table FAMILIAR(\n" +
-                "    Codigo INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                "    Nss TEXT NOT NULL UNIQUE,\n" +
-                "    NssEmpregado TEXT NOT NULL,\n" +
-                "    Nombre TEXT NOT NULL,\n" +
-                "    Apellido1 TEXT NOT NULL,\n" +
-                "    Apellido2 TEXT,\n" +
-                "    FechaNac TEXT NOT NULL,\n" +
-                "    Parentesto TEXT NOT NULL,\n" +
-                "    Sexo TEXT NOT NULL CHECK (Sexo in ('H','M')) DEFAULT 'M'\n" +
-                ")";
-        if ( borrarSiExsisten && tablaExiste(con, "FAMILIAR") || tablaExiste(con, "VEHICULO")) {
-            borrarTablas(con,"FAMILIAR","VEHICULO");
-        }
-        ejecutarLoteTransaccional(con, sqlVehiculos, sqlFamiliares);
-    }
 }

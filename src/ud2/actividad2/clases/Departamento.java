@@ -1,9 +1,13 @@
-package ud2.actividad1.clases;
+package ud2.actividad2.clases;
 
 public class Departamento {
     private int numDepartamento;
     private String nombre;
     private String nss;
+
+    public Departamento(int numDepartamento, String nomeDepartamento) {
+        //TODO
+    }
 
     public int getNumDepartamento() {
         return numDepartamento;
@@ -33,10 +37,6 @@ public class Departamento {
         this.numDepartamento = numDepartamento;
         this.nombre = nombre;
         this.nss = nss;
-    }
-
-    public Departamento(int int1, String string) {
-        //TODO Auto-generated constructor stub
     }
 
     public void mostrarDatos(){
