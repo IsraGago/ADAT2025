@@ -8,4 +8,12 @@ public class DepartamentoConMasDeNDTO {
         this.numDepartamento = numDepartamento;
         this.numEpleados = numEpleados;
     }
+
+    @Override
+    public String toString() {
+        return "DepartamentoConMasDeNDTO{" +
+                "numDepartamento=" + numDepartamento +
+                ", numEpleados=" + numEpleados +
+                '}';
+    }
 }

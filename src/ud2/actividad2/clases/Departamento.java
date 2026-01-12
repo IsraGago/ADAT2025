@@ -6,7 +6,8 @@ public class Departamento {
     private String nss;
 
     public Departamento(int numDepartamento, String nomeDepartamento) {
-        //TODO
+        this.numDepartamento = numDepartamento;
+        this.nombre = nomeDepartamento;
     }
 
     public int getNumDepartamento() {

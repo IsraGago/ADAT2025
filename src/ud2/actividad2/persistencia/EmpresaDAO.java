@@ -110,13 +110,14 @@ public class EmpresaDAO implements AutoCloseable {
         GestorConexiones.ejecutarLoteTransaccional(con, sqlVehiculos, sqlFamiliares);
     }
 
-    public List<Departamento> obtenerDepartamentosConProyectos() {
+    public static List<Departamento> obtenerDepartamentosConProyectos(Connection con) {
         // ejercicio 1
         List<Departamento> lista = new ArrayList<>();
-        String sql = "Select * from DEPARTAMENTO where NumDepartamento in (select distinct NumDepartamentoControla From PROXECTO)";
+        String sql = "Select * from DEPARTAMENTO where NumDepartamento in (select distinct NumDepartControla From PROXECTO);";
         try (ResultSet rs = GestorConexiones.ejecutarConsulta(con, sql);) {
             while (rs.next()) {
-                lista.add(new Departamento(rs.getInt("NumDepartamento"), rs.getString("NomeDepartamento")));
+                Departamento departamento = new Departamento(rs.getInt("NumDepartamento"), rs.getString("NomeDepartamento"));
+                lista.add(departamento);
             }
 
         } catch (Exception e) {
@@ -125,7 +126,7 @@ public class EmpresaDAO implements AutoCloseable {
         return lista;
     }
 
-    public List<DirectorDepartamentoDTO> obtenerDirectoresConProyectos() {
+    public static List<DirectorDepartamentoDTO> obtenerDirectoresConProyectos(Connection con) {
         // ejercicio 2
         List<DirectorDepartamentoDTO> lista = new ArrayList<>();
         String sql = "select d.NumDepartamento, d.NomeDepartamento, Nome, Apelido1, Apelido2\n" +
@@ -149,7 +150,7 @@ public class EmpresaDAO implements AutoCloseable {
         return lista;
     }
 
-    public List<EmpleadoEdadDTO> obtenerEmpleadosConEdad() {
+    public static List<EmpleadoEdadDTO> obtenerEmpleadosConEdad(Connection con) {
         // ejercicio 3
         List<EmpleadoEdadDTO> lista = new ArrayList<>();
         String sql = "Select NSS,\n" +
@@ -177,9 +178,9 @@ public class EmpresaDAO implements AutoCloseable {
 
     }
 
-    public List<EmpleadoTipo> obtenerEmpleadoPorDepartamento(String nombreDepartamento) {
+    public static List<EmpleadoTipoDTO> obtenerEmpleadoPorDepartamento(Connection con,String nombreDepartamento) {
         // ejercicio 4
-        List<EmpleadoTipo> lista = new ArrayList<>();
+        List<EmpleadoTipoDTO> lista = new ArrayList<>();
         String sql = "SELECT\n" +
                 "    e.Nome || ' ' || e.Apelido1 || ' ' || COALESCE(e.Apelido2, '') AS empleado,\n" +
                 "    CASE\n" +
@@ -198,7 +199,7 @@ public class EmpresaDAO implements AutoCloseable {
 
         try (ResultSet rs = GestorConexiones.ejecutarConsulta(con, sql);) {
             while (rs.next()) {
-                lista.add(new EmpleadoTipo(
+                lista.add(new EmpleadoTipoDTO(
                         rs.getString("empleado"),
                         rs.getString("tipo")));
             }
@@ -210,9 +211,9 @@ public class EmpresaDAO implements AutoCloseable {
 
     }
 
-    public List<EmpleadoFijoProyecto> obtenerEmpleadoFijoPorPorProyectoYLocalidad(String nombreProyecto, String localidad) {
+    public static List<EmpleadoFijoProyectoDTO> obtenerEmpleadoFijoPorPorProyectoYLocalidad(Connection con,String nombreProyecto, String localidad) {
         // ejercicio 5
-        List<EmpleadoFijoProyecto> lista = new ArrayList<>();
+        List<EmpleadoFijoProyectoDTO> lista = new ArrayList<>();
         String sql = "select e.nss, concat(Nome, \" \", Apelido1, \" \", Apelido2) as nombreCompleto, Salario, NomeDepartamento\n" +
                 "from PROXECTO p\n" +
                 "         inner join EMPREGADO_PROXECTO ep on ep.NumProxecto = p.NumProxecto\n" +
@@ -224,7 +225,7 @@ public class EmpresaDAO implements AutoCloseable {
 
         try (ResultSet rs = GestorConexiones.ejecutarConsulta(con, sql);) {
             while (rs.next()) {
-                lista.add(new EmpleadoFijoProyecto(
+                lista.add(new EmpleadoFijoProyectoDTO(
                         rs.getString("nombreCompleto"),
                         rs.getDouble("Salario"),
                         rs.getString("NomeDepartamento")));
@@ -237,9 +238,36 @@ public class EmpresaDAO implements AutoCloseable {
 
     }
 
-    //TODO: hacer el 6
+    public static List<DepartamentoNumEpleadosDTO> obtenerNumEpleadosDepartamentosPorTipo(Connection con) {
+        // ejercicio 6
+        List<DepartamentoNumEpleadosDTO> lista = new ArrayList<>();
+        String sql = "SELECT d.NumDepartamento,\n" +
+                "       d.NomeDepartamento,\n" +
+                "       COUNT(DISTINCT ef.NSS) AS NumEmpregadosFixos,\n" +
+                "       COUNT(DISTINCT et.NSS) AS NumEmpregadosTemporais\n" +
+                "FROM DEPARTAMENTO d\n" +
+                "LEFT JOIN EMPREGADO e\n" +
+                "    ON e.NumDepartamentoPertenece = d.NumDepartamento\n" +
+                "LEFT JOIN EMPREGADOFIXO ef ON ef.NSS = e.NSS\n" +
+                "LEFT JOIN EMPREGADOTEMPORAL et ON et.NSS = e.NSS\n" +
+                "GROUP BY d.NumDepartamento, d.NomeDepartamento;";
 
-    public List<DepartamentoConMasDeNDTO> obtenerDepartamentosConMasDeN(int n) {
+        try (ResultSet rs = GestorConexiones.ejecutarConsulta(con, sql);) {
+            while (rs.next()) {
+                lista.add(new DepartamentoNumEpleadosDTO(
+                        rs.getInt("NumDepartamento"),
+                        rs.getString("NomeDepartamento"),
+                        rs.getInt("NumEmpregadosFixos"),
+                        rs.getInt("NumEmpregadosTemporais")));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al consultar los departamentos con su número de empleados por tipo: " + e.getMessage(), e);
+        }
+        return lista;
+    }
+
+    public static List<DepartamentoConMasDeNDTO> obtenerDepartamentosConMasDeN(Connection con,int n) {
         // ejercicio 7
         List<DepartamentoConMasDeNDTO> lista = new ArrayList<>();
         String sql = "select NumDepartamento, count(NomeDepartamento) as numEpleados\n" +
@@ -263,7 +291,7 @@ public class EmpresaDAO implements AutoCloseable {
 
     }
 
-    public List<EmpleadoFijoSalarioDTO> obtenerFijosConSalarioMayorQue(double salario) {
+    public static List<EmpleadoFijoSalarioDTO> obtenerFijosConSalarioMayorQue(Connection con,double salario) {
         // ejercicio 8
         List<EmpleadoFijoSalarioDTO> lista = new ArrayList<>();
         String sql = "select *\n" +
@@ -282,7 +310,84 @@ public class EmpresaDAO implements AutoCloseable {
             }
 
         } catch (Exception e) {
-            throw new RuntimeException("Error al consultar los empleados con mas de x salario: " + e.getMessage(), e);
+            throw new RuntimeException("Error al consultar los empleados con más de x salario: " + e.getMessage(), e);
+        }
+        return lista;
+
+    }
+
+    public static List<EmpleadosFijosMaxSalarioDepartamentoDTO> obtenerEmpleadosFijosMaxSalarioDepartamento(Connection con) {
+        // ejercicio 9
+        List<EmpleadosFijosMaxSalarioDepartamentoDTO> lista = new ArrayList<>();
+        String sql = "    SELECT\n" +
+                "    d.NumDepartamento,\n" +
+                "    d.NomeDepartamento,\n" +
+                "    e.Nome,\n" +
+                "    e.Apelido1,\n" +
+                "    e.Apelido2,\n" +
+                "    ef.Salario\n" +
+                "FROM EMPREGADO e\n" +
+                "JOIN EMPREGADOFIXO ef\n" +
+                "    ON e.NSS = ef.NSS\n" +
+                "JOIN DEPARTAMENTO d\n" +
+                "    ON e.NumDepartamentoPertenece = d.NumDepartamento\n" +
+                "WHERE ef.Salario = (\n" +
+                "    SELECT MAX(ef2.Salario)\n" +
+                "    FROM EMPREGADO e2\n" +
+                "    JOIN EMPREGADOFIXO ef2\n" +
+                "        ON e2.NSS = ef2.NSS\n" +
+                "    WHERE e2.NumDepartamentoPertenece = e.NumDepartamentoPertenece\n" +
+                ")\n" +
+                "ORDER BY d.NomeDepartamento ASC;";
+
+        try (ResultSet rs = GestorConexiones.ejecutarConsulta(con, sql);) {
+            while (rs.next()) {
+                lista.add(new EmpleadosFijosMaxSalarioDepartamentoDTO(
+                        rs.getInt("NumDepartamento"),
+                        rs.getString("NomeDepartamento"),
+                        rs.getString("Nome"),
+                        rs.getString("Apelido1"),
+                        rs.getString("Apelido2"),
+                        rs.getDouble("Salario")));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al consultar los empleados con más salario de cada departamento: " + e.getMessage(), e);
+        }
+        return lista;
+
+    }
+
+    public static List<DepartamentoNumProyectosDTO> obtenerDepartamentosMaxProyectosControlados(Connection con) {
+        // ejercicio 10
+        List<DepartamentoNumProyectosDTO> lista = new ArrayList<>();
+        String sql = "SELECT\n" +
+                "    d.NumDepartamento,\n" +
+                "    d.NomeDepartamento,\n" +
+                "    COUNT(p.NumProxecto) AS NumProxectos\n" +
+                "FROM DEPARTAMENTO d\n" +
+                "LEFT JOIN PROXECTO p\n" +
+                "    ON d.NumDepartamento = p.NumDepartControla\n" +
+                "GROUP BY d.NumDepartamento, d.NomeDepartamento\n" +
+                "HAVING COUNT(p.NumProxecto) = (\n" +
+                "    SELECT MAX(NumProxectos)\n" +
+                "    FROM (\n" +
+                "        SELECT COUNT(*) AS NumProxectos\n" +
+                "        FROM PROXECTO\n" +
+                "        GROUP BY NumDepartControla\n" +
+                "    )\n" +
+                ");";
+
+        try (ResultSet rs = GestorConexiones.ejecutarConsulta(con, sql);) {
+            while (rs.next()) {
+                lista.add(new DepartamentoNumProyectosDTO(
+                        rs.getInt("NumDepartamento"),
+                        rs.getString("NomeDepartamento"),
+                        rs.getInt("NumProxectos")));
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error al consultar los departamentos con mas proyectos controlados: " + e.getMessage(), e);
         }
         return lista;
 
