@@ -85,10 +85,11 @@ public class GestorConexiones {
     }
 
     // permite sentencias DDL y DML
-    public static void ejecutarSentencia(Connection con, String sql, Object... parametros) throws SQLException {
+    public static int ejecutarSentencia(Connection con, String sql, Object... parametros) throws SQLException {
         try (PreparedStatement stmt = con.prepareStatement(sql)) {
             setParametros(stmt, parametros);
             stmt.executeUpdate();
+            return stmt.getUpdateCount();
         }
     }
 
@@ -153,6 +154,21 @@ public class GestorConexiones {
             throw new RuntimeException(e);
         } finally {
             con.setAutoCommit(true);
+        }
+    }
+
+        public static int insertarYRetornarClaveGenerada(Connection con, String sql, Object... params) throws SQLException {
+        try(PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            setParametros(ps, params);
+            ps.executeUpdate();
+
+            try(ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                } else {
+                    throw new SQLException("No se generó clave primaria");
+                }
+            }
         }
     }
 
