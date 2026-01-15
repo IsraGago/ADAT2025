@@ -1,6 +1,7 @@
-package ud2.actividad2.persistencia;
+package ud2.actividad3.persistencia;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -8,10 +9,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ud2.actividad2.clases.*;
-import ud2.actividad2.dto.*;
-import ud2.actividad2.utilidades.GestorConexiones;
-import ud2.actividad2.utilidades.TipoSGBD;
+import ud2.actividad3.clases.*;
+import ud2.actividad3.dto.*;
+import ud2.actividad3.utilidades.GestorConexiones;
+import ud2.actividad3.utilidades.TipoSGBD;
 
 public class EmpresaDAO implements AutoCloseable {
 
@@ -32,7 +33,7 @@ public class EmpresaDAO implements AutoCloseable {
 
     public static ArrayList<Departamento> getDepartamentos(Connection con) throws SQLException {
         ResultSet rs = GestorConexiones.ejecutarConsulta(con, "SELECT * FROM DEPARTAMENTO");
-        ArrayList<ud2.actividad2.clases.Departamento> departamentos = new ArrayList<>();
+        ArrayList<ud2.actividad3.clases.Departamento> departamentos = new ArrayList<>();
         while (rs.next()) {
             Departamento departamento = new Departamento(rs.getInt("NumDepartamento"), rs.getString("NomeDepartamento"), rs.getString("NSSDirector"));
             departamentos.add(departamento);
@@ -92,8 +93,6 @@ public class EmpresaDAO implements AutoCloseable {
         GestorConexiones.ejecutarLoteTransaccional(con, sqlVehiculos, sqlFamiliares);
     }
 
-
-// ACTIVIDAD 2: CONSULTAS
     public static List<Departamento> obtenerDepartamentosConProyectos(Connection con) {
         // ejercicio 1
         List<Departamento> lista = new ArrayList<>();
@@ -260,4 +259,326 @@ public class EmpresaDAO implements AutoCloseable {
         return lista;
 
     }
+
+    // ACTIVIDAD 3: ACTUALIZACIONES
+
+    public static int insertarFamiliar(Connection con, Familiar familiar) throws SQLException {
+        // ejercicio1
+        try {
+//            con.setAutoCommit(false);
+//            String sqlMax = """
+//                    Select COALESCE(MAX(Numero),0)
+//                    FROM FAMILIAR
+//                    WHERE NSS_empregado = ?
+//                    """;
+//            int numero = 1;
+//
+//            try(ResultSet rs = GestorConexiones.ejecutarConsulta(con,sqlMax,familiar.getNssEmpleado())){
+//                if (rs.next()) {
+//                    numero = rs.getInt(1)+1;
+//                }
+//                familiar.setN
+//            }catch (){
+//
+//            }
+
+            String sql = """
+                    INSERT INTO FAMILIAR
+                    (Nss,NssEmpregado,Nombre,Apellido1,Apellido2,FechaNac,Parentesco,Sexo)
+                    Values(?,?,?,?,?,?,?,?);
+                    """;
+            GestorConexiones.ejecutarSentencia(con, sql, familiar.getNss(), familiar.getNssEmpleado(), familiar.getNombre(), familiar.getApellido1(), familiar.getApellido2(), familiar.getFechaNacimiento(), familiar.getParentesco(), familiar.getSexo());
+        } catch (SQLException e) {
+            try {
+                con.rollback();
+                /*
+                 * error de FK -> -1
+                 * PK o unique -> -2
+                 * check -> -3
+                 * */
+            } catch (SQLException ex) {
+                String msg = ex.getMessage();
+                if (msg.contains("FK")) {
+                    return -1;
+                } else if (msg.contains("PK|UQ")) {
+                    return -2;
+                } else if (msg.contains("CK")) {
+                    return -3;
+                }
+                throw new RuntimeException(ex);
+            }
+        } finally {
+            con.setAutoCommit(true);
+            return 0;
+        }
+    }
+
+    public static int insertarVehiculo(Connection con, Vehiculo vehiculo) {
+        // ejercicio 2
+        String sqlVehiculoSQL = """
+                        INSERT INTO VEHICULO(Matricula,Marca,Modelo,Tipo)
+                        VALUES(?,?,?,?)
+                """;
+        String sqlVehiculoPropiosSQL = """
+                        INSERT INTO VEHICULO_PROPIOS(CodVehiculo,FechaCompra,Precio)
+                        VALUES(?,?,?)
+                """;
+        String sqlVehiculoRentingSQL = """
+                INSERT INTO VEHICULO_RENTINGS(CodVehiculo,FechaIni,PrecioMensual,MesesContratados)
+                VALUES(?,?,?,?)
+                """;
+        try {
+            con.setAutoCommit(false);
+            int codVehiculo = GestorConexiones.insertarYRetornarClaveGenerada(con, sqlVehiculoSQL,
+                    vehiculo.getMatricula(),
+                    vehiculo.getMarca(),
+                    vehiculo.getModelo(),
+                    String.valueOf(vehiculo.getTipo()));
+
+            if (vehiculo instanceof VehiculoPropio v) {
+                GestorConexiones.ejecutarSentencia(con, sqlVehiculoPropiosSQL,
+                        v.getCodigo(),
+                        v.getFechaCompra(),
+                        v.getPrecio());
+            } else if (vehiculo instanceof VehiculoRenting v) {
+                GestorConexiones.ejecutarSentencia(con, sqlVehiculoRentingSQL,
+                        v.getCodigo(), java.sql.Date.valueOf(v.getFechaCompra()), v.getPrecioMensual(), v.getMesesContratados());
+            }
+
+        } catch (SQLException e) {
+            con.rollback();
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return 0;
+        }
+    }
+
+    public static int cambiarDepartamentoProyecto(Connection con, String nombreDepartamento, String nombreProyecto) {
+        // ejercicio 3
+        try {
+            String sql = """
+                    UPDATE PROXECTO
+                    SET NumDepartamentoControla = (Select NumDepartamento FROM DEPARTAMENTO WHERE NomeDepartamento = ?)
+                    WHERE NomeProxecto = ?
+                    """;
+            int filas = GestorConexiones.ejecutarSentencia(con, sql, nombreDepartamento, nombreProyecto);
+            if (filas == 0) {
+                return -2;
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static ProyectoConEmpleadosDTO obtenerProyectoConEmpleados(Connection con, int numProyecto) {
+        // ejercicio 4
+        // TODO HACER CON PROCEDIMIENTO
+        String sql = """
+                Select NumProxecto,NomeProxecto,Lugar,NumDepartControla
+                From PROXECTO
+                WHERE NumProxecto = ?
+                """;
+        String sql2 = """
+                Select e.NSS,CONCAT(e.Nome,' ',e.Apelido1,' ',COALESCE(e.Apelido2,'')) as NombreCompleto
+                FROM EMPREGRADO e
+                Join EMPREGADO_PROXECTO ep on e.NSS = ep.NSSEmpregado
+                where ep.NumProxecto = ?
+                """;
+        ProyectoConEmpleadosDTO dto = null;
+        return null;
+    }
+
+    public static boolean borrarProyecto(Connection con, int numProyecto) {
+        // ejercicio 4
+        String slqBorrarAsignaciones = "DELETE FROM EMPREGADO_PROXECTO WHERE NumProyecto = ?";
+        String slqBorrarProyecto = "DELETE FROM PROXECTO WHERE NumProyecto = ?";
+        try {
+            con.setAutoCommit(false);
+            GestorConexiones.ejecutarSentencia(con, slqBorrarAsignaciones, numProyecto);
+            int filas = GestorConexiones.ejecutarSentencia(con, slqBorrarProyecto, numProyecto);
+            con.commit();
+            return filas == 1;
+        } catch (SQLException e) {
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(e);
+            }
+        } finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return false;
+    }
+
+    public static int incrementarSalarioEmpleadosFijos(Connection con, double incremento, List<String> listaNss) {
+        // ejercicio 5
+        String sql = "UPDATE EMPREGADOFIXO SET salario = salario + ? WHERE NSS = ?";
+        PreparedStatement ps = null;
+        try {
+            con.setAutoCommit(false);
+            ps = con.prepareStatement(sql);
+            ps.setDouble(1, incremento);
+            for (String nss : listaNss) {
+                ps.setString(2, nss);
+                ps.addBatch(nss);
+            }
+            int[] resultados = ps.executeBatch();
+            con.commit();
+            int filasCambiadas = 0;
+            for (int i = 0; i < resultados.length; i++) {
+                filasCambiadas = resultados[i];
+            }
+            return filasCambiadas;
+        } catch (SQLException e) {
+            try {
+                con.rollback();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
+        } finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        return 0;
+    }
+
+    public static boolean insertarProyecto(Connection con, Proxecto proyecto) {
+        // ejercicio 6
+        String sql = "Select * from PROXECTO";
+        try (ResultSet rs = GestorConexiones.crearResultSetActualizable(con, sql)) {
+            rs.moveToInsertRow();
+            rs.updateInt("NumProxecto", obtenerUltimoNumProyecto(con) + 1);
+            rs.updateString("NomeProxecto", proyecto.getNombre());
+            rs.updateString("Lugar", proyecto.getLugar());
+            rs.updateInt("NumDepartControla", proyecto.getNumDepartamento());
+
+            rs.insertRow();
+            rs.moveToCurrentRow();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static int obtenerUltimoNumProyecto(Connection con) {
+        String sql = "select MAX(NumProxecto) as max FROM PROXECTO";
+        try (ResultSet rs = GestorConexiones.ejecutarConsulta(con, sql)) {
+            return rs.getInt("max");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static int incrementarSalario(Connection con, double incremento, int numDepartamento) {
+        // ejercicio 7
+        String sql = """
+                SELECT EF.NSS, EF.SALARIO
+                FROM EMPREGADOFIXO EF INNER JOIN EMPREGADO E
+                ON E.NSS = EF.NSS
+                WHERE E.NumDepartamentoPertenece = ?
+                """;
+        int afectados = 0;
+        try {
+            con.setAutoCommit(false);
+            try (ResultSet rs = GestorConexiones.crearResultSetActualizable(con, sql, numDepartamento)) {
+                while (rs.next()) {
+                    double salarioActual = rs.getDouble("salario");
+                    rs.updateDouble("salario", salarioActual + incremento);
+                    rs.updateRow();
+                    afectados++;
+                }
+            }
+            con.commit();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                con.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            return afectados;
+        }
+    }
+
+    public List<EmpleadoInfoDTO> obtenerEmpleadosConMasProyectos(Connection con, int valor) {
+        String sql = """
+                SELECT E.NSS,
+                       CONCAT(E.Nome, ' ', E.Apelido1, ' ', COALESCE(E.Apelido2, '')) AS NombreCompleto,
+                       E.Localidade,
+                       EF.Salario
+                FROM EMPREGADO E
+                INNER JOIN EMPREGADOFIXO EF ON E.NSS = EF.NSS
+                WHERE (SELECT COUNT(*)
+                       FROM EMPREGADO_PROXECTO EP
+                       WHERE EP.NSSEmpregado = E.NSS) > ?
+                """;
+
+        List<EmpleadoInfoDTO> lista = new ArrayList<>();
+
+        try (PreparedStatement stmt = con.prepareStatement(sql,
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_READ_ONLY)) {
+
+            stmt.setInt(1, valor);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (!rs.isBeforeFirst()) {
+                    return lista;
+                }
+
+                if (rs.first()) {
+                    imprimirFila(rs);
+                }
+
+                if (rs.last()) {
+                    imprimirFila(rs);
+                    int totalFilas = rs.getRow();
+
+                    if (totalFilas >= 3) {
+                        if (rs.absolute(totalFilas - 2)) {
+                            imprimirFila(rs);
+                        }
+                    }
+                }
+
+                rs.afterLast();
+                while (rs.previous()) {
+                    imprimirFila(rs);
+                    lista.add(new EmpleadoInfoDTO(
+                            rs.getString("NSS"),
+                            rs.getString("NombreCompleto"),
+                            rs.getString("Localidade"),
+                            rs.getDouble("Salario")
+                    ));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return lista;
+    }
+
+    private void imprimirFila(ResultSet rs) throws SQLException {
+        System.out.printf("NSS: %s | Nome: %s | Localidade: %s | Salario: %.2f%n",
+                rs.getString("NSS"),
+                rs.getString("NombreCompleto"),
+                rs.getString("Localidade"),
+                rs.getDouble("Salario"));
+    }
+
 }

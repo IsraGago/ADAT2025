@@ -63,6 +63,7 @@ public class GestorEmpresa {
         }
     }
 
+    // ACTIVIDAD2: Consultas
     public void mostrarDepartamentosConProyectos(){
         List<Departamento> lista = EmpresaDAO.obtenerDepartamentosConProyectos(con);
         for (Departamento departamento : lista){
