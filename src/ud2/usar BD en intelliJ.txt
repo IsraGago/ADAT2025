@@ -1,0 +1,39 @@
+EN VBOX:
+click derecho sobre la máquina -> configuración -> red -> reenvio de puertos
+hay que añadir dos reglas:
+Protocolo	Puerto anfitrión	Ip invitado	Puerto invitado
+TCP		3306			(ip mv)		3306
+TCP		1433			(ip mv)		1443
+
+en el puerto anfitrión (la maquina real) puedes poner el puerto que quieras siempre que no esté ocupado ya
+
+recuerda darle a aceptar en el dialogo de reenvio de puertos y en el de configuración para que se apliquen los cambios
+
+EN LA MV:
+
+abre un power shell como administrador y ejecuta los siguientes comandos
+# TCP para SQL Server
+netsh advfirewall firewall add rule name="SQL Server TCP 1433" dir=in action=allow protocol=TCP localport=1433
+
+# UDP para SQL Server Browser (opcional, útil para instancias nombradas)
+netsh advfirewall firewall add rule name="SQL Browser UDP 1434" dir=in action=allow protocol=UDP localport=1434
+
+DESDE LA MÁQUINA REAL:
+para comprobar que la redirección de puertos funciona:
+Test-NetConnection -ComputerName 127.0.0.1 -Port 1433 (si en las reglas has puesto un puerto diferente cambialo)
+Test-NetConnection -ComputerName 127.0.0.1 -Port 3306
+
+Enlace de JDBC para intelliJ:
+jdbc:sqlserver://localhost:1433;databaseName=BDEMPRESA25;encrypt=false;trustServerCertificate=true;
+
+MYSQL:
+crear usuario con privilegios que se pueda conectar desde cualquier ip.
+CREATE USER 'usuario'@'%' IDENTIFIED BY 'abc123.';
+GRANT ALL PRIVILEGES ON *.* TO 'usuario'@'%' WITH GRANT OPTION;
+-- GRANT ALL PRIVILEGES ON bdempresa25.* TO 'usuario'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+SHOW GRANTS FOR 'usuario'@'%';
+
+
+Enlace de JDBC para intelliJ:
+jdbc:mysql://localhost:3306/BDEMPRESA25?serverTimezone=UTC

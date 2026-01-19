@@ -1,13 +1,11 @@
 package ud2.actividad3.persistencia;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import ud2.actividad3.clases.*;
 import ud2.actividad3.dto.*;
@@ -92,6 +90,7 @@ public class EmpresaDAO implements AutoCloseable {
         }
         GestorConexiones.ejecutarLoteTransaccional(con, sqlVehiculos, sqlFamiliares);
     }
+    // Actividad 2: CONSULTAS
 
     public static List<Departamento> obtenerDepartamentosConProyectos(Connection con) {
         // ejercicio 1
