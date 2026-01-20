@@ -14,14 +14,6 @@ public class Vehiculo {
         this.tipo = tipo;
     }
 
-    public Vehiculo(int codigo, String matricula, String marca, String modelo, char tipo) {
-        this.codigo = codigo;
-        this.matricula = matricula;
-        this.marca = marca;
-        this.modelo = modelo;
-        this.tipo = tipo;
-    }
-
     public int getCodigo() {
         return codigo;
     }

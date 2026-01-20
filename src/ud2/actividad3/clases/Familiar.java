@@ -25,6 +25,17 @@ public class Familiar {
         this.sexo = sexo;
     }
 
+    public Familiar(String nss, String nssEmpleado, String nombre, String apellido1, String apellido2, LocalDate fechaNacimiento, String parentesco, char sexo) {
+        this.nss = nss;
+        this.nssEmpleado = nssEmpleado;
+        this.nombre = nombre;
+        this.apellido1 = apellido1;
+        this.apellido2 = apellido2;
+        this.fechaNacimiento = fechaNacimiento;
+        this.parentesco = parentesco;
+        this.sexo = sexo;
+    }
+
     public int getCodigo() {
         return codigo;
     }

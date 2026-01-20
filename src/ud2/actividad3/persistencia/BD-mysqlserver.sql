@@ -85,3 +85,27 @@ CREATE TABLE VEHICULO (
     Tipo      CHAR(1) NOT NULL,
     CONSTRAINT CK_TIPO_VEHICULO CHECK (Tipo IN ('G', 'D'))
 );
+
+-- Tabla para Vehículos Propios
+CREATE TABLE VEHICULO_PROPIO (
+                                 CodVehiculo INT NOT NULL,
+                                 FechaCompra DATE NOT NULL,
+                                 Precio DECIMAL(18, 2) NOT NULL, -- Usamos Decimal para mayor precisión en dinero
+
+                                 CONSTRAINT PK_VEHICULO_PROPIO PRIMARY KEY (CodVehiculo),
+                                 CONSTRAINT FK_VEHICULO_PROPIO FOREIGN KEY (CodVehiculo)
+                                     REFERENCES VEHICULO(Codigo)
+);
+
+
+-- Tabla para Vehículos en Renting
+CREATE TABLE VEHICULO_RENTING (
+                                  CodVehiculo INT NOT NULL,
+                                  FechaIni DATE NOT NULL,
+                                  PrecioMensual DECIMAL(18, 2) NOT NULL,
+                                  MesesContratados INT NOT NULL,
+
+                                  CONSTRAINT PK_VEHICULO_RENTING PRIMARY KEY (CodVehiculo),
+                                  CONSTRAINT FK_VEHICULO_RENTING FOREIGN KEY (CodVehiculo)
+                                      REFERENCES VEHICULO(Codigo)
+);

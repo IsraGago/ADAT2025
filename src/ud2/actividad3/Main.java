@@ -1,47 +1,57 @@
 package ud2.actividad3;
 
 
+import ud2.actividad3.clases.Familiar;
+import ud2.actividad3.clases.Proxecto;
+import ud2.actividad3.clases.VehiculoPropio;
+import ud2.actividad3.clases.VehiculoRenting;
 import ud2.actividad3.logica.GestorEmpresa;
 import ud2.actividad3.utilidades.TipoSGBD;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
         String baseDatos = "BDEMPRESA25";
+        String usuario = "sa";
+        String password = "abc123.";
         String rutaSQLite = "./src/ud2/actividad3/persistencia/dbEmpresa.db";
 
         try {
-            GestorEmpresa gestorEmpresa = new GestorEmpresa(TipoSGBD.SQLITE, rutaSQLite);
-            System.out.println("\n1. DEPARTAMENTOS CON PROYECTOS\n");
-            gestorEmpresa.mostrarDepartamentosConProyectos();
+            GestorEmpresa gestorEmpresa = new GestorEmpresa(TipoSGBD.SQLSERVER, baseDatos, usuario, password);
+            // EJERCICIO 1
+            System.out.println("insertar familiar");
+            gestorEmpresa.insertarFamiliar(new Familiar(
+                    "54321343","54321342",
+                    "Mario","Gago","Acuña",
+                    LocalDate.now(),"Hermano",'H'));
+            // EJERCICIO 2
+            System.out.println("insertar vehiculos");
+            gestorEmpresa.insertarVehiculo(new VehiculoRenting("0000AAA","Ford","F1",'G',LocalDate.now(),300.0,24));
+            gestorEmpresa.insertarVehiculo(new VehiculoPropio("1111BBB","Mercedes","M1",'D',LocalDate.now(),40000.0));
+            // EJERCICIO 3
+            System.out.println("Cambiar departamento de proyecto");
+            gestorEmpresa.cambiarDepartamentoProyecto("PESROAL","PORTAL");
+            //EJERCICIO 4
+            System.out.println("Eliminar proyecto");
+            gestorEmpresa.borrarProyecto(11);
+            //EJERCICIO 5
+            System.out.println("Incrementar salario de empleados fijos");
+            List<String> NSSs = List.of("0010010","0110010","0999900");
+            gestorEmpresa.incrementarSalarioEmpleadosFijos(1.0,NSSs);
+            //EJERCICIO 6
+            System.out.println("Insertar proyecto");
+            gestorEmpresa.insertarProyecto(new Proxecto(5,"4","Vigo"));
+            //EJERCICIO 7
+            System.out.println("Incrementar salario a un departamento");
+            gestorEmpresa.incrementarSalarioDepartamento(1.0,4);
+            //EJERCICIO 8
+            System.out.println("Empleados con más de X num de proyectos");
+            gestorEmpresa.obtenerEmpleadosConMasProyectos();
 
-            System.out.println("\n2. DIRECTORES CON PROYECTOS\n");
-            gestorEmpresa.mostrarDirectoresConProyectos();
-
-            System.out.println("\n3. EMPLEADOS Y EDADES\n");
-            gestorEmpresa.mostrarEmpleadosConEdad();
-
-            System.out.println("\n4. EMPLEADOS EN DEPARTAMENTO CONCRETO\n");
-            gestorEmpresa.mostrarEmpleadoPorDepartamento("INFORMÁTICA");
-
-            System.out.println("\n5. EMPLEADOS FIJOS EN PROYECTO Y LOCALIDAD CONCRETOS\n");
-            gestorEmpresa.mostrarEmpleadoFijoPorPorProyectoYLocalidad("MELLORAS SOCIAIS", "Vigo");
-
-            System.out.println("\n6. DEPARTAMENTOS CON SU NUM DE EMPLEADOS POR TIPO\n");
-            gestorEmpresa.mostrarNumEpleadosDepartamentosPorTipo();
-
-            System.out.println("\n7. DEPARTAMENTOS CON MAS DE N EMPLEADOS\n");
-            gestorEmpresa.mostrarDepartamentosConMasDeN(4);
-
-            System.out.println("\n8. EMPLEADOS FIJOS CON SALARIO > N\n");
-            gestorEmpresa.mostrarFijosConSalarioMayorQue(1300.0);
-
-            System.out.println("\n9. EMPLEADOS FIJOS CON MAS SALARIO DE CADA DEPARTAMENTO\n");
-            gestorEmpresa.mostrarEmpleadosFijosMaxSalarioDepartamento();
-
-            System.out.println("\n10. DEPARTAMENTOS CON MAX NÚMERO DE PROYECTOS\n");
-            gestorEmpresa.mostrarDepartamentosMaxProyectosControlados();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

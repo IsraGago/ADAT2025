@@ -38,8 +38,7 @@ public class Proxecto {
         this.lugar = lugar;
     }
 
-    public Proxecto(int id, int numDepartamento, String nombre, String lugar) {
-        this.id = id;
+    public Proxecto( int numDepartamento, String nombre, String lugar) {
         this.numDepartamento = numDepartamento;
         this.nombre = nombre;
         this.lugar = lugar;

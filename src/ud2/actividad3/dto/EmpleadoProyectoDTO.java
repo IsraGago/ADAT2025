@@ -24,4 +24,12 @@ public class EmpleadoProyectoDTO {
         this.nss = nss;
         this.nombreCompleto = nombreCompleto;
     }
+
+    @Override
+    public String toString() {
+        return "EmpleadoProyectoDTO{" +
+                "nss='" + nss + '\'' +
+                ", nombreCompleto='" + nombreCompleto + '\'' +
+                '}';
+    }
 }

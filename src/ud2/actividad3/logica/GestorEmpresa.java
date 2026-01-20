@@ -1,9 +1,7 @@
 package ud2.actividad3.logica;
 
 import ud1.actividad5personas.clases.Empresa;
-import ud2.actividad3.clases.Departamento;
-import ud2.actividad3.clases.Familiar;
-import ud2.actividad3.clases.Vehiculo;
+import ud2.actividad3.clases.*;
 import ud2.actividad3.persistencia.EmpresaDAO;
 import ud2.actividad3.utilidades.GestorConexiones;
 import ud2.actividad3.utilidades.TipoSGBD;
@@ -24,108 +22,9 @@ public class GestorEmpresa {
         con = GestorConexiones.getConnection(tipo, rutaSQLite);
     }
 
-    public void mostrarDepartamentos() {
-        try {
-            ArrayList<Departamento> departamentos = EmpresaDAO.getDepartamentos(con);
-            for (Departamento departamento : departamentos) {
-                departamento.mostrarDatos();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Error al obtener los departamentos");
-        }
-    }
-
-    public void mostrarMetadatos() {
-        try {
-            System.out.println(GestorConexiones.obtenerMetadatos(con));
-        } catch (SQLException e) {
-            System.out.println("Error al obtener los metadatos");
-        }
-    }
-
-    public void insertarDepartamento(String nombre, String nssDirector) {
-        try {
-            if (EmpresaDAO.insertarDepartamento(con, nombre, nssDirector)) {
-                System.out.println("Departamento insertado");
-            } else {
-                System.out.println("Error al insertar departamento");
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error al crear el departamento: " + e.getMessage());
-        }
-    }
-
-    public void crearTablasExtra(boolean borrarSiExsisten) {
-        try {
-            EmpresaDAO.crearTablas(con, borrarSiExsisten);
-            System.out.println("Tablas creadas con exito.");
-        } catch (SQLException e) {
-            System.out.println("Error al crear tablas: " + e.getMessage());
-        }
-    }
-
-    public void mostrarDepartamentosConProyectos() {
-        List<Departamento> lista = EmpresaDAO.obtenerDepartamentosConProyectos(con);
-        for (Departamento departamento : lista) {
-            System.out.println(departamento);
-        }
-    }
-
-    public void mostrarDirectoresConProyectos() {
-        List lista = EmpresaDAO.obtenerDirectoresConProyectos(con);
-        mostrar(lista);
-    }
-
-    public void mostrarEmpleadosConEdad() {
-        List lista = EmpresaDAO.obtenerEmpleadosConEdad(con);
-        mostrar(lista);
-    }
-
-    public void mostrarEmpleadoPorDepartamento(String departamento) {
-        List lista = EmpresaDAO.obtenerEmpleadoPorDepartamento(con, departamento);
-        mostrar(lista);
-    }
-
-    public void mostrarEmpleadoFijoPorPorProyectoYLocalidad(String nombreProyecto, String localidad) {
-        List lista = EmpresaDAO.obtenerEmpleadoFijoPorPorProyectoYLocalidad(con, nombreProyecto, localidad);
-        mostrar(lista);
-    }
-
-    public void mostrarNumEpleadosDepartamentosPorTipo() {
-        List lista = EmpresaDAO.obtenerNumEpleadosDepartamentosPorTipo(con);
-        mostrar(lista);
-    }
-
-    public void mostrarDepartamentosConMasDeN(int numEpleados) {
-        List lista = EmpresaDAO.obtenerDepartamentosConMasDeN(con, numEpleados);
-        mostrar(lista);
-    }
-
-    public void mostrarFijosConSalarioMayorQue(double salario) {
-        List lista = EmpresaDAO.obtenerFijosConSalarioMayorQue(con, salario);
-        mostrar(lista);
-    }
-
-    public void mostrarEmpleadosFijosMaxSalarioDepartamento() {
-        List lista = EmpresaDAO.obtenerEmpleadosFijosMaxSalarioDepartamento(con);
-        mostrar(lista);
-    }
-
-    public void mostrarDepartamentosMaxProyectosControlados() {
-        List lista = EmpresaDAO.obtenerDepartamentosMaxProyectosControlados(con);
-        mostrar(lista);
-    }
-
-    public void mostrar(List<Object> lista) {
-        for (Object object : lista) {
-            System.out.println(object);
-        }
-    }
-
     // ACTIVIDAD 3: Actualizaciones
     public void insertarFamiliar(Familiar familiar) {
+        // ejercicio 1
         try {
             int resultado = EmpresaDAO.insertarFamiliar(con, familiar);
             switch (resultado) {
@@ -136,33 +35,90 @@ public class GestorEmpresa {
                     System.out.println("Error de fk");
                 }
                 case -2 -> {
-                    System.out.println("Error de PK o UQ");
+                    System.out.println("Error de UQ");
                 }
                 case -3 -> {
                     System.out.println("Error restricción CHECK");
+                }case -4 -> {
+                    System.out.println("Error restricción PK");
+                }default -> {
+                    System.out.println(resultado);
                 }
 
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (RuntimeException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void insertarVehiculo(Vehiculo vehiculo) {
+        // ejercicio 2
         int resultado = EmpresaDAO.insertarVehiculo(con, vehiculo);
-        if (resultado == 0) {
-            System.out.println("Vehiculo insertado");
+        switch (resultado){
+            case 0 -> {
+                System.out.println("Vehículo insertado");
+            }
+            case -1 -> {
+                System.out.println("Error de FK");
+            }
+            case -2 -> {
+                System.out.println("Error de UQ");
+            }
+            case -3 -> {
+                System.out.println("Error restricción CHECK");
+            }case -4 -> {
+                System.out.println("Error restricción PK");
+            }
         }
     }
 
     public void cambiarDepartamentoProyecto(String nombreDepartamento, String nombreProyecto) {
+        // ejercicio 3
         int filas = EmpresaDAO.cambiarDepartamentoProyecto(con, nombreDepartamento, nombreProyecto);
-        if (filas == -2) {
+        if (filas != 1) {
             System.out.println("No han habido cambios. Comprueba la existencia del proyecto.");
+        } else {
+            System.out.println("Proyecto actualizado");
+        }
+    }
+
+    public void borrarProyecto(int numProyecto){
+        if (EmpresaDAO.borrarProyecto(con,numProyecto)){
+            System.out.println("Proyecto eliminado");
+        } else {
+            System.out.println("No se ha podido eliminar el proyecto. Comprueba su existencia.");
+        }
+    }
+
+    public void incrementarSalarioEmpleadosFijos(double incremento, List<String> listaNss){
+        int numFilas = EmpresaDAO.incrementarSalarioEmpleadosFijos(con,incremento,listaNss);
+        System.out.println("Se han actualizado " + numFilas + " empleados fijos.");
+    }
+
+    public void insertarProyecto(Proxecto p){
+        try {
+            if (EmpresaDAO.insertarProyecto(con,p)){
+                System.out.println("Proyecto insertado");
+            } else {
+                System.out.println("No se ha podido insertar el proyecto. Comprueba las restricciones.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if(e.getMessage().contains("TYPE_FORWARD_ONLY")){
+                System.out.println("SQLite no soporta este tipo de operación.");
+            }
+        }
+    }
+
+    public void incrementarSalarioDepartamento(double incremento, int numDepartamento){
+        int afectados = EmpresaDAO.incrementarSalarioDepartamento(con, incremento,  numDepartamento);
+        System.out.println("Se han actualizado " + afectados + " empleados del departamento " + numDepartamento);
+    }
+
+    public void obtenerEmpleadosConMasProyectos(){
+        List<EmpleadoInfoDTO> lista = EmpresaDAO.obtenerEmpleadosConMasProyectos(con,1);
+        for (EmpleadoInfoDTO e: lista) {
+            System.out.println(e);
         }
     }
 }

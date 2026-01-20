@@ -11,18 +11,17 @@ Create table VEHICULO(
 )
 
 Create table VEHICULO_RENTING(
-    CodVehiculo int not null,
+    CodVehiculo int not null primary key ,
     FechaIni date not null,
     PrecioMensual float not null,
     MesesContratados int not null,
     CONSTRAINT FK_VEHICULO_RENTING FOREIGN KEY (CodVehiculo) references VEHICULO(Codigo)
 )
 Create table VEHICULO_PROPIO(
-    CodVehiculo int not null,
+    CodVehiculo int not null primary key ,
     FechaCompra date not null,
     Precio float not null,
     CONSTRAINT FK_VEHICULO_PROPIO FOREIGN KEY (CodVehiculo) references VEHICULO(Codigo)
-
 )
 
 Create table FAMILIAR(

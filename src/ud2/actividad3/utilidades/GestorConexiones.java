@@ -87,8 +87,7 @@ public class GestorConexiones {
     public static int ejecutarSentencia(Connection con, String sql, Object... parametros) throws SQLException {
         try (PreparedStatement stmt = con.prepareStatement(sql)) {
             setParametros(stmt, parametros);
-            stmt.executeUpdate();
-            return stmt.getUpdateCount();
+            return stmt.executeUpdate();
         }
     }
 

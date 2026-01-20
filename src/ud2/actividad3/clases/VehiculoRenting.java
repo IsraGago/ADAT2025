@@ -7,12 +7,13 @@ public class VehiculoRenting extends Vehiculo {
     double precioMensual;
     int mesesContratados;
 
-    public VehiculoRenting(int codigo, String matricula, String marca, String modelo, char tipo,LocalDate fechaCompra, double precioMensual, int mesesContratados) {
-        super(codigo, matricula, marca, modelo, tipo);
+    public VehiculoRenting(String matricula, String marca, String modelo, char tipo, LocalDate fechaCompra, double precioMensual, int mesesContratados) {
+        super(matricula, marca, modelo, tipo);
         this.fechaCompra = fechaCompra;
         this.precioMensual = precioMensual;
         this.mesesContratados = mesesContratados;
     }
+
 
     public LocalDate getFechaCompra() {
         return fechaCompra;
