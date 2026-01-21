@@ -45,8 +45,7 @@ END
 if OBJECT_ID('sp_DepartControlaProxec','P') IS NOT NULL
     DROP PROCEDURE sp_DepartControlaProxec
 GO
-CREATE PROCEDURE sp_DepartControlaProxec
-    @NUM int
+CREATE PROCEDURE sp_DepartControlaProxec(@NUM int)
 AS
 BEGIN
     SELECT *

@@ -55,7 +55,7 @@ public class EmpresaDAO implements AutoCloseable {
 
     public static ProxectoInfoDTO obtenerDatosProyecto(Connection con, int numProyecto) {
         // ejercicio2
-        String sql = "{ call sp_DatosProxectos(?,?,?,?)}";
+        String sql = "{ call sp_DatosProyectos(?,?,?,?)}";
         try (CallableStatement cs = con.prepareCall(sql)) {
             cs.setInt(1, numProyecto);
 
@@ -104,20 +104,25 @@ public class EmpresaDAO implements AutoCloseable {
         }
     }
 
-    public static int numeroEmpregadoDepartamento(Connection con, String nombreDepartamento) throws SQLException {
+    public static int numeroEmpregadoDepartamento(Connection con, String nombreDepartamento) {
         // ejercicio4
         String sql = "{? = call fn_nEmpDepart(?)}";
-        if (existeDepartamento(con, nombreDepartamento)) {
-            try (CallableStatement cs = con.prepareCall(sql)) {
-                cs.registerOutParameter(1, Types.INTEGER);
-                cs.setString(2, nombreDepartamento);
-                cs.execute();
-                return cs.getInt(1);
-            } catch (SQLException e) {
-                throw new RuntimeException("Error al ejecutar fn_nEmpDepart: " + e.getMessage(), e);
+        try {
+            if (existeDepartamento(con, nombreDepartamento)) {
+                try (CallableStatement cs = con.prepareCall(sql)) {
+                    cs.registerOutParameter(1, Types.INTEGER);
+                    cs.setString(2, nombreDepartamento);
+                    cs.execute();
+                    return cs.getInt(1);
+                } catch (SQLException e) {
+                    throw new RuntimeException("Error al ejecutar fn_nEmpDepart: " + e.getMessage(), e);
+                }
+            } else {
+                return -1;
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return 0;
     }
 
     // EXTRAS

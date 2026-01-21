@@ -10,4 +10,13 @@ public class ProxectoInfoDTO {
         this.lugar = lugar;
         this.numDepartamento = numDepartamento;
     }
+
+    @Override
+    public String toString() {
+        return "ProxectoInfoDTO{" +
+                "nombre='" + nombre + '\'' +
+                ", lugar='" + lugar + '\'' +
+                ", numDepartamento=" + numDepartamento +
+                '}';
+    }
 }
