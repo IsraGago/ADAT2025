@@ -3,11 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-import clases.Artistica;
-import clases.Fotografia;
-import logica.GestorExposicion;
-import utilidades.TipoSGBD;
-import clases.Documental;
+
+import ud2.examen.clases.Artistica;
+import ud2.examen.clases.Fotografia;
+import ud2.examen.logica.GestorExposicion;
+import ud2.examen.utilidades.TipoSGBD;
+import ud2.examen.clases.Documental;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
